@@ -100,6 +100,20 @@ public class Main
       for (int i = 1; i < tuple_size; ++i)
       {
          out.write("(contains_node " + id + " " + tuple.get(i) + ")\n");
+
+         for (int j = (i + 1); j < tuple_size; ++j)
+         {
+            out.write
+            (
+               "(is_before "
+               + id
+               + " "
+               + tuple.get(i)
+               + " "
+               + tuple.get(j)
+               + ")\n"
+            );
+         }
       }
    }
 }

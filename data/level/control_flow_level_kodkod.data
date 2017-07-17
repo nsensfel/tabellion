@@ -11,3 +11,4 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate is_path_of path node)
 (add_predicate contains_node path node)
+(add_predicate is_before path node node)
