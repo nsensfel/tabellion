@@ -16,7 +16,7 @@ public class Parameters
          + "\t<INSTRUCTIONS>\tInstruction file describing the model.\n"
          + "NOTES:\n"
          + "\tThe properties to be verified still have to be hand coded in the"
-         + "source files (in Main.java)."
+         + " source files (in Main.java)."
       );
    }
 

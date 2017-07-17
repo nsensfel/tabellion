@@ -96,7 +96,7 @@ public class ControlFlow
          return false;
       }
 
-      if (input[1] != "node")
+      if (!input[1].equals("node"))
       {
          return true;
       }

@@ -1,38 +1,14 @@
 /* FIXME: Finer imports */
-import kodkod.ast.*;
+import java.util.*;
 
-import kodkod.engine.*;
-import kodkod.engine.config.*;
-import kodkod.engine.satlab.*;
-
-import kodkod.instance.*;
 public class Main
 {
    private static Parameters PARAMETERS;
 
-   private static Formula get_formula (final VHDLModel model)
-   {
-      final Variable w;
-
-      w = Variable.unary("w");
-
-      return
-         w.join
-         (
-            model.get_predicate_as_relation("is_accessed_by")
-         ).no().forSome(w.oneOf(model.get_type_as_relation("waveform")));
-   }
-
    public static void main (final String... args)
    {
-      final VHDLModel model;
-
-      final Universe univ;
-      final TupleFactory tf;
-      final Bounds bounds;
-
-      final Solver solver;
-      final Solution sol;
+      final Collection<Path> all_paths;
+      final Collection<List<Node>> all_subpaths;
 
       PARAMETERS = new Parameters(args);
 
@@ -41,51 +17,31 @@ public class Main
          return;
       }
 
-      model = new VHDLModel();
-
       try
       {
-         VHDLLevel.add_to_model
+         ControlFlow.load_file(PARAMETERS.get_model_file());
+      }
+      catch (final Exception e)
+      {
+         System.err.println
          (
-            model,
-            (
-               PARAMETERS.get_levels_directory()
-               + "/structural_level.data"
-            )
+            "[E] Could not load model file \""
+            + PARAMETERS.get_model_file()
+            + "\":"
          );
-      }
-      catch (final Exception e)
-      {
-         System.err.println("[E] Could not load structural level:");
+
          e.printStackTrace();
 
          return;
       }
 
-      try
+      all_paths = Path.get_all_paths_from(PARAMETERS.get_root_node());
+
+      all_subpaths = new ArrayList<List<Node>>();
+
+      for (final Path p: all_paths)
       {
-         model.parse_file(PARAMETERS.get_model_file());
+         all_subpaths.addAll(p.get_all_subpaths());
       }
-      catch (final Exception e)
-      {
-         System.err.println("[E] Could not load instructions:");
-         e.printStackTrace();
-
-         return;
-      }
-
-      univ = new Universe(model.get_atoms());
-      tf = univ.factory();
-      bounds = new Bounds(univ);
-
-      model.add_to_bounds(bounds, tf);
-
-      solver = new Solver();
-      solver.options().setSolver(SATFactory.DefaultSAT4J);
-      solver.options().setReporter(new ConsoleReporter());
-
-      sol = solver.solve(get_formula(model), bounds);
-
-      System.out.println(sol);
    }
 }

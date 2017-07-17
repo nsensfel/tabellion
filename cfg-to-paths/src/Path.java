@@ -31,6 +31,21 @@ public class Path
    {
       final Collection<Path> result;
       final Stack<Path> waiting_list;
+      final Node root_node;
+
+      root_node = Node.get_node(root);
+
+      if (root_node == null)
+      {
+         System.err.println
+         (
+            "[E] Could not find root node \""
+            + root
+            + "\"."
+         );
+
+         return null;
+      }
 
       result = new ArrayList<Path>();
       waiting_list = new Stack<Path>();
@@ -63,17 +78,17 @@ public class Path
       return result;
    }
 
-   public static Collection<List<Node>> get_subpaths (final Path p)
+   public Collection<List<Node>> get_all_subpaths ()
    {
       final Collection<List<Node>> result;
       final int path_length;
 
       result = new ArrayList<List<Node>>();
-      path_length = p.nodes.size();
+      path_length = nodes.size();
 
       for (int i = 0; i < path_length; ++i)
       {
-         result.add(p.nodes.subList(i, path_length));
+         result.add(nodes.subList(i, path_length));
       }
 
       return result;

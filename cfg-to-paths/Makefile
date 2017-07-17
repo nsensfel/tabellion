@@ -1,17 +1,15 @@
 ## Target(s) Configuration #####################################################
-MODEL_FILE = "../data/instructions/example_1.sl"
-LEVEL_DIR = "../data/level/"
+MODEL_FILE = "../data/instructions/example_process.pl"
+ROOT_NODE = "237"
+ID_PREFIX = "p237_"
+OUTPUT_FILE = "$(MODEL_FILE).kk"
+
 ## Executables #################################################################
 JAVAC = javac
 JAVA = java
-DOWNLOADER = wget
 
 ## Java Config #################################################################
-CLASSPATH = "kodkod.jar:./src/:org.sat4j.core.jar"
-
-## Dependencies ################################################################
-JAR_SOURCE = https://noot-noot.org/onera_2017/jar/
-REQUIRED_JARS = kodkod.jar org.sat4j.core.jar
+CLASSPATH = "./src/"
 
 ## Makefile Magic ##############################################################
 SOURCES = $(wildcard src/*.java)
@@ -24,13 +22,9 @@ all: $(CLASSES)
 clean:
 	rm -f $(CLASSES)
 
-run: $(CLASSES) $(REQUIRED_JARS)
-	$(JAVA) -cp $(CLASSPATH) Main $(LEVEL_DIR) $(MODEL_FILE)
+run: $(CLASSES)
+	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_FILE) $(ROOT_NODE) $(ID_PREFIX) \
+		$(OUTPUT_FILE)
 
-%.class: %.java $(REQUIRED_JARS)
+%.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $<
-
-%.jar:
-	echo "Attempting to download missing jar '$@'"
-	$(DOWNLOADER) "$(JAR_SOURCE)/$@"
-

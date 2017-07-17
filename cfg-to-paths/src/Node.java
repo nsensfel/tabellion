@@ -51,6 +51,19 @@ public class Node
       n_a = NODE_FROM_STRING.get(a);
       n_b = NODE_FROM_STRING.get(b);
 
+      if ((n_a == null) || (n_b == null))
+      {
+         System.err.println
+         (
+            "[E] Causality issue: Nodes \""
+            + a
+            + "\" or \""
+            + b
+            + "\" used but not defined."
+         );
+
+         return false;
+      }
       n_a.next_nodes.add(n_b);
 
       return true;
