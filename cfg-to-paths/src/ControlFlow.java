@@ -51,7 +51,7 @@ public class ControlFlow
          {
             success = handle_add_element(input);
          }
-         else if (input[0].equals("connect_to"))
+         else if (input[0].equals("node_connect"))
          {
             success = handle_add_connect_to(input);
          }
