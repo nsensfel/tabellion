@@ -8,6 +8,8 @@ import kodkod.engine.satlab.*;
 import kodkod.instance.*;
 public class Main
 {
+   private static Parameters PARAMETERS;
+
    private static Formula get_formula (final VHDLModel model)
    {
       final Variable w;
@@ -32,10 +34,10 @@ public class Main
       final Solver solver;
       final Solution sol;
 
-      if (args.length != 1)
-      {
-         System.out.println("Use: java Main <instructions_file>");
+      PARAMETERS = new Parameters(args);
 
+      if (!PARAMETERS.are_valid())
+      {
          return;
       }
 
@@ -43,7 +45,14 @@ public class Main
 
       try
       {
-         VHDLLevel.add_to_model(model, "./structural_level.data");
+         VHDLLevel.add_to_model
+         (
+            model,
+            (
+               PARAMETERS.get_levels_directory()
+               + "/structural_level.data"
+            )
+         );
       }
       catch (final Exception e)
       {
@@ -55,7 +64,7 @@ public class Main
 
       try
       {
-         model.parse_file(args[0]);
+         model.parse_file(PARAMETERS.get_model_file());
       }
       catch (final Exception e)
       {
