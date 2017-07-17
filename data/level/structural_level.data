@@ -1,0 +1,112 @@
+;; Structural Level
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TYPES DECLARATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(add_type entity)
+(add_type port)
+(add_type port_mode)
+(add_type generic)
+(add_type architecture)
+(add_type signal)
+(add_type process)
+(add_type file)
+(add_type component)
+(add_type waveform)
+(add_type string)
+(add_type type)
+(add_type type_kind)
+(add_type signal_kind)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; PREDICATES DECLARATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; Entity ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_predicate is_in_file entity file)
+(add_predicate has_begin entity)
+(add_predicate has_visible_flag entity)
+(add_predicate end_has_reserved_id entity)
+(add_predicate end_has_identifier entity)
+(add_predicate is_simulation_scenario entity)
+
+;;;; Port ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_predicate is_port_of port entity)
+(add_predicate has_disconnect_flag port)
+(add_predicate is_of_mode port string)
+(add_predicate has_class port)
+(add_predicate is_ref port)
+(add_predicate has_active_flag port)
+(add_predicate has_identifier_list port)
+(add_predicate has_visible_flag port)
+(add_predicate has_after_drivers_flag port)
+(add_predicate has_use_flag port)
+(add_predicate has_open_flag port)
+(add_predicate has_guarded_signal_flag port)
+(add_predicate is_of_kind port string)
+
+;;;; Generic ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_predicate is_generic_of generic entity)
+(add_predicate has_class generic)
+(add_predicate is_ref generic)
+(add_predicate has_identifier_list generic)
+(add_predicate has_visible_flag generic)
+(add_predicate has_after_drivers_flag generic)
+(add_predicate is_of_type generic type)
+
+;;;; File ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_predicate is_in_file architecture file)
+(add_predicate is_architecture_of architecture entity)
+(add_predicate has_foreign_flag architecture)
+(add_predicate has_visible_flag architecture)
+(add_predicate is_within_flag architecture)
+(add_predicate end_has_reserved_id architecture)
+(add_predicate end_has_identifier architecture)
+
+;;;; Signal ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_predicate belongs_to_architecture signal architecture)
+(add_predicate has_disconnect_flag signal)
+(add_predicate is_ref signal)
+(add_predicate has_active_flag signal)
+(add_predicate has_identifier_list signal)
+(add_predicate has_visible_flag signal)
+(add_predicate has_after_drivers signal)
+(add_predicate has_use_flag signal)
+(add_predicate has_open_flag signal)
+(add_predicate has_guarded_flag signal)
+(add_predicate is_of_kind signal string)
+(add_predicate is_of_type signal type)
+
+;;;; Process ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_predicate belongs_to_architecture process architecture)
+(add_predicate has_seen_flag process)
+(add_predicate end_has_postboned process)
+(add_predicate has_postboned_flag process)
+(add_predicate is_ref process)
+(add_predicate has_passive_flag process)
+(add_predicate has_visible_flag process)
+(add_predicate is_within_flag process)
+(add_predicate has_label process)
+(add_predicate has_is process)
+(add_predicate end_has_reserved_id process)
+(add_predicate end_has_identifier process)
+(add_predicate is_explicit_process process)
+
+;;;; Component ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_predicate is_component_of component entity)
+(add_predicate belongs_to_architecture component architecture)
+(add_predicate port_maps component waveform port)
+
+;;;; Waveform ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_predicate is_in_sensitivity_list waveform process)
+(add_predicate is_accessed_by waveform process)
+(add_predicate is_waveform_of waveform signal)
+(add_predicate is_waveform_of waveform port)
+
+;;;; String ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_predicate string_matches string string)
+
+;;;; Type ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_predicate is_approved_type type)
+(add_predicate is_of_kind type string)
