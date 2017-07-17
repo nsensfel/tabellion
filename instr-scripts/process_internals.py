@@ -128,7 +128,7 @@ class Process_Internals:
             xml.attrib.get("label")
         )
         self.output.write(
-            "(set_attribute label "
+            "(set_function label "
             + cond_node_id
             + " "
             + string_id
@@ -145,7 +145,7 @@ class Process_Internals:
             "IF"
         )
         self.output.write(
-            "(set_attribute kind "
+            "(set_function kind "
             + cond_node_id
             + " "
             + string_id
@@ -165,7 +165,7 @@ class Process_Internals:
 
         #### Depth
         self.output.write(
-            "(set_attribute depth "
+            "(set_function depth "
             + cond_node_id
             + " "
             + str(node_depth + 1)
@@ -223,7 +223,7 @@ class Process_Internals:
             xml.attrib.get("label")
         )
         self.output.write(
-            "(set_attribute label "
+            "(set_function label "
             + node_id
             + " "
             + string_id
@@ -240,7 +240,7 @@ class Process_Internals:
             "INSTRUCTION"
         )
         self.output.write(
-            "(set_attribute kind "
+            "(set_function kind "
             + node_id
             + " "
             + string_id
@@ -260,7 +260,7 @@ class Process_Internals:
 
         #### Depth
         self.output.write(
-            "(set_attribute depth "
+            "(set_function depth "
             + node_id
             + " "
             + str(node_depth)
@@ -339,7 +339,7 @@ class Process_Internals:
             xml.attrib.get("label")
         )
         self.output.write(
-            "(set_attribute label "
+            "(set_function label "
             + cond_node_id
             + " "
             + string_id
@@ -356,7 +356,7 @@ class Process_Internals:
             "CASE"
         )
         self.output.write(
-            "(set_attribute kind "
+            "(set_function kind "
             + cond_node_id
             + " "
             + string_id
@@ -376,7 +376,7 @@ class Process_Internals:
 
         #### Depth
         self.output.write(
-            "(set_attribute depth "
+            "(set_function depth "
             + cond_node_id
             + " "
             + str(node_depth + 1)
@@ -458,7 +458,7 @@ class Process_Internals:
             ""
         )
         self.output.write(
-            "(set_attribute label "
+            "(set_function label "
             + node_id
             + " "
             + string_id
@@ -475,7 +475,7 @@ class Process_Internals:
             "WHEN"
         )
         self.output.write(
-            "(set_attribute kind "
+            "(set_function kind "
             + node_id
             + " "
             + string_id
@@ -495,7 +495,7 @@ class Process_Internals:
 
         #### Depth
         self.output.write(
-            "(set_attribute depth "
+            "(set_function depth "
             + node_id
             + " "
             + str(node_depth)
