@@ -11,7 +11,7 @@ CLASSPATH = "kodkod.jar:./src/:org.sat4j.core.jar"
 
 ## Dependencies ################################################################
 JAR_SOURCE = https://noot-noot.org/onera_2017/jar/
-REQUIRED_JARS = kodkod.jar org.sat4j.core.jar
+REQUIRED_JARS = kodkod.jar org.sat4j.core.jar antlr-4.7-complete.jar
 
 ## Makefile Magic ##############################################################
 SOURCES = $(wildcard src/*.java)
