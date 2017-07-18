@@ -14,6 +14,7 @@ public class VHDLPredicate
    private final String name;
    private final int arity;
    private final Relation as_relation;
+   private boolean is_used;
 
    public VHDLPredicate (final String name, final VHDLType[] signature)
    {
@@ -22,6 +23,7 @@ public class VHDLPredicate
 
       signatures = new ArrayList<VHDLType[]>();
       members = new ArrayList<String[]>();
+      is_used = false;
 
       as_relation = Relation.nary(name, arity);
 
@@ -33,6 +35,11 @@ public class VHDLPredicate
       members.add(tuple);
    }
 
+   public boolean is_used ()
+   {
+      return is_used;
+   }
+
    public int get_arity ()
    {
       return arity;
@@ -40,13 +47,26 @@ public class VHDLPredicate
 
    public Relation get_as_relation ()
    {
+      if (!is_used)
+      {
+         for (final VHDLType[] sig: signatures)
+         {
+            for (final VHDLType t: sig)
+            {
+               t.flag_as_used();
+            }
+         }
+
+         is_used = true;
+      }
+
       return as_relation;
    }
 
    /* pre: i < get_arity() */
    public boolean accepts_as_nth_param (final int i, final String id)
    {
-      for (VHDLType[] sig: signatures)
+      for (final VHDLType[] sig: signatures)
       {
          if (sig[i].get_member_as_relation(id) != null)
          {

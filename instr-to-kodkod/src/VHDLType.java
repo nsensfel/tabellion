@@ -12,10 +12,12 @@ public class VHDLType
    private final Map<String, Relation> members;
    private final String name;
    private final Relation as_relation;
+   private boolean is_used;
 
    public VHDLType (final String name)
    {
       members = new HashMap<String, Relation>();
+      is_used = false;
 
       this.name = name;
       as_relation = Relation.unary(name);
@@ -31,11 +33,22 @@ public class VHDLType
       return name;
    }
 
-   public Relation get_as_relation ()
+   public void flag_as_used ()
    {
-      return as_relation;
+      is_used = true;
    }
 
+   public boolean is_used ()
+   {
+      return is_used;
+   }
+
+   public Relation get_as_relation ()
+   {
+      is_used = true;
+
+      return as_relation;
+   }
 
    public Relation get_member_as_relation (final String id)
    {

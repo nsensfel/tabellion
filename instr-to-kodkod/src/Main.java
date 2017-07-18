@@ -9,6 +9,7 @@ import kodkod.instance.*;
 public class Main
 {
    private static Parameters PARAMETERS;
+   private static VHDLModel MODEL;
 
    private static Formula get_formula (final VHDLModel model)
    {
@@ -25,14 +26,21 @@ public class Main
 
    public static void main (final String... args)
    {
-      final VHDLModel model;
-
+      /*
+       * Order of operations:
+       * 1/ Load Levels (Types + predicates)
+       * 2/ Load Properties (will change 'is_used()' on predicates)
+       * 3/ Generate complementary model according to used predicates.
+       * 4/ Load Model, but only for used predicates and types.
+       * 5/ Add all used types and predicates to the Universe.
+       */
       final Universe univ;
       final TupleFactory tf;
       final Bounds bounds;
 
       final Solver solver;
       final Solution sol;
+      final Formula property;
 
       PARAMETERS = new Parameters(args);
 
@@ -41,13 +49,14 @@ public class Main
          return;
       }
 
-      model = new VHDLModel();
+      MODEL = new VHDLModel();
 
+      /* 1/ Load Levels (Types + predicates) */
       try
       {
          VHDLLevel.add_to_model
          (
-            model,
+            MODEL,
             (
                PARAMETERS.get_levels_directory()
                + "/structural_level.data"
@@ -62,9 +71,17 @@ public class Main
          return;
       }
 
+       /* 2/ Load Properties (will change 'is_used()' on predicates) */
+       property = get_formula(MODEL);
+       /* TODO */
+
+       /* 3/ Generate complementary model according to used predicates. */
+       /* TODO */
+
+      /* 4/ Load Model, but only for used predicates and types. */
       try
       {
-         model.parse_file(PARAMETERS.get_model_file());
+         MODEL.parse_file(PARAMETERS.get_model_file());
       }
       catch (final Exception e)
       {
@@ -74,17 +91,18 @@ public class Main
          return;
       }
 
-      univ = new Universe(model.get_atoms());
+      /* 5/ Add all types and used predicates to the Universe. */
+      univ = new Universe(MODEL.get_atoms());
       tf = univ.factory();
       bounds = new Bounds(univ);
 
-      model.add_to_bounds(bounds, tf);
+      MODEL.add_to_bounds(bounds, tf);
 
       solver = new Solver();
       solver.options().setSolver(SATFactory.DefaultSAT4J);
       solver.options().setReporter(new ConsoleReporter());
 
-      sol = solver.solve(get_formula(model), bounds);
+      sol = solver.solve(property, bounds);
 
       System.out.println(sol);
    }

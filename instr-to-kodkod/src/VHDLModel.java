@@ -178,7 +178,10 @@ public class VHDLModel
          return false;
       }
 
-      t.add_member(cmd[2]);
+      if (t.is_used())
+      {
+         t.add_member(cmd[2]);
+      }
 
       return true;
    }
@@ -228,6 +231,11 @@ public class VHDLModel
          );
 
          return false;
+      }
+
+      if (!p.is_used())
+      {
+         return true;
       }
 
       if (params.length != p.get_arity())
@@ -293,12 +301,18 @@ public class VHDLModel
    {
       for (final VHDLType t: types.values())
       {
-         t.add_to_bounds(b, f);
+         if (t.is_used())
+         {
+            t.add_to_bounds(b, f);
+         }
       }
 
       for (final VHDLPredicate p: predicates.values())
       {
-         p.add_to_bounds(b, f);
+         if (p.is_used())
+         {
+            p.add_to_bounds(b, f);
+         }
       }
    }
 
