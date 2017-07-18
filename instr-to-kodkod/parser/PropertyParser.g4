@@ -178,7 +178,7 @@ sl_exists_operator
             Main.get_variable_manager().get_variable
             (
                ($var.text)
-            ).in
+            ).oneOf
             (
                Main.get_model().get_type_as_relation(($type.text))
             )
@@ -203,7 +203,7 @@ sl_forall_operator
             Main.get_variable_manager().get_variable
             (
                ($var.text)
-            ).in
+            ).oneOf
             (
                Main.get_model().get_type_as_relation(($type.text))
             )
@@ -236,12 +236,9 @@ sl_ctl_verifies_operator
          (
             root_node.oneOf
             (
-               Main.get_model().get_type_as_relation("node").in
+               Main.get_variable_manager().get_variable(($ps.text)).join
                (
-                  Main.get_variable_manager().get_variable(($ps.text)).join
-                  (
-                     Main.get_model().get_predicate_as_relation("start_node")
-                  )
+                  Main.get_model().get_predicate_as_relation("start_node")
                )
             )
          );
@@ -408,7 +405,7 @@ bl_ax_operator [Variable current_node]
       $result =
          ($bl_formula.result).forAll
          (
-            next_node.in
+            next_node.oneOf
             (
                current_node.join
                (
@@ -439,7 +436,7 @@ bl_ex_operator [Variable current_node]
       $result =
          ($bl_formula.result).forSome
          (
-            next_node.in
+            next_node.oneOf
             (
                current_node.join
                (
@@ -470,7 +467,7 @@ bl_ag_operator [Variable current_node]
       $result =
          ($bl_formula.result).forAll
          (
-            next_node.in
+            next_node.oneOf
             (
                current_node.join
                (
@@ -508,7 +505,7 @@ bl_eg_operator [Variable current_node]
       $result =
          ($bl_formula.result).forAll
          (
-            next_node.in
+            next_node.oneOf
             (
                chosen_path.join
                (
@@ -517,7 +514,7 @@ bl_eg_operator [Variable current_node]
             )
          ).forSome
          (
-            chosen_path.in
+            chosen_path.oneOf
             (
                current_node.join
                (
@@ -552,7 +549,7 @@ bl_af_operator [Variable current_node]
       $result =
          ($bl_formula.result).forSome
          (
-            next_node.in
+            next_node.oneOf
             (
                chosen_path.join
                (
@@ -561,7 +558,7 @@ bl_af_operator [Variable current_node]
             )
          ).forAll
          (
-            chosen_path.in
+            chosen_path.oneOf
             (
                current_node.join
                (
@@ -596,7 +593,7 @@ bl_ef_operator [Variable current_node]
       $result =
          ($bl_formula.result).forSome
          (
-            next_node.in
+            next_node.oneOf
             (
                chosen_path.join
                (
@@ -605,7 +602,7 @@ bl_ef_operator [Variable current_node]
             )
          ).forSome
          (
-            chosen_path.in
+            chosen_path.oneOf
             (
                current_node.join
                (
@@ -642,7 +639,7 @@ bl_au_operator [Variable current_node]
       $result =
          ($f1.result).forAll
          (
-            f1_node.in
+            f1_node.oneOf
             (
                f2_node.join
                (
@@ -657,7 +654,7 @@ bl_au_operator [Variable current_node]
             ($f2.result)
          ).forSome
          (
-            f2_node.in
+            f2_node.oneOf
             (
                chosen_path.join
                (
@@ -666,7 +663,7 @@ bl_au_operator [Variable current_node]
             )
          ).forAll
          (
-            chosen_path.in
+            chosen_path.oneOf
             (
                current_node.join
                (
@@ -700,7 +697,7 @@ bl_eu_operator [Variable current_node]
       $result =
          ($f1.result).forAll
          (
-            f1_node.in
+            f1_node.oneOf
             (
                f2_node.join
                (
@@ -714,7 +711,7 @@ bl_eu_operator [Variable current_node]
             ($f2.result)
          ).forSome
          (
-            f2_node.in
+            f2_node.oneOf
             (
                chosen_path.join
                (
@@ -723,7 +720,7 @@ bl_eu_operator [Variable current_node]
             )
          ).forSome
          (
-            chosen_path.in
+            chosen_path.oneOf
             (
                current_node.join
                (
