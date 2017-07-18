@@ -10,6 +10,17 @@ public class Main
 {
    private static Parameters PARAMETERS;
    private static VHDLModel MODEL;
+   private static VariableManager VARIABLE_MANAGER;
+
+   public static VHDLModel get_model ()
+   {
+      return MODEL;
+   }
+
+   public static VariableManager get_variable_manager ()
+   {
+      return VARIABLE_MANAGER;
+   }
 
    private static Formula get_formula (final VHDLModel model)
    {
@@ -48,6 +59,8 @@ public class Main
       {
          return;
       }
+
+      VARIABLE_MANAGER = new VariableManager(PARAMETERS.get_variables_prefix());
 
       MODEL = new VHDLModel();
 

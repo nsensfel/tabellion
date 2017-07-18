@@ -18,7 +18,6 @@ options
 @members
 {
    /* of the class */
-
 }
 
 prog:
@@ -56,7 +55,7 @@ id_list
       (WS)+
       var=ID
       {
-         result.add(VARIABLE_SET.get_variable($var.text));
+         result.add(Main.get_variable_manager().get_variable($var.text));
       }
    )*
 
@@ -79,7 +78,7 @@ sl_predicate
 
    {
       /* TODO */
-      result = null;
+      $result = null;
    }
 ;
 
@@ -176,12 +175,12 @@ sl_exists_operator
       $result =
          ($f.result).forSome
          (
-            VARIABLE_SET.get_variable
+            Main.get_variable_manager().get_variable
             (
                ($var.text)
             ).in
             (
-               MODEL.get_type_as_relation(($type.text))
+               Main.get_model().get_type_as_relation(($type.text))
             )
          );
    }
@@ -201,12 +200,12 @@ sl_forall_operator
       $result =
          ($f.result).forAll
          (
-            VARIABLE_SET.get_variable
+            Main.get_variable_manager().get_variable
             (
                ($var.text)
             ).in
             (
-               MODEL.get_type_as_relation(($type.text))
+               Main.get_model().get_type_as_relation(($type.text))
             )
          );
    }
@@ -220,7 +219,7 @@ sl_ctl_verifies_operator
    {
       final Variable root_node;
 
-      root_node = VARIABLE_SET.generate_new_state_variable();
+      root_node = Main.get_variable_manager().generate_new_variable();
    }
 
    :
@@ -237,11 +236,11 @@ sl_ctl_verifies_operator
          (
             root_node.oneOf
             (
-               MODEL.get_type_as_relation("node").in
+               Main.get_model().get_type_as_relation("node").in
                (
-                  VARIABLE_SET.get_variable(($ps.text)).join
+                  Main.get_variable_manager().get_variable(($ps.text)).join
                   (
-                     MODEL.get_predicate_as_relation("start_node")
+                     Main.get_model().get_predicate_as_relation("start_node")
                   )
                )
             )
@@ -297,7 +296,7 @@ sl_formula
 /******************************************************************************/
 /** Behavioral Level **********************************************************/
 /******************************************************************************/
-bl_predicate [Variable current_state]
+bl_predicate [Variable current_node]
    returns [Formula result]:
 
    (WS)* L_PAREN
@@ -307,11 +306,11 @@ bl_predicate [Variable current_state]
 
    {
       /* TODO */
-      result = null;
+      $result = null;
    }
 ;
 
-bl_formula_list [Variable current_state]
+bl_formula_list [Variable current_node]
    returns [List<Formula> list]
 
    @init
@@ -321,7 +320,7 @@ bl_formula_list [Variable current_state]
 
    :
    (
-      bl_formula[current_state]
+      bl_formula[current_node]
       {
          result.add(($bl_formula.result));
       }
@@ -333,12 +332,12 @@ bl_formula_list [Variable current_state]
 ;
 
 /**** First Order Expressions *************************************************/
-bl_and_operator [Variable current_state]
+bl_and_operator [Variable current_node]
    returns [Formula result]:
 
    (WS)* AND_OPERATOR_KW
-      bl_formula[current_state]
-      bl_formula_list[current_state]
+      bl_formula[current_node]
+      bl_formula_list[current_node]
    (WS)* R_PAREN
 
    {
@@ -347,12 +346,12 @@ bl_and_operator [Variable current_state]
    }
 ;
 
-bl_or_operator [Variable current_state]
+bl_or_operator [Variable current_node]
    returns [Formula result]:
 
    (WS)* OR_OPERATOR_KW
-      bl_formula[current_state]
-      bl_formula_list[current_state]
+      bl_formula[current_node]
+      bl_formula_list[current_node]
    (WS)* R_PAREN
 
    {
@@ -361,11 +360,11 @@ bl_or_operator [Variable current_state]
    }
 ;
 
-bl_not_operator [Variable current_state]
+bl_not_operator [Variable current_node]
    returns [Formula result]:
 
    (WS)* NOT_OPERATOR_KW
-      bl_formula[current_state]
+      bl_formula[current_node]
    (WS)* R_PAREN
 
    {
@@ -374,12 +373,12 @@ bl_not_operator [Variable current_state]
    }
 ;
 
-bl_implies_operator [Variable current_state]
+bl_implies_operator [Variable current_node]
    returns [Formula result]:
 
    (WS)* IMPLIES_OPERATOR_KW
-      a=bl_formula[current_state]
-      b=bl_formula[current_state]
+      a=bl_formula[current_node]
+      b=bl_formula[current_node]
    (WS)* R_PAREN
 
    {
@@ -389,19 +388,19 @@ bl_implies_operator [Variable current_state]
 ;
 
 /**** Computation Tree Logic Expressions **************************************/
-bl_ax_operator [Variable current_state]
+bl_ax_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
-      final Variable next_state;
+      final Variable next_node;
 
-      next_state = VARIABLE_SET.generate_new_state_variable();
+      next_node = Main.get_variable_manager().generate_new_variable();
    }
 
    :
    (WS)* AX_OPERATOR_KW
-      bl_formula[next_state]
+      bl_formula[next_node]
    (WS)* R_PAREN
 
    {
@@ -409,30 +408,30 @@ bl_ax_operator [Variable current_state]
       $result =
          ($bl_formula.result).forAll
          (
-            next_state.in
+            next_node.in
             (
-               current_state.join
+               current_node.join
                (
-                  MODEL.get_predicate_as_relation("node_connect")
+                  Main.get_model().get_predicate_as_relation("node_connect")
                )
-            );
+            )
          );
    }
 ;
 
-bl_ex_operator [Variable current_state]
+bl_ex_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
-      final Variable next_state;
+      final Variable next_node;
 
-      next_state = VARIABLE_SET.generate_new_state_variable();
+      next_node = Main.get_variable_manager().generate_new_variable();
    }
 
    :
    (WS)* EX_OPERATOR_KW
-      bl_formula[next_state]
+      bl_formula[next_node]
    (WS)* R_PAREN
 
    {
@@ -440,30 +439,30 @@ bl_ex_operator [Variable current_state]
       $result =
          ($bl_formula.result).forSome
          (
-            next_state.in
+            next_node.in
             (
-               current_state.join
+               current_node.join
                (
-                  MODEL.get_predicate_as_relation("node_connect")
+                  Main.get_model().get_predicate_as_relation("node_connect")
                )
-            );
+            )
          );
    }
 ;
 
-bl_ag_operator [Variable current_state]
+bl_ag_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
-      final Variable next_state;
+      final Variable next_node;
 
-      next_state = VARIABLE_SET.generate_new_state_variable();
+      next_node = Main.get_variable_manager().generate_new_variable();
    }
 
    :
    (WS)* AG_OPERATOR_KW
-      bl_formula[next_state]
+      bl_formula[next_node]
    (WS)* R_PAREN
 
    {
@@ -471,37 +470,37 @@ bl_ag_operator [Variable current_state]
       $result =
          ($bl_formula.result).forAll
          (
-            next_state.in
+            next_node.in
             (
-               current_state.join
+               current_node.join
                (
-                  MODEL.get_predicate_as_relation
+                  Main.get_model().get_predicate_as_relation
                   (
                      "is_path_of"
                   ).transpose() /* (is_path_of path node), we want the path. */
                ).join
                (
-                  MODEL.get_predicate_as_relation("contains_node")
-               ).
+                  Main.get_model().get_predicate_as_relation("contains_node")
+               )
             )
-         )
+         );
    }
 ;
 
-bl_eg_operator [Variable current_state]
+bl_eg_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
-      final Variable next_state, chosen_path;
+      final Variable next_node, chosen_path;
 
-      next_state = VARIABLE_SET.generate_new_state_variable();
-      chosen_path = VARIABLE_SET.generate_new_state_variable();
+      next_node = Main.get_variable_manager().generate_new_variable();
+      chosen_path = Main.get_variable_manager().generate_new_variable();
    }
 
    :
    (WS)* EG_OPERATOR_KW
-      bl_formula[next_state]
+      bl_formula[next_node]
    (WS)* R_PAREN
 
    {
@@ -509,20 +508,20 @@ bl_eg_operator [Variable current_state]
       $result =
          ($bl_formula.result).forAll
          (
-            next_state.in
+            next_node.in
             (
                chosen_path.join
                (
-                  MODEL.get_predicate_as_relation("contains_node")
-               ).
+                  Main.get_model().get_predicate_as_relation("contains_node")
+               )
             )
          ).forSome
          (
             chosen_path.in
             (
-               current_state.join
+               current_node.join
                (
-                  MODEL.get_predicate_as_relation
+                  Main.get_model().get_predicate_as_relation
                   (
                      "is_path_of"
                   ).transpose() /* (is_path_of path node), we want the path. */
@@ -532,20 +531,20 @@ bl_eg_operator [Variable current_state]
    }
 ;
 
-bl_af_operator [Variable current_state]
+bl_af_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
-      final Variable next_state, chosen_path;
+      final Variable next_node, chosen_path;
 
-      next_state = VARIABLE_SET.generate_new_state_variable();
-      chosen_path = VARIABLE_SET.generate_new_state_variable();
+      next_node = Main.get_variable_manager().generate_new_variable();
+      chosen_path = Main.get_variable_manager().generate_new_variable();
    }
 
    :
    (WS)* AF_OPERATOR_KW
-      bl_formula[next_state]
+      bl_formula[next_node]
    (WS)* R_PAREN
 
    {
@@ -553,20 +552,20 @@ bl_af_operator [Variable current_state]
       $result =
          ($bl_formula.result).forSome
          (
-            next_state.in
+            next_node.in
             (
                chosen_path.join
                (
-                  MODEL.get_predicate_as_relation("contains_node")
-               ).
+                  Main.get_model().get_predicate_as_relation("contains_node")
+               )
             )
          ).forAll
          (
             chosen_path.in
             (
-               current_state.join
+               current_node.join
                (
-                  MODEL.get_predicate_as_relation
+                  Main.get_model().get_predicate_as_relation
                   (
                      "is_path_of"
                   ).transpose() /* (is_path_of path node), we want the path. */
@@ -576,20 +575,20 @@ bl_af_operator [Variable current_state]
    }
 ;
 
-bl_ef_operator [Variable current_state]
+bl_ef_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
-      final Variable next_state, chosen_path;
+      final Variable next_node, chosen_path;
 
-      next_state = VARIABLE_SET.generate_new_state_variable();
-      chosen_path = VARIABLE_SET.generate_new_state_variable();
+      next_node = Main.get_variable_manager().generate_new_variable();
+      chosen_path = Main.get_variable_manager().generate_new_variable();
    }
 
    :
    (WS)* EF_OPERATOR_KW
-      bl_formula[next_state]
+      bl_formula[next_node]
    (WS)* R_PAREN
 
    {
@@ -597,20 +596,20 @@ bl_ef_operator [Variable current_state]
       $result =
          ($bl_formula.result).forSome
          (
-            next_state.in
+            next_node.in
             (
                chosen_path.join
                (
-                  MODEL.get_predicate_as_relation("contains_node")
-               ).
+                  Main.get_model().get_predicate_as_relation("contains_node")
+               )
             )
          ).forSome
          (
             chosen_path.in
             (
-               current_state.join
+               current_node.join
                (
-                  MODEL.get_predicate_as_relation
+                  Main.get_model().get_predicate_as_relation
                   (
                      "is_path_of"
                   ).transpose() /* (is_path_of path node), we want the path. */
@@ -620,22 +619,22 @@ bl_ef_operator [Variable current_state]
    }
 ;
 
-bl_au_operator [Variable current_state]
+bl_au_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
-      final Variable f1_state, f2_state, chosen_path;
+      final Variable f1_node, f2_node, chosen_path;
 
-      f1_state = VARIABLE_SET.generate_new_state_variable();
-      f2_state = VARIABLE_SET.generate_new_state_variable();
-      chosen_path = VARIABLE_SET.generate_new_state_variable();
+      f1_node = Main.get_variable_manager().generate_new_variable();
+      f2_node = Main.get_variable_manager().generate_new_variable();
+      chosen_path = Main.get_variable_manager().generate_new_variable();
    }
 
    :
    (WS)* AU_OPERATOR_KW
-      f1=bl_formula[f1_state]
-      f2=bl_formula[f2_state]
+      f1=bl_formula[f1_node]
+      f2=bl_formula[f2_node]
    (WS)* R_PAREN
 
    {
@@ -643,57 +642,57 @@ bl_au_operator [Variable current_state]
       $result =
          ($f1.result).forAll
          (
-            f1_state.in
+            f1_node.in
             (
-               f2_state.join
+               f2_node.join
                (
                   chosen_path.join
                   (
-                     MODEL.get_predicate_as_relation("is_before")
+                     Main.get_model().get_predicate_as_relation("is_before")
                   ).transpose()
                )
-            );
+            )
          ).and
          (
             ($f2.result)
          ).forSome
          (
-            f2_state.in
+            f2_node.in
             (
                chosen_path.join
                (
-                  MODEL.get_predicate_as_relation("contains_node")
+                  Main.get_model().get_predicate_as_relation("contains_node")
                )
             )
          ).forAll
          (
             chosen_path.in
             (
-               current_state.join
+               current_node.join
                (
-                  MODEL.get_predicate_as_relation("is_path_of").transpose()
+                  Main.get_model().get_predicate_as_relation("is_path_of").transpose()
                )
             )
          );
    }
 ;
 
-bl_eu_operator [Variable current_state]
+bl_eu_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
-      final Variable f1_state, f2_state, chosen_path;
+      final Variable f1_node, f2_node, chosen_path;
 
-      f1_state = VARIABLE_SET.generate_new_state_variable();
-      f2_state = VARIABLE_SET.generate_new_state_variable();
-      chosen_path = VARIABLE_SET.generate_new_state_variable();
+      f1_node = Main.get_variable_manager().generate_new_variable();
+      f2_node = Main.get_variable_manager().generate_new_variable();
+      chosen_path = Main.get_variable_manager().generate_new_variable();
    }
 
    :
    (WS)* EU_OPERATOR_KW
-      f1=bl_formula[f1_state]
-      f2=bl_formula[f2_state]
+      f1=bl_formula[f1_node]
+      f2=bl_formula[f2_node]
    (WS)* R_PAREN
 
    {
@@ -701,34 +700,34 @@ bl_eu_operator [Variable current_state]
       $result =
          ($f1.result).forAll
          (
-            f1_state.in
+            f1_node.in
             (
-               f2_state.join
+               f2_node.join
                (
                   chosen_path.join
                   (
-                     MODEL.get_predicate_as_relation("is_before")
+                     Main.get_model().get_predicate_as_relation("is_before")
                   ).transpose()
                )
-            );
+            )
          ).and(
             ($f2.result)
          ).forSome
          (
-            f2_state.in
+            f2_node.in
             (
                chosen_path.join
                (
-                  MODEL.get_predicate_as_relation("contains_node")
+                  Main.get_model().get_predicate_as_relation("contains_node")
                )
             )
          ).forSome
          (
             chosen_path.in
             (
-               current_state.join
+               current_node.join
                (
-                  MODEL.get_predicate_as_relation("is_path_of").transpose()
+                  Main.get_model().get_predicate_as_relation("is_path_of").transpose()
                )
             )
          );
@@ -736,58 +735,58 @@ bl_eu_operator [Variable current_state]
 ;
 
 /**** Formula Definition ******************************************************/
-bl_formula [Variable current_state]
+bl_formula [Variable current_node]
    returns [Formula result]:
 
-   bl_predicate[current_state]
+   bl_predicate[current_node]
    {
       $result = ($bl_predicate.result);
    }
-   | bl_and_operator[current_state]
+   | bl_and_operator[current_node]
    {
       $result = ($bl_and_operator.result);
    }
-   | bl_or_operator[current_state]
+   | bl_or_operator[current_node]
    {
       $result = ($bl_or_operator.result);
    }
-   | bl_not_operator[current_state]
+   | bl_not_operator[current_node]
    {
       $result = ($bl_not_operator.result);
    }
-   | bl_implies_operator[current_state]
+   | bl_implies_operator[current_node]
    {
       $result = ($bl_implies_operator.result);
    }
-   | bl_ax_operator[current_state]
+   | bl_ax_operator[current_node]
    {
       $result = ($bl_ax_operator.result);
    }
-   | bl_ex_operator[current_state]
+   | bl_ex_operator[current_node]
    {
       $result = ($bl_ex_operator.result);
    }
-   | bl_ag_operator[current_state]
+   | bl_ag_operator[current_node]
    {
       $result = ($bl_ag_operator.result);
    }
-   | bl_eg_operator[current_state]
+   | bl_eg_operator[current_node]
    {
       $result = ($bl_eg_operator.result);
    }
-   | bl_af_operator[current_state]
+   | bl_af_operator[current_node]
    {
       $result = ($bl_af_operator.result);
    }
-   | bl_ef_operator[current_state]
+   | bl_ef_operator[current_node]
    {
       $result = ($bl_ef_operator.result);
    }
-   | bl_au_operator[current_state]
+   | bl_au_operator[current_node]
    {
       $result = ($bl_au_operator.result);
    }
-   | bl_eu_operator[current_state]
+   | bl_eu_operator[current_node]
    {
       $result = ($bl_eu_operator.result);
    }
