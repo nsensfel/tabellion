@@ -1,13 +1,31 @@
 lexer grammar PropertyLexer;
 
-TAG_EXISTING_KW: '(tag_existing';
-AND_OPERATOR_KW: '(and';
-OR_OPERATOR_KW: '(or';
-NOT_OPERATOR_KW: '(not';
-EXISTS_OPERATOR_KW: '(exists';
-FORALL_OPERATOR_KW: '(forall';
-ID: [a-zA-Z0-9_]+;
+fragment SEP: [ \t\r\n]+;
+
 L_PAREN : '(';
 R_PAREN : ')';
 
-WS: [ \t\r\n]+ -> skip;
+TAG_EXISTING_KW: '(tag_existing' SEP;
+
+AND_OPERATOR_KW: '(and' SEP;
+OR_OPERATOR_KW: '(or' SEP;
+NOT_OPERATOR_KW: '(not' SEP ;
+IMPLIES_OPERATOR_KW: '(implies' SEP ;
+
+EXISTS_OPERATOR_KW: '(exists' SEP;
+FORALL_OPERATOR_KW: '(forall' SEP;
+
+CTL_VERIFIES_OPERATOR_KW: '(CTL_verifies' SEP;
+
+AX_OPERATOR_KW: '(AX' SEP;
+EX_OPERATOR_KW: '(EX' SEP;
+AG_OPERATOR_KW: '(AG' SEP;
+EG_OPERATOR_KW: '(EG' SEP;
+AF_OPERATOR_KW: '(AF' SEP;
+EF_OPERATOR_KW: '(EF' SEP;
+AU_OPERATOR_KW: '(AU' SEP;
+EU_OPERATOR_KW: '(EU' SEP;
+
+WS: SEP;
+
+ID: [a-zA-Z0-9_]+;
