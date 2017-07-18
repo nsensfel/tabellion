@@ -97,7 +97,7 @@ public class Main
       out.write("(add_element path " + id + ")\n");
       out.write("(is_path_of " + id + " " + tuple.get(0) + ")\n");
 
-      for (int i = 1; i < tuple_size; ++i)
+      for (int i = 0; i < tuple_size; ++i)
       {
          out.write("(contains_node " + id + " " + tuple.get(i) + ")\n");
 

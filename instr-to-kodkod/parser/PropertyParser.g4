@@ -18,6 +18,7 @@ options
 @members
 {
    /* of the class */
+
 }
 
 prog:
@@ -429,7 +430,6 @@ bl_ex_operator [Variable current_state]
    }
 ;
 
-
 bl_ag_operator [Variable current_state]
    returns [Formula result]:
 
@@ -447,135 +447,257 @@ bl_ag_operator [Variable current_state]
    {
       /* TODO */
       $result =
-         Formula.replace /* That does not seem to exist. */
+         $bl_formula.forAll
          (
-            next_state,
-            current_state,
-            $bl_formula
-         ).and
-         (
-            $bl_formula.forAll
+            next_state.in
             (
-               {n | <p, n> \in contains_node}
-            ).forAll
-            (
-               {p | <p, current_node> \in is_path_of}
+               current_state.join
+               (
+                  MODEL.get_predicate_as_relation
+                  (
+                     "is_path_of"
+                  ).transpose() /* (is_path_of path node), we want the path. */
+               ).join
+               (
+                  MODEL.get_predicate_as_relation("contains_node")
+               ).
             )
          )
    }
 ;
 
-bl_eg_operator returns [Formula result]:
-   (WS)* EG_OPERATOR_KW bl_formula (WS)* R_PAREN
-   {
-      /* TODO */
-      $result =
-         $bl_formula.forSome
-         (
-            current_node
-         ).and
-         (
-            $bl_formula.forSome
-            (
-               {n | <p, n> \in contains_node}
-            ).forAll
-            (
-               {p | <p, current_node> \in is_path_of}
-            )
-         );
-   }
-;
+bl_eg_operator [Variable current_state]
+   returns [Formula result]:
 
-bl_af_operator returns [Formula result]:
-   (WS)* AF_OPERATOR_KW bl_formula (WS)* R_PAREN
+   @init
    {
-      /* TODO */
-      $result =
-         $bl_formula.forSome
-         (
-            current_node
-         ).or
-         (
-            $bl_formula.forAll
-            (
-               {n | <p, n> \in contains_node}
-            ).forSome
-            (
-               {p | <p, current_node> \in is_path_of}
-            )
-         );
-   }
-;
+      final Variable next_state, chosen_path;
 
-bl_ef_operator returns [Formula result]:
-   (WS)* EF_OPERATOR_KW bl_formula (WS)* R_PAREN
-   {
-      /* TODO */
-      $result =
-         $bl_formula.forSome
-         (
-            current_node
-         ).or
-         (
-            $bl_formula.forSome
-            (
-               {n | <p, n> \in contains_node}
-            ).forSome
-            (
-               {p | <p, current_node> \in is_path_of}
-            )
-         );
+      next_state = VARIABLE_SET.generate_new_state_variable();
+      chosen_path = VARIABLE_SET.generate_new_state_variable();
    }
-;
 
-bl_au_operator returns [Formula result]: (WS)* AU_OPERATOR_KW f1=bl_formula f2=bl_formula (WS)* R_PAREN
+   (WS)* EG_OPERATOR_KW
+      bl_formula[next_state]
+   (WS)* R_PAREN
+
    {
       /* TODO */
       $result =
-         $f1.forSome
+         $bl_formula.forAll
          (
-            current_node
-         ).and
-         (
-            $f2.and
+            next_state.in
             (
-               $f1.forAll
+               chosen_path.join
                (
-                  {t | <p, t, n> \in is_before}
+                  MODEL.get_predicate_as_relation("contains_node")
+               ).
+            )
+         ).forSome
+         (
+            chosen_path.in
+            (
+               current_state.join
+               (
+                  MODEL.get_predicate_as_relation
+                  (
+                     "is_path_of"
+                  ).transpose() /* (is_path_of path node), we want the path. */
                )
-            ).forSome
-            (
-               {n | <p, n> \in contains_node}
-            ).forAll
-            (
-               {p | <p, current_node> \in is_path_of}
             )
          );
    }
 ;
 
-bl_eu_operator returns [Formula result]:
-   (WS)* EU_OPERATOR_KW f1=bl_formula f2=bl_formula (WS)* R_PAREN
+bl_af_operator [Variable current_state]
+   returns [Formula result]:
+
+   @init
+   {
+      final Variable next_state, chosen_path;
+
+      next_state = VARIABLE_SET.generate_new_state_variable();
+      chosen_path = VARIABLE_SET.generate_new_state_variable();
+   }
+
+   (WS)* AF_OPERATOR_KW
+      bl_formula[next_state]
+   (WS)* R_PAREN
+
    {
       /* TODO */
       $result =
-         $f1.forSome
+         $bl_formula.forSome
          (
-            current_node
-         ).and
-         (
-            $f2.and
+            next_state.in
             (
-               $f1.forAll
+               chosen_path.join
                (
-                  {t | <p, t, n> \in is_before}
+                  MODEL.get_predicate_as_relation("contains_node")
+               ).
+            )
+         ).forAll
+         (
+            chosen_path.in
+            (
+               current_state.join
+               (
+                  MODEL.get_predicate_as_relation
+                  (
+                     "is_path_of"
+                  ).transpose() /* (is_path_of path node), we want the path. */
                )
-            ).forSome
+            )
+         );
+   }
+;
+
+bl_ef_operator [Variable current_state]
+   returns [Formula result]:
+
+   @init
+   {
+      final Variable next_state, chosen_path;
+
+      next_state = VARIABLE_SET.generate_new_state_variable();
+      chosen_path = VARIABLE_SET.generate_new_state_variable();
+   }
+
+   (WS)* EF_OPERATOR_KW
+      bl_formula[next_state]
+   (WS)* R_PAREN
+
+   {
+      /* TODO */
+      $result =
+         $bl_formula.forSome
+         (
+            next_state.in
             (
-               {n | <p, n> \in contains_node}
-            ).forSome
+               chosen_path.join
+               (
+                  MODEL.get_predicate_as_relation("contains_node")
+               ).
+            )
+         ).forSome
+         (
+            chosen_path.in
             (
-               {p | <p, current_node> \in is_path_of}
+               current_state.join
+               (
+                  MODEL.get_predicate_as_relation
+                  (
+                     "is_path_of"
+                  ).transpose() /* (is_path_of path node), we want the path. */
+               )
+            )
+         );
+   }
+;
+
+bl_au_operator [Variable current_state]
+   returns [Formula result]:
+
+   @init
+   {
+      final Variable f1_state, f2_state, chosen_path;
+
+      f1_state = VARIABLE_SET.generate_new_state_variable();
+      f2_state = VARIABLE_SET.generate_new_state_variable();
+      chosen_path = VARIABLE_SET.generate_new_state_variable();
+   }
+
+   (WS)* AU_OPERATOR_KW
+      f1=bl_formula[f1_state]
+      f2=bl_formula[f2_state]
+   (WS)* R_PAREN
+
+   {
+      /* TODO */
+      $result =
+         $f1.forAll
+         (
+            f1_state.in
+            (
+               f2_state.join
+               (
+                  chosen_path.join
+                  (
+                     MODEL.get_predicate_as_relation("is_before")
+                  ).transpose()
+               )
+            );
+         ).forSome
+         (
+            f2_state.in
+            (
+               chosen_path.join
+               (
+                  MODEL.get_predicate_as_relation("contains_node")
+               )
+            )
+         ).forAll
+         (
+            chosen_path.in
+            (
+               current_state.join
+               (
+                  MODEL.get_predicate_as_relation("is_path_of").transpose()
+               )
+            )
+         );
+   }
+;
+
+bl_eu_operator [Variable current_state]
+   returns [Formula result]:
+
+   @init
+   {
+      final Variable f1_state, f2_state, chosen_path;
+
+      f1_state = VARIABLE_SET.generate_new_state_variable();
+      f2_state = VARIABLE_SET.generate_new_state_variable();
+      chosen_path = VARIABLE_SET.generate_new_state_variable();
+   }
+
+   (WS)* EU_OPERATOR_KW
+      f1=bl_formula[f1_state]
+      f2=bl_formula[f2_state]
+   (WS)* R_PAREN
+
+   {
+      /* TODO */
+      $result =
+         $f1.forAll
+         (
+            f1_state.in
+            (
+               f2_state.join
+               (
+                  chosen_path.join
+                  (
+                     MODEL.get_predicate_as_relation("is_before")
+                  ).transpose()
+               )
+            );
+         ).forSome
+         (
+            f2_state.in
+            (
+               chosen_path.join
+               (
+                  MODEL.get_predicate_as_relation("contains_node")
+               )
+            )
+         ).forSome
+         (
+            chosen_path.in
+            (
+               current_state.join
+               (
+                  MODEL.get_predicate_as_relation("is_path_of").transpose()
+               )
             )
          );
    }
