@@ -44,13 +44,14 @@ tag_item:
 ;
 
 id_list
-   returns [List<Variable> list]:
+   returns [List<Variable> list]
 
    @init
    {
       final List<Variable> result = new ArrayList<Variable>();
    }
 
+   :
    (
       (WS)+
       var=ID
@@ -69,7 +70,7 @@ id_list
 /******************************************************************************/
 
 sl_predicate
-   return [Formula result]:
+   returns [Formula result]:
 
    (WS)* L_PAREN
       ID
@@ -78,22 +79,24 @@ sl_predicate
 
    {
       /* TODO */
+      result = null;
    }
 ;
 
 sl_non_empty_formula_list
-   returns [List<Formula> list]:
+   returns [List<Formula> list]
 
    @init
    {
       final List<Formula> result = new ArrayList<Formula>();
    }
 
+   :
    (
       sl_formula
 
       {
-         result.add($sl_formula);
+         result.add(($sl_formula.result));
       }
    )+
 
@@ -113,7 +116,7 @@ sl_and_operator
 
    {
       /* TODO */
-      $result = $sl_formula.and($sl_non_empty_formula_list);
+      $result = ($sl_formula.result).and(($sl_non_empty_formula_list.list));
    }
 ;
 
@@ -127,7 +130,7 @@ sl_or_operator
 
    {
       /* TODO */
-      $result = $sl_formula.or($sl_non_empty_formula_list);
+      $result = ($sl_formula.result).or(($sl_non_empty_formula_list.list));
    }
 ;
 
@@ -140,7 +143,7 @@ sl_not_operator
 
    {
       /* TODO */
-      $result = $sl_formula.not();
+      $result = ($sl_formula.result).not();
    }
 ;
 
@@ -154,7 +157,7 @@ sl_implies_operator
 
    {
       /* TODO */
-      $result = $a.implies($b);
+      $result = ($a.result).implies(($b.result));
    }
 ;
 
@@ -171,14 +174,14 @@ sl_exists_operator
    {
       /* TODO */
       $result =
-         $f.forSome
+         ($f.result).forSome
          (
             VARIABLE_SET.get_variable
             (
-               $var
-            ).oneOf
+               ($var.text)
+            ).in
             (
-               MODEL.get_type_as_relation($type)
+               MODEL.get_type_as_relation(($type.text))
             )
          );
    }
@@ -196,14 +199,14 @@ sl_forall_operator
    {
       /* TODO */
       $result =
-         $f.forAll
+         ($f.result).forAll
          (
             VARIABLE_SET.get_variable
             (
-               $var.text
-            ).oneOf
+               ($var.text)
+            ).in
             (
-               MODEL.get_type_as_relation($type)
+               MODEL.get_type_as_relation(($type.text))
             )
          );
    }
@@ -211,7 +214,7 @@ sl_forall_operator
 
 /** Special Expressions *******************************************************/
 sl_ctl_verifies_operator
-   returns [Formula result]:
+   returns [Formula result]
 
    @init
    {
@@ -220,6 +223,7 @@ sl_ctl_verifies_operator
       root_node = VARIABLE_SET.generate_new_state_variable();
    }
 
+   :
    (WS)* CTL_VERIFIES_OPERATOR_KW
          ps=ID
          f=bl_formula[root_node]
@@ -229,13 +233,13 @@ sl_ctl_verifies_operator
       /* TODO */
 
       $result =
-         $f.forSome
+         ($f.result).forSome
          (
             root_node.oneOf
             (
                MODEL.get_type_as_relation("node").in
                (
-                  VARIABLE_SET.get_variable($ps).join
+                  VARIABLE_SET.get_variable(($ps.text)).join
                   (
                      MODEL.get_predicate_as_relation("start_node")
                   )
@@ -251,60 +255,75 @@ sl_formula
 
    sl_predicate
    {
-      $result = $predicate;
+      $result = ($sl_predicate.result);
    }
 
    | sl_and_operator
    {
-      $result = $sl_and_operator;
+      $result = ($sl_and_operator.result);
    }
 
    | sl_or_operator
    {
-      $result = $sl_or_operator;
+      $result = ($sl_or_operator.result);
    }
 
    | sl_not_operator
    {
-      $result = $sl_not_operator;
+      $result = ($sl_not_operator.result);
    }
 
    | sl_implies_operator
    {
-      $result = $sl_implies_operator;
+      $result = ($sl_implies_operator.result);
    }
 
    | sl_exists_operator
    {
-      $result = $sl_exists_operator;
+      $result = ($sl_exists_operator.result);
    }
 
    | sl_forall_operator
    {
-      $result = $sl_forall_operator;
+      $result = ($sl_forall_operator.result);
    }
 
    | sl_ctl_verifies_operator
    {
-      $result = $sl_ctl_verifies_operator;
+      $result = ($sl_ctl_verifies_operator.result);
    }
 ;
 
 /******************************************************************************/
 /** Behavioral Level **********************************************************/
 /******************************************************************************/
+bl_predicate [Variable current_state]
+   returns [Formula result]:
+
+   (WS)* L_PAREN
+      ID
+      id_list
+   (WS)* R_PAREN
+
+   {
+      /* TODO */
+      result = null;
+   }
+;
+
 bl_formula_list [Variable current_state]
-   returns [List<Formula> list]:
+   returns [List<Formula> list]
 
    @init
    {
       final List<Formula> result = new ArrayList<Formula>();
    }
 
+   :
    (
       bl_formula[current_state]
       {
-         result.add($bl_formula);
+         result.add(($bl_formula.result));
       }
    )+
 
@@ -324,7 +343,7 @@ bl_and_operator [Variable current_state]
 
    {
       /* TODO */
-      $result = $bl_formula.and($bl_formula_list);
+      $result = ($bl_formula.result).and(($bl_formula_list.list));
    }
 ;
 
@@ -338,7 +357,7 @@ bl_or_operator [Variable current_state]
 
    {
       /* TODO */
-      $result = $bl_formula.or($bl_formula_list);
+      $result = ($bl_formula.result).or(($bl_formula_list.list));
    }
 ;
 
@@ -351,7 +370,7 @@ bl_not_operator [Variable current_state]
 
    {
       /* TODO */
-      $result = $bl_formula.not();
+      $result = ($bl_formula.result).not();
    }
 ;
 
@@ -365,13 +384,13 @@ bl_implies_operator [Variable current_state]
 
    {
       /* TODO */
-      $result = $a.implies($b);
+      $result = ($a.result).implies(($b.result));
    }
 ;
 
 /**** Computation Tree Logic Expressions **************************************/
 bl_ax_operator [Variable current_state]
-   returns [Formula result]:
+   returns [Formula result]
 
    @init
    {
@@ -380,6 +399,7 @@ bl_ax_operator [Variable current_state]
       next_state = VARIABLE_SET.generate_new_state_variable();
    }
 
+   :
    (WS)* AX_OPERATOR_KW
       bl_formula[next_state]
    (WS)* R_PAREN
@@ -387,7 +407,7 @@ bl_ax_operator [Variable current_state]
    {
       /* TODO */
       $result =
-         $bl_formula.forAll
+         ($bl_formula.result).forAll
          (
             next_state.in
             (
@@ -401,7 +421,7 @@ bl_ax_operator [Variable current_state]
 ;
 
 bl_ex_operator [Variable current_state]
-   returns [Formula result]:
+   returns [Formula result]
 
    @init
    {
@@ -410,6 +430,7 @@ bl_ex_operator [Variable current_state]
       next_state = VARIABLE_SET.generate_new_state_variable();
    }
 
+   :
    (WS)* EX_OPERATOR_KW
       bl_formula[next_state]
    (WS)* R_PAREN
@@ -417,7 +438,7 @@ bl_ex_operator [Variable current_state]
    {
       /* TODO */
       $result =
-         $bl_formula.forSome
+         ($bl_formula.result).forSome
          (
             next_state.in
             (
@@ -431,7 +452,7 @@ bl_ex_operator [Variable current_state]
 ;
 
 bl_ag_operator [Variable current_state]
-   returns [Formula result]:
+   returns [Formula result]
 
    @init
    {
@@ -440,6 +461,7 @@ bl_ag_operator [Variable current_state]
       next_state = VARIABLE_SET.generate_new_state_variable();
    }
 
+   :
    (WS)* AG_OPERATOR_KW
       bl_formula[next_state]
    (WS)* R_PAREN
@@ -447,7 +469,7 @@ bl_ag_operator [Variable current_state]
    {
       /* TODO */
       $result =
-         $bl_formula.forAll
+         ($bl_formula.result).forAll
          (
             next_state.in
             (
@@ -467,7 +489,7 @@ bl_ag_operator [Variable current_state]
 ;
 
 bl_eg_operator [Variable current_state]
-   returns [Formula result]:
+   returns [Formula result]
 
    @init
    {
@@ -477,6 +499,7 @@ bl_eg_operator [Variable current_state]
       chosen_path = VARIABLE_SET.generate_new_state_variable();
    }
 
+   :
    (WS)* EG_OPERATOR_KW
       bl_formula[next_state]
    (WS)* R_PAREN
@@ -484,7 +507,7 @@ bl_eg_operator [Variable current_state]
    {
       /* TODO */
       $result =
-         $bl_formula.forAll
+         ($bl_formula.result).forAll
          (
             next_state.in
             (
@@ -510,7 +533,7 @@ bl_eg_operator [Variable current_state]
 ;
 
 bl_af_operator [Variable current_state]
-   returns [Formula result]:
+   returns [Formula result]
 
    @init
    {
@@ -520,6 +543,7 @@ bl_af_operator [Variable current_state]
       chosen_path = VARIABLE_SET.generate_new_state_variable();
    }
 
+   :
    (WS)* AF_OPERATOR_KW
       bl_formula[next_state]
    (WS)* R_PAREN
@@ -527,7 +551,7 @@ bl_af_operator [Variable current_state]
    {
       /* TODO */
       $result =
-         $bl_formula.forSome
+         ($bl_formula.result).forSome
          (
             next_state.in
             (
@@ -553,7 +577,7 @@ bl_af_operator [Variable current_state]
 ;
 
 bl_ef_operator [Variable current_state]
-   returns [Formula result]:
+   returns [Formula result]
 
    @init
    {
@@ -563,6 +587,7 @@ bl_ef_operator [Variable current_state]
       chosen_path = VARIABLE_SET.generate_new_state_variable();
    }
 
+   :
    (WS)* EF_OPERATOR_KW
       bl_formula[next_state]
    (WS)* R_PAREN
@@ -570,7 +595,7 @@ bl_ef_operator [Variable current_state]
    {
       /* TODO */
       $result =
-         $bl_formula.forSome
+         ($bl_formula.result).forSome
          (
             next_state.in
             (
@@ -596,7 +621,7 @@ bl_ef_operator [Variable current_state]
 ;
 
 bl_au_operator [Variable current_state]
-   returns [Formula result]:
+   returns [Formula result]
 
    @init
    {
@@ -607,6 +632,7 @@ bl_au_operator [Variable current_state]
       chosen_path = VARIABLE_SET.generate_new_state_variable();
    }
 
+   :
    (WS)* AU_OPERATOR_KW
       f1=bl_formula[f1_state]
       f2=bl_formula[f2_state]
@@ -615,7 +641,7 @@ bl_au_operator [Variable current_state]
    {
       /* TODO */
       $result =
-         $f1.forAll
+         ($f1.result).forAll
          (
             f1_state.in
             (
@@ -627,6 +653,9 @@ bl_au_operator [Variable current_state]
                   ).transpose()
                )
             );
+         ).and
+         (
+            ($f2.result)
          ).forSome
          (
             f2_state.in
@@ -650,7 +679,7 @@ bl_au_operator [Variable current_state]
 ;
 
 bl_eu_operator [Variable current_state]
-   returns [Formula result]:
+   returns [Formula result]
 
    @init
    {
@@ -661,6 +690,7 @@ bl_eu_operator [Variable current_state]
       chosen_path = VARIABLE_SET.generate_new_state_variable();
    }
 
+   :
    (WS)* EU_OPERATOR_KW
       f1=bl_formula[f1_state]
       f2=bl_formula[f2_state]
@@ -669,7 +699,7 @@ bl_eu_operator [Variable current_state]
    {
       /* TODO */
       $result =
-         $f1.forAll
+         ($f1.result).forAll
          (
             f1_state.in
             (
@@ -681,6 +711,8 @@ bl_eu_operator [Variable current_state]
                   ).transpose()
                )
             );
+         ).and(
+            ($f2.result)
          ).forSome
          (
             f2_state.in
@@ -704,57 +736,59 @@ bl_eu_operator [Variable current_state]
 ;
 
 /**** Formula Definition ******************************************************/
-bl_formula returns [Formula result]:
-   predicate
+bl_formula [Variable current_state]
+   returns [Formula result]:
+
+   bl_predicate[current_state]
    {
-      $result = $predicate;
+      $result = ($bl_predicate.result);
    }
-   | bl_and_operator
+   | bl_and_operator[current_state]
    {
-      $result = $bl_and_operator;
+      $result = ($bl_and_operator.result);
    }
-   | bl_or_operator
+   | bl_or_operator[current_state]
    {
-      $result = $bl_or_operator;
+      $result = ($bl_or_operator.result);
    }
-   | bl_not_operator
+   | bl_not_operator[current_state]
    {
-      $result = $bl_not_operator;
+      $result = ($bl_not_operator.result);
    }
-   | bl_implies_operator
+   | bl_implies_operator[current_state]
    {
-      $result = $bl_implies_operator;
+      $result = ($bl_implies_operator.result);
    }
-   | bl_ax_operator
+   | bl_ax_operator[current_state]
    {
-      $result = $bl_ax_operator;
+      $result = ($bl_ax_operator.result);
    }
-   | bl_ex_operator
+   | bl_ex_operator[current_state]
    {
-      $result = $bl_ex_operator;
+      $result = ($bl_ex_operator.result);
    }
-   | bl_ag_operator
+   | bl_ag_operator[current_state]
    {
-      $result = $bl_ag_operator;
+      $result = ($bl_ag_operator.result);
    }
-   | bl_eg_operator
+   | bl_eg_operator[current_state]
    {
-      $result = $bl_eg_operator;
+      $result = ($bl_eg_operator.result);
    }
-   | bl_af_operator
+   | bl_af_operator[current_state]
    {
-      $result = $bl_af_operator;
+      $result = ($bl_af_operator.result);
    }
-   | bl_ef_operator
+   | bl_ef_operator[current_state]
    {
-      $result = $bl_ef_operator;
+      $result = ($bl_ef_operator.result);
    }
-   | bl_au_operator
+   | bl_au_operator[current_state]
    {
-      $result = $bl_au_operator;
+      $result = ($bl_au_operator.result);
    }
-   | bl_eu_operator
+   | bl_eu_operator[current_state]
    {
-      $result = $bl_eu_operator;
+      $result = ($bl_eu_operator.result);
    }
 ;
