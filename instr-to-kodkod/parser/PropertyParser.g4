@@ -238,7 +238,7 @@ sl_ctl_verifies_operator
             (
                Main.get_variable_manager().get_variable(($ps.text)).join
                (
-                  Main.get_model().get_predicate_as_relation("start_node")
+                  Main.get_model().get_predicate_as_relation("is_start_node").transpose()
                )
             )
          );

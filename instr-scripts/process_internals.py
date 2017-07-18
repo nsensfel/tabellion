@@ -33,11 +33,12 @@ def new_element (
     return result
 
 class Process_Internals:
-    def __init__ (self, xml, id_manager, wfm_manager, output):
+    def __init__ (self, xml, id_manager, wfm_manager, process_id, output):
         self.xml = xml
         self.id_manager = id_manager
         self.wfm_manager = wfm_manager
         self.output = output
+        self.process_id = process_id
 
     def parse (self):
         start = self.xml.find("./sequential_statement_chain")
@@ -96,6 +97,17 @@ class Process_Internals:
 
     def handle_if_node (self, xml, prev_nodes, node_depth, extra_attributes):
         cond_node_id = new_element(self.output, self.id_manager, "node")
+
+        ## FIXME: That's a dirty hack.
+        if (self.process_id != None):
+            self.output.write(
+                "(is_start_node "
+                + cond_node_id
+                + " "
+                + self.process_id
+                + ")\n"
+            )
+            self.process_id = None
 
         for pn in prev_nodes:
             self.output.write(
@@ -207,6 +219,17 @@ class Process_Internals:
     ):
         node_id = new_element(self.output, self.id_manager, "node")
 
+        ## FIXME: That's a dirty hack.
+        if (self.process_id != None):
+            self.output.write(
+                "(is_start_node "
+                + node_id
+                + " "
+                + self.process_id
+                + ")\n"
+            )
+            self.process_id = None
+
         for pn in prev_nodes:
             self.output.write(
                 "(node_connect "
@@ -307,6 +330,17 @@ class Process_Internals:
 
     def handle_case_node (self, xml, prev_nodes, node_depth, extra_attributes):
         cond_node_id = new_element(self.output, self.id_manager, "node")
+
+        ## FIXME: That's a dirty hack.
+        if (self.process_id != None):
+            self.output.write(
+                "(is_start_node "
+                + cond_node_id
+                + " "
+                + self.process_id
+                + ")\n"
+            )
+            self.process_id = None
 
         for pn in prev_nodes:
             self.output.write(
