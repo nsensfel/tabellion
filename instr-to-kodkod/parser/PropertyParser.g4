@@ -20,48 +20,137 @@ options
    /* of the class */
 }
 
-prog: tag_existing;
-
-tag_existing
-   : TAG_EXISTING_KW L_PAREN (tag_item)+ R_PAREN (WS)* sl_formula (WS)* R_PAREN
+prog:
+   tag_existing
 ;
 
-tag_item
-   : (WS)* L_PAREN (WS)* ID (WS)+ ID (WS)+ ID (WS)* R_PAREN (WS)*
+tag_existing:
+   (WS)* TAG_EXISTING_KW
+      L_PAREN
+         (tag_item)+
+      R_PAREN
+   (WS)* sl_formula
+   (WS)* R_PAREN
 ;
 
-predicate: (WS)* L_PAREN ID ((WS)+ ID)* (WS)* R_PAREN;
+tag_item:
+   (WS)* L_PAREN
+   (WS)* var=ID
+   (WS)+ type=ID
+   (WS)+ tag=ID
+   (WS)* R_PAREN
+   (WS)*
+;
+
+id_list
+   returns [List<Variable> list]:
+
+   @init
+   {
+      final List<Variable> result = new ArrayList<Variable>();
+   }
+
+   (
+      (WS)+
+      var=ID
+      {
+         result.add(VARIABLE_SET.get_variable($var.text));
+      }
+   )*
+
+   {
+      $list = result;
+   }
+;
 
 /******************************************************************************/
 /** Structural Level **********************************************************/
 /******************************************************************************/
+
+sl_predicate
+   return [Formula result]:
+
+   (WS)* L_PAREN
+      ID
+      id_list
+   (WS)* R_PAREN
+
+   {
+      /* TODO */
+   }
+;
+
+sl_non_empty_formula_list
+   returns [List<Formula> list]:
+
+   @init
+   {
+      final List<Formula> result = new ArrayList<Formula>();
+   }
+
+   (
+      sl_formula
+
+      {
+         result.add($sl_formula);
+      }
+   )+
+
+   {
+      $list = result;
+   }
+;
+
 /**** First Order Expressions *************************************************/
-sl_and_operator returns [Formula result]:
-   (WS)* AND_OPERATOR_KW a=sl_formula b=(sl_formula)+ (WS)* R_PAREN
+sl_and_operator
+   returns [Formula result]:
+
+   (WS)* AND_OPERATOR_KW
+      sl_formula
+      sl_non_empty_formula_list
+   (WS)* R_PAREN
+
    {
       /* TODO */
-      $result = a.and(b);
+      $result = $sl_formula.and($sl_non_empty_formula_list);
    }
 ;
 
-sl_or_operator returns [Formula result]:
-   (WS)* OR_OPERATOR_KW a=sl_formula b=(sl_formula)+ (WS)* R_PAREN
+sl_or_operator
+   returns [Formula result]:
+
+   (WS)* OR_OPERATOR_KW
+      sl_formula
+      sl_non_empty_formula_list
+   (WS)* R_PAREN
+
    {
       /* TODO */
-      $result = a.or(b);
+      $result = $sl_formula.or($sl_non_empty_formula_list);
    }
 ;
 
-sl_not_operator returns [Formula result]:
-   (WS)* NOT_OPERATOR_KW sl_formula (WS)* R_PAREN
+sl_not_operator
+   returns [Formula result]:
+
+   (WS)* NOT_OPERATOR_KW
+      sl_formula
+   (WS)* R_PAREN
+
    {
       /* TODO */
       $result = $sl_formula.not();
    }
 ;
 
-sl_implies_operator returns [Formula result]:
-   (WS)* IMPLIES_OPERATOR_KW a=sl_formula b=sl_formula (WS)* R_PAREN
+sl_implies_operator
+   returns [Formula result]:
+
+   (WS)* IMPLIES_OPERATOR_KW
+      a=sl_formula
+      b=sl_formula
+   (WS)* R_PAREN
+
    {
       /* TODO */
       $result = $a.implies($b);
@@ -69,8 +158,15 @@ sl_implies_operator returns [Formula result]:
 ;
 
 /** Quantified Expressions ****************************************************/
-sl_exists_operator returns [Formula result]:
-   (WS)* EXISTS_OPERATOR_KW var=ID (WS)+ type=ID f=sl_formula (WS*) R_PAREN
+sl_exists_operator
+   returns [Formula result]:
+
+   (WS)* EXISTS_OPERATOR_KW
+         var=ID
+   (WS)+ type=ID
+         f=sl_formula
+   (WS*) R_PAREN
+
    {
       /* TODO */
       $result =
@@ -87,8 +183,15 @@ sl_exists_operator returns [Formula result]:
    }
 ;
 
-sl_forall_operator returns [Formula result]:
-   (WS)* FORALL_OPERATOR_KW var=ID (WS)+ type=ID f=sl_formula (WS*) R_PAREN
+sl_forall_operator
+   returns [Formula result]:
+
+   (WS)* FORALL_OPERATOR_KW
+         var=ID
+   (WS)+ type=ID
+         f=sl_formula
+   (WS*) R_PAREN
+
    {
       /* TODO */
       $result =
@@ -96,7 +199,7 @@ sl_forall_operator returns [Formula result]:
          (
             VARIABLE_SET.get_variable
             (
-               $var
+               $var.text
             ).oneOf
             (
                MODEL.get_type_as_relation($type)
@@ -106,54 +209,80 @@ sl_forall_operator returns [Formula result]:
 ;
 
 /** Special Expressions *******************************************************/
-sl_ctl_verifies_operator returns [Formula result]:
-   (WS)* CTL_VERIFIES_OPERATOR_KW ps=ID (WS)* f=bl_formula (WS)* R_PAREN
+sl_ctl_verifies_operator
+   returns [Formula result]:
+
+   @init
+   {
+      final Variable root_node;
+
+      root_node = VARIABLE_SET.generate_new_state_variable();
+   }
+
+   (WS)* CTL_VERIFIES_OPERATOR_KW
+         ps=ID
+         f=bl_formula[root_node]
+   (WS)* R_PAREN
+
    {
       /* TODO */
+
       $result =
          $f.forSome
          (
-            VARIABLE_SET.get_variable
+            root_node.oneOf
             (
-               ???
-            ).oneOf
-            (
-               {n | <ps, n> \in start_node}
+               MODEL.get_type_as_relation("node").in
+               (
+                  VARIABLE_SET.get_variable($ps).join
+                  (
+                     MODEL.get_predicate_as_relation("start_node")
+                  )
+               )
             )
          );
    }
 ;
 
 /**** Formula Definition ******************************************************/
-sl_formula returns [Formula result]:
-   predicate
+sl_formula
+   returns [Formula result]:
+
+   sl_predicate
    {
       $result = $predicate;
    }
+
    | sl_and_operator
    {
       $result = $sl_and_operator;
    }
+
    | sl_or_operator
    {
       $result = $sl_or_operator;
    }
+
    | sl_not_operator
    {
       $result = $sl_not_operator;
    }
+
    | sl_implies_operator
    {
       $result = $sl_implies_operator;
    }
+
    | sl_exists_operator
    {
       $result = $sl_exists_operator;
    }
+
    | sl_forall_operator
    {
       $result = $sl_forall_operator;
    }
+
    | sl_ctl_verifies_operator
    {
       $result = $sl_ctl_verifies_operator;
@@ -163,33 +292,76 @@ sl_formula returns [Formula result]:
 /******************************************************************************/
 /** Behavioral Level **********************************************************/
 /******************************************************************************/
+bl_formula_list [Variable current_state]
+   returns [List<Formula> list]:
+
+   @init
+   {
+      final List<Formula> result = new ArrayList<Formula>();
+   }
+
+   (
+      bl_formula[current_state]
+      {
+         result.add($bl_formula);
+      }
+   )+
+
+   {
+      $list = result;
+   }
+;
+
 /**** First Order Expressions *************************************************/
-bl_and_operator returns [Formula result]:
-   (WS)* AND_OPERATOR_KW a=bl_formula b=(bl_formula)+ (WS)* R_PAREN
+bl_and_operator [Variable current_state]
+   returns [Formula result]:
+
+   (WS)* AND_OPERATOR_KW
+      bl_formula[current_state]
+      bl_formula_list[current_state]
+   (WS)* R_PAREN
+
    {
       /* TODO */
-      $result = $a.and($b);
+      $result = $bl_formula.and($bl_formula_list);
    }
 ;
 
-bl_or_operator returns [Formula result]:
-   (WS)* OR_OPERATOR_KW a=bl_formula b=(bl_formula)+ (WS)* R_PAREN
+bl_or_operator [Variable current_state]
+   returns [Formula result]:
+
+   (WS)* OR_OPERATOR_KW
+      bl_formula[current_state]
+      bl_formula_list[current_state]
+   (WS)* R_PAREN
+
    {
       /* TODO */
-      $result = $a.or($b);
+      $result = $bl_formula.or($bl_formula_list);
    }
 ;
 
-bl_not_operator returns [Formula result]:
-   (WS)* NOT_OPERATOR_KW bl_formula (WS)* R_PAREN
+bl_not_operator [Variable current_state]
+   returns [Formula result]:
+
+   (WS)* NOT_OPERATOR_KW
+      bl_formula[current_state]
+   (WS)* R_PAREN
+
    {
       /* TODO */
       $result = $bl_formula.not();
    }
 ;
 
-bl_implies_operator returns [Formula result]:
-   (WS)* IMPLIES_OPERATOR_KW a=bl_formula b=bl_formula (WS)* R_PAREN
+bl_implies_operator [Variable current_state]
+   returns [Formula result]:
+
+   (WS)* IMPLIES_OPERATOR_KW
+      a=bl_formula[current_state]
+      b=bl_formula[current_state]
+   (WS)* R_PAREN
+
    {
       /* TODO */
       $result = $a.implies($b);
@@ -197,32 +369,89 @@ bl_implies_operator returns [Formula result]:
 ;
 
 /**** Computation Tree Logic Expressions **************************************/
-bl_ax_operator returns [Formula result]:
-   (WS)* AX_OPERATOR_KW bl_formula (WS)* R_PAREN
+bl_ax_operator [Variable current_state]
+   returns [Formula result]:
+
+   @init
+   {
+      final Variable next_state;
+
+      next_state = VARIABLE_SET.generate_new_state_variable();
+   }
+
+   (WS)* AX_OPERATOR_KW
+      bl_formula[next_state]
+   (WS)* R_PAREN
+
    {
       /* TODO */
       $result =
-         $bl_formula.forAll({n | <current_state, n> \in node_connect});
+         $bl_formula.forAll
+         (
+            next_state.in
+            (
+               current_state.join
+               (
+                  MODEL.get_predicate_as_relation("node_connect")
+               )
+            );
+         );
    }
 ;
 
-bl_ex_operator returns [Formula result]:
-   (WS)* EX_OPERATOR_KW bl_formula (WS)* R_PAREN
+bl_ex_operator [Variable current_state]
+   returns [Formula result]:
+
+   @init
    {
-      /* TODO */
-      $result =
-         $bl_formula.forSome({n | <current_state, n> \in node_connect});
-   }
-;
+      final Variable next_state;
 
-bl_ag_operator returns [Formula result]:
-   (WS)* AG_OPERATOR_KW bl_formula (WS)* R_PAREN
+      next_state = VARIABLE_SET.generate_new_state_variable();
+   }
+
+   (WS)* EX_OPERATOR_KW
+      bl_formula[next_state]
+   (WS)* R_PAREN
+
    {
       /* TODO */
       $result =
          $bl_formula.forSome
          (
-            current_node
+            next_state.in
+            (
+               current_state.join
+               (
+                  MODEL.get_predicate_as_relation("node_connect")
+               )
+            );
+         );
+   }
+;
+
+
+bl_ag_operator [Variable current_state]
+   returns [Formula result]:
+
+   @init
+   {
+      final Variable next_state;
+
+      next_state = VARIABLE_SET.generate_new_state_variable();
+   }
+
+   (WS)* AG_OPERATOR_KW
+      bl_formula[next_state]
+   (WS)* R_PAREN
+
+   {
+      /* TODO */
+      $result =
+         Formula.replace /* That does not seem to exist. */
+         (
+            next_state,
+            current_state,
+            $bl_formula
          ).and
          (
             $bl_formula.forAll
