@@ -8,6 +8,7 @@ import kodkod.engine.satlab.*;
 import kodkod.instance.*;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 public class Main
 {
@@ -125,9 +126,8 @@ public class Main
       final Universe univ;
       final TupleFactory tf;
       final Bounds bounds;
-
+      final Iterator<Solution> solutions;
       final Solver solver;
-      final Solution sol;
       final Formula property;
 
       PARAMETERS = new Parameters(args);
@@ -155,6 +155,14 @@ public class Main
       {
          return;
       }
+      else
+      {
+         System.out.println
+         (
+            "Solving property:\n"
+            + property.toString()
+         );
+      }
 
       /* 3/ Generate complementary model according to used predicates. */
       /* TODO */
@@ -176,8 +184,11 @@ public class Main
       solver.options().setSolver(SATFactory.DefaultSAT4J);
       solver.options().setReporter(new ConsoleReporter());
 
-      sol = solver.solve(property, bounds);
+      solutions = solver.solveAll(property, bounds);
 
-      System.out.println(sol);
+      while (solutions.hasNext())
+      {
+         System.out.println(solutions.next());
+      }
    }
 }
