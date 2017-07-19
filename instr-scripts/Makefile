@@ -6,8 +6,8 @@ AST_FILE = ../data/ast/best_chronometer_ever.xml
 PYTHON_EXEC = python3
 
 ## Structural Level
-SL_INST_FILE = system.sl
-SL_EXTRA_FILE = system_extra.sl
+SL_INST_FILE = structural.mod
+SL_EXTRA_FILE = system_extra.txt
 
 ################################################################################
 ## PROGRAM FILES ###############################################################

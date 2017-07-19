@@ -515,9 +515,10 @@ def handle_process (
     inst_list_output.write("\n")
 
     # TODO: use 'pfp' parameter.
-    pf = open(('./pfp_id_' + local_id), 'w')
+    pf = open(('./pfp_id_' + local_id + '.mod'), 'w')
 
     internals = process_internals.Process_Internals(
+        root,
         elem,
         id_manager,
         wfm_manager,
@@ -1286,15 +1287,15 @@ parser.add_argument(
 parser.add_argument(
     '-io', '--instructions-output',
     type = argparse.FileType(mode = 'w', encoding = 'UTF-8'),
-    default = 'system.sl',
-    help = 'Instruction List output file (default: system.sl)',
+    default = 'structural.mod',
+    help = 'Instruction List output file (default: system.mod)',
 )
 
 parser.add_argument(
     '-eo', '--extra-output',
     type = argparse.FileType(mode = 'w', encoding = 'UTF-8'),
-    default = 'system_extra.sl',
-    help = 'Extra Information output file (default: system_extra.sl)',
+    default = 'system_extra.txt',
+    help = 'Extra Information output file (default: system_extra.txt)',
 )
 
 parser.add_argument(
@@ -1302,7 +1303,7 @@ parser.add_argument(
     '--process-files-prefix',
     type = str,
     default = "./process_instr_",
-    help = 'Resulting process description files: this + their ID.'
+    help = 'Resulting process description files: this + their ID + ".mod".'
 )
 
 args = parser.parse_args()

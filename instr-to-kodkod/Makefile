@@ -1,5 +1,6 @@
 ## Target(s) Configuration #####################################################
-MODEL_FILES = $(wildcard ../data/instructions/*.mod)
+#MODEL_FILES = $(wildcard ../data/instructions/*.mod)
+MODEL_FILES = $(wildcard ../instr-scripts/*.mod)
 LEVEL_DIR = $(wildcard ../data/level/*.lvl)
 PROPERTY_FILE = ../data/property/unread_waveforms.pro
 VAR_PREFIX = "_anon_"

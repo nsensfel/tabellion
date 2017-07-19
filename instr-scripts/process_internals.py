@@ -33,8 +33,9 @@ def new_element (
     return result
 
 class Process_Internals:
-    def __init__ (self, xml, id_manager, wfm_manager, process_id, output):
+    def __init__ (self, root, xml, id_manager, wfm_manager, process_id, output):
         self.xml = xml
+        self.root_xml = root
         self.id_manager = id_manager
         self.wfm_manager = wfm_manager
         self.output = output
@@ -125,6 +126,19 @@ class Process_Internals:
         )
 
         for src_xml in sources_xml:
+            ref = src_xml.attrib.get("ref")
+
+            if (self.root_xml.find(".//el[@id=\"" + ref + "\"]") == None):
+                print(
+                    "Assumed that \""
+                    + src_xml.find("./..").attrib.get("identifier")
+                    + "\" is a function or literal (XML id: "
+                    + ref
+                    + ", could not find source)."
+                )
+
+                continue
+
             self.output.write(
                 "(expr_reads "
                 + cond_node_id
@@ -172,7 +186,7 @@ class Process_Internals:
                 attr
             )
             self.output.write(
-                "(add_option " + cond_node_id + " " + string_id  + ")\n"
+                "(has_option " + cond_node_id + " " + string_id  + ")\n"
             )
 
         #### Depth
@@ -278,7 +292,7 @@ class Process_Internals:
                 attr
             )
             self.output.write(
-                "(add_option " + node_id + " " + string_id  + ")\n"
+                "(has_option " + node_id + " " + string_id  + ")\n"
             )
 
         #### Depth
@@ -405,7 +419,7 @@ class Process_Internals:
                 attr
             )
             self.output.write(
-                "(add_option " + cond_node_id + " " + string_id  + ")\n"
+                "(has_option " + cond_node_id + " " + string_id  + ")\n"
             )
 
         #### Depth
@@ -524,7 +538,7 @@ class Process_Internals:
                 attr
             )
             self.output.write(
-                "(add_option " + node_id + " " + string_id  + ")\n"
+                "(has_option " + node_id + " " + string_id  + ")\n"
             )
 
         #### Depth
