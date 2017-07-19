@@ -188,7 +188,14 @@ public class Main
 
       while (solutions.hasNext())
       {
-         System.out.println(solutions.next());
+         final Solution sol;
+
+         sol = solutions.next();
+
+         if (sol.sat())
+         {
+            System.out.println(sol);
+         }
       }
    }
 }

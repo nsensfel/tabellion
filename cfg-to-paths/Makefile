@@ -1,8 +1,6 @@
 ## Target(s) Configuration #####################################################
-MODEL_FILE = "../data/instructions/example_process.pl"
-ROOT_NODE = "237"
-ID_PREFIX = "p237_"
-OUTPUT_FILE = "$(MODEL_FILE).kk"
+MODEL_FILES = $(wildcard ../instr-scripts/pfp_*.mod)
+OUTPUT_FILES = $(patsubst ../instr-scripts/%.mod,%.cfg.mod,$(MODEL_FILES))
 
 ## Executables #################################################################
 JAVAC = javac
@@ -17,14 +15,18 @@ CLASSES = $(SOURCES:.java=.class)
 
 ## Makefile Rules ##############################################################
 
-all: $(CLASSES)
+all: $(CLASSES) $(OUTPUT_FILES)
 
 clean:
 	rm -f $(CLASSES)
 
-run: $(CLASSES)
-	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_FILE) $(ROOT_NODE) $(ID_PREFIX) \
-		$(OUTPUT_FILE)
+#run: $(CLASSES)
+#	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_FILE) $(ROOT_NODE) $(ID_PREFIX) \
+#		$(OUTPUT_FILE)
 
 %.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $<
+
+%.cfg.mod: ../instr-scripts/%.mod $(CLASSES)
+	$(eval ROOT_NODE := $(shell head -n 1 $< | grep "[0-9]\+" -o))
+	$(JAVA) -cp $(CLASSPATH) Main $< $(ROOT_NODE) "p$(ROOT_NODE)_" $@
