@@ -2,7 +2,7 @@
    (
       (ps process STRUCT_COMBINATIONAL_PROCESS)
    )
-   (forall sl1 signal
+   (forall sl1 waveform
       (and
          (CTL_verifies ps
             (implies
@@ -11,18 +11,16 @@
             )
          )
          (implies
-            (exists target signal
+            (exists target waveform
                (CTL_verifies ps
                   (EF
                      (and
                         (expr_reads sl1)
+                        (expr_writes target)
                         (not
-                           (and
-                              (expr_writes target)
-                              (AX
-                                 (AF
-                                    (expr_writes target)
-                                 )
+                           (AX
+                              (AF
+                                 (expr_writes target)
                               )
                            )
                         )
