@@ -59,12 +59,25 @@ class Process_Internals:
     def parse (self):
         start = self.xml.find("./sequential_statement_chain")
 
-        self.handle_sequential_statement_chain(
+        last_nodes = self.handle_sequential_statement_chain(
             start,
             [],
             0,
             []
         )
+
+        final_node_id = new_element(self.output, self.id_manager, "node")
+
+        for ln in last_nodes:
+            self.output.write(
+                "(node_connect "
+                + ln
+                + " "
+                + final_node_id
+                + ")\n"
+            )
+
+
 
     def handle_sequential_statement_chain (
         self,
