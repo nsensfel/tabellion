@@ -19,12 +19,13 @@ CLASSES = $(SOURCES:.java=.class)
 
 ## Makefile Rules ##############################################################
 
-all: $(CLASSES)
+all: parser/PropertyParser.java $(CLASSES)
 
 clean:
 	rm -f $(CLASSES)
+	$(MAKE) -C parser clean
 
-run: $(CLASSES) $(REQUIRED_JARS)
+run: parser/PropertyParser.java $(CLASSES) $(REQUIRED_JARS)
 	$(JAVA) -cp $(CLASSPATH) Main $(LEVEL_DIR) $(MODEL_FILE)
 
 %.class: %.java $(REQUIRED_JARS)
@@ -34,3 +35,5 @@ run: $(CLASSES) $(REQUIRED_JARS)
 	echo "Attempting to download missing jar '$@'"
 	$(DOWNLOADER) "$(JAR_SOURCE)/$@"
 
+parser/PropertyParser.java: antlr-4.7-complete.jar
+	$(MAKE) -C parser

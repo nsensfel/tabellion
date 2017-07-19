@@ -6,6 +6,9 @@ import kodkod.engine.config.*;
 import kodkod.engine.satlab.*;
 
 import kodkod.instance.*;
+
+import java.io.IOException;
+
 public class Main
 {
    private static Parameters PARAMETERS;
@@ -22,17 +25,80 @@ public class Main
       return VARIABLE_MANAGER;
    }
 
-   private static Formula get_formula (final VHDLModel model)
+   private static boolean load_levels ()
    {
-      final Variable w;
+      for (final String lvl: PARAMETERS.get_level_files())
+      {
+         try
+         {
+            VHDLLevel.add_to_model(MODEL, lvl);
+         }
+         catch (final Exception e)
+         {
+            System.err.println
+            (
+               "[E] Could not load level file \""
+               + lvl
+               + "\":"
+            );
 
-      w = Variable.unary("w");
+            e.printStackTrace();
 
-      return
-         w.join
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   private static Formula load_property ()
+   {
+      final VHDLProperty pro;
+
+      pro = new VHDLProperty(PARAMETERS.get_property_file());
+
+      try
+      {
+         return pro.generate_formula();
+      }
+      catch (final IOException e)
+      {
+         System.err.println
          (
-            model.get_predicate_as_relation("is_accessed_by")
-         ).no().forSome(w.oneOf(model.get_type_as_relation("waveform")));
+            "[E] Could not load property file \""
+            + PARAMETERS.get_property_file()
+            + "\":"
+         );
+         e.printStackTrace();
+
+         return null;
+      }
+   }
+
+   private static boolean load_models ()
+   {
+      for (final String mod: PARAMETERS.get_model_files())
+      {
+         try
+         {
+            MODEL.parse_file(mod);
+         }
+         catch (final Exception e)
+         {
+            System.err.println
+            (
+               "[E] Could not load instructions from file \""
+               + mod
+               + "\":"
+            );
+
+            e.printStackTrace();
+
+            return false;
+         }
+      }
+
+      return true;
    }
 
    public static void main (final String... args)
@@ -65,42 +131,26 @@ public class Main
       MODEL = new VHDLModel();
 
       /* 1/ Load Levels (Types + predicates) */
-      try
+      if (!load_levels())
       {
-         VHDLLevel.add_to_model
-         (
-            MODEL,
-            (
-               PARAMETERS.get_levels_directory()
-               + "/structural_level.data"
-            )
-         );
-      }
-      catch (final Exception e)
-      {
-         System.err.println("[E] Could not load structural level:");
-         e.printStackTrace();
-
          return;
       }
 
-       /* 2/ Load Properties (will change 'is_used()' on predicates) */
-       property = get_formula(MODEL);
-       /* TODO */
+      /* 2/ Load Properties (will change 'is_used()' on predicates) */
+      /* FIXME? Currently only one property, due to the 'is_used' */
+      property = load_property();
 
-       /* 3/ Generate complementary model according to used predicates. */
-       /* TODO */
+      if (property == null)
+      {
+         return;
+      }
+
+      /* 3/ Generate complementary model according to used predicates. */
+      /* TODO */
 
       /* 4/ Load Model, but only for used predicates and types. */
-      try
+      if (!load_models())
       {
-         MODEL.parse_file(PARAMETERS.get_model_file());
-      }
-      catch (final Exception e)
-      {
-         System.err.println("[E] Could not load instructions:");
-         e.printStackTrace();
-
          return;
       }
 

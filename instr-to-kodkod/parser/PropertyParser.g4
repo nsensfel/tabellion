@@ -20,26 +20,80 @@ options
    /* of the class */
 }
 
-prog:
-   tag_existing
-;
+tag_existing
+   returns [Formula result]:
 
-tag_existing:
    (WS)* TAG_EXISTING_KW
       L_PAREN
-         (tag_item)+
+         tag_list
       R_PAREN
    (WS)* sl_formula
    (WS)* R_PAREN
+
+   {
+      final List<String[]> tags;
+
+      $result = ($sl_formula.result);
+
+      tags = ($tag_list.list);
+
+      for (final String[] tag_var: tags)
+      {
+         $result =
+            $result.forSome
+            (
+               Main.get_variable_manager().get_variable
+               (
+                  tag_var[0]
+               ).oneOf
+               (
+                  Main.get_model().get_type_as_relation(tag_var[1])
+               )
+            );
+
+         Main.get_variable_manager().tag_variable(tag_var[0], tag_var[2]);
+      }
+   }
 ;
 
-tag_item:
+tag_list
+   returns [List<String[]> list]
+
+   @init
+   {
+      final List<String[]> result = new ArrayList<String[]>();
+   }
+
+   :
+   (
+      tag_item
+      {
+         result.add(($tag_item.result));
+      }
+   )+
+
+   {
+      $list = result;
+   }
+;
+
+tag_item
+   returns [String[] result]:
+
    (WS)* L_PAREN
    (WS)* var=ID
    (WS)+ type=ID
    (WS)+ tag=ID
    (WS)* R_PAREN
    (WS)*
+
+   {
+      $result = new String[3];
+
+      $result[0] = ($var.text);
+      $result[1] = ($type.text);
+      $result[2] = ($tag.text);
+   }
 ;
 
 id_list
@@ -53,9 +107,9 @@ id_list
    :
    (
       (WS)+
-      var=ID
+      ID
       {
-         result.add(Main.get_variable_manager().get_variable($var.text));
+         result.add(Main.get_variable_manager().get_variable(($ID.text)));
       }
    )*
 

@@ -1,8 +1,13 @@
+import java.util.List;
+import java.util.ArrayList;
+
 public class Parameters
 {
-   private final String levels_dir;
-   private final String model_file;
+   private final List<String> level_files;
+   private final List<String> model_files;
+   private final String property_file;
    private final String var_prefix;
+
    private final boolean are_valid;
 
    public static void print_usage ()
@@ -11,45 +16,114 @@ public class Parameters
       (
          "Instr-to-kodkod\n"
          + "USAGE:\n"
-         + "\tjava Main <LEVELS_DIR> <INSTRUCTIONS> <VAR_PREFIX>\n"
+         + "\tjava Main <VAR_PREFIX> <FILES>+\n"
          + "PARAMETERS:\n"
-         + "\t<LEVELS_DIR>\tDirectory containing the level definitions.\n"
-         + "\t<INSTRUCTIONS>\tInstruction file describing the model.\n"
-         + "\t<VAR_PREFIX>\tPrefix for anonymous variables (e.g. \"_anon_\").\n"
+         + "\t- <VAR_PREFIX>\tPrefix for anonymous variables (e.g. \"_anon_\").\n"
+         + "\t- <FILES>\tList of files to be loaded.\n"
          + "NOTES:\n"
-         + "\tThe properties to be verified still have to be hand coded in the"
-         + " source files (in Main.java)."
+         + "\t- One, single, property file MUST be in <FILES>.\n"
+         + "\t- Property files have a \".pro\" extension.\n"
+         + "\t- Model files have a \".mod\" extension.\n"
+         + "\t- Level files have a \".lvl\" extension.\n"
+         + "\t- The files may be given in any order."
       );
    }
 
    public Parameters (String... args)
    {
-      if (args.length != 3)
+      boolean has_pro_file, has_error;
+      String prop_file;
+
+      level_files = new ArrayList<String>();
+      model_files = new ArrayList<String>();
+
+      if (args.length < 2)
       {
          print_usage();
 
-         levels_dir = new String();
-         model_file = new String();
+         property_file = new String();
          var_prefix = new String();
+
          are_valid = false;
+
+         return;
       }
-      else
+
+      has_pro_file = false;
+      has_error = false;
+
+      var_prefix = args[1];
+      prop_file = new String();
+
+      for (int i = 2; i < args.length; ++i)
       {
-         levels_dir = args[0];
-         model_file = args[1];
-         var_prefix = args[2];
-         are_valid = true;
+         if (args[i].endsWith(".lvl"))
+         {
+            level_files.add(args[i]);
+         }
+         else if (args[i].endsWith(".mod"))
+         {
+            model_files.add(args[i]);
+         }
+         else if (args[i].endsWith(".lvl"))
+         {
+            if (has_pro_file)
+            {
+               System.err.println
+               (
+                  "[E] Both files \""
+                  + prop_file
+                  + "\" and \"."
+                  + args[i]
+                  + "\" contain a property. Only one can be used at a time."
+               );
+
+               has_error = true;
+            }
+            else
+            {
+               has_pro_file = true;
+               prop_file = args[i];
+            }
+         }
+         else
+         {
+            System.err.println
+            (
+               "[E] Unknown file type \""
+               + args[i]
+               + "\"."
+            );
+
+            has_error = true;
+         }
       }
+
+      property_file = prop_file;
+
+      if (!has_pro_file)
+      {
+         System.err.println("[E] There was no property file.");
+
+         has_error = true;
+      }
+
+      are_valid = has_error;
    }
 
-   public String get_levels_directory ()
+   public List<String> get_level_files ()
    {
-      return levels_dir;
+      return level_files;
    }
 
-   public String get_model_file ()
+   public List<String> get_model_files ()
    {
-      return model_file;
+      return model_files;
+   }
+
+   public String get_property_file ()
+   {
+      return property_file;
    }
 
    public String get_variables_prefix ()
