@@ -86,11 +86,6 @@ public class Main
 
       tuple_size = tuple.size();
 
-      if (tuple_size == 1)
-      {
-         return;
-      }
-
       id = (PARAMETERS.get_id_prefix() + path_counter);
       path_counter += 1;
 
