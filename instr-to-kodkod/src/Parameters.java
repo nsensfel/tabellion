@@ -52,10 +52,10 @@ public class Parameters
       has_pro_file = false;
       has_error = false;
 
-      var_prefix = args[1];
+      var_prefix = args[0];
       prop_file = new String();
 
-      for (int i = 2; i < args.length; ++i)
+      for (int i = 1; i < args.length; ++i)
       {
          if (args[i].endsWith(".lvl"))
          {

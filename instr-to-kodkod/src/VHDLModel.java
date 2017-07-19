@@ -291,7 +291,10 @@ public class VHDLModel
 
       for (final VHDLType t: types.values())
       {
-         result.addAll(t.get_all_members_as_atoms());
+         if (t.is_used())
+         {
+            result.addAll(t.get_all_members_as_atoms());
+         }
       }
 
       return result;
