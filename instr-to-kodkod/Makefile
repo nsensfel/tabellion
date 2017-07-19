@@ -1,8 +1,9 @@
 ## Target(s) Configuration #####################################################
 #MODEL_FILES = $(wildcard ../data/instructions/*.mod)
-MODEL_FILES = $(wildcard ../instr-scripts/*.mod)
+MODEL_FILES = ../instr-scripts/structural.mod $(wildcard ../instr-scripts/pfp_*.mod)
 LEVEL_DIR = $(wildcard ../data/level/*.lvl)
-PROPERTY_FILE = ../data/property/unread_waveforms.pro
+#PROPERTY_FILE = ../data/property/unread_waveforms.pro
+PROPERTY_FILE = ../data/property/combinational_processes.pro
 VAR_PREFIX = "_anon_"
 
 ## Executables #################################################################

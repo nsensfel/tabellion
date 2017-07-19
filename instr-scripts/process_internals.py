@@ -158,7 +158,9 @@ class Process_Internals:
                 "(expr_reads "
                 + cond_node_id
                 + " "
-                + self.id_manager.get_id_from_xml(src_xml.attrib.get("ref"))
+                + self.wfm_manager.get_waveform_from_source(
+                    self.id_manager.get_id_from_xml(src_xml.attrib.get("ref"))
+                )
                 + ")\n"
             )
 
@@ -327,16 +329,26 @@ class Process_Internals:
             "./target"
         )
 
-        if (target_xml.attrib.get("kind") == "indexed_name"):
-            target_xml = target_xml.find("./prefix/named_entity")
-        else:
-            target_xml = target_xml.find("./named_entity")
+        # Oddly enough, we can get a target as a ref...
+        # The (hacky) solution? Find the real source.
+        while (target_xml.tag == "target"):
+
+            if (target_xml.attrib.get("kind") == "indexed_name"):
+                target_xml = target_xml.find("./prefix/named_entity")
+            else:
+                target_xml = target_xml.find("./named_entity")
+
+            target_xml = self.xml_root.find(
+                ".//*[@id=\"" + target_xml.attrib.get("ref") + "\"]"
+            )
 
         self.output.write(
             "(expr_writes "
             + node_id
             + " "
-            + self.id_manager.get_id_from_xml(target_xml.attrib.get("ref"))
+            + self.wfm_manager.get_waveform_from_source(
+                self.id_manager.get_id_from_xml(target_xml.attrib.get("id"))
+            )
             + ")\n"
         )
 
@@ -362,7 +374,9 @@ class Process_Internals:
                 "(expr_reads "
                 + node_id
                 + " "
-                + self.id_manager.get_id_from_xml(src_xml.attrib.get("ref"))
+                + self.wfm_manager.get_waveform_from_source(
+                    self.id_manager.get_id_from_xml(src_xml.attrib.get("ref"))
+                )
                 + ")\n"
             )
 
@@ -417,7 +431,9 @@ class Process_Internals:
                 "(expr_reads "
                 + cond_node_id
                 + " "
-                + self.id_manager.get_id_from_xml(src_xml.attrib.get("ref"))
+                + self.wfm_manager.get_waveform_from_source(
+                    self.id_manager.get_id_from_xml(src_xml.attrib.get("ref"))
+                )
                 + ")\n"
             )
 
@@ -540,7 +556,9 @@ class Process_Internals:
                 "(expr_reads "
                 + node_id
                 + " "
-                + self.id_manager.get_id_from_xml(src_xml.attrib.get("ref"))
+                + self.wfm_manager.get_waveform_from_source(
+                    self.id_manager.get_id_from_xml(src_xml.attrib.get("ref"))
+                )
                 + ")\n"
             )
 
