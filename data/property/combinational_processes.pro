@@ -4,12 +4,6 @@
    )
    (forall sl1 waveform
       (and
-         (CTL_verifies ps
-            (implies
-               (EF (expr_writes sl1))
-               (AF (expr_writes sl1))
-            )
-         )
          (implies
             (exists target waveform
                (CTL_verifies ps
@@ -28,7 +22,13 @@
                   )
                )
             )
-            (is_in_sensitivity_list ps sl1)
+            (is_in_sensitivity_list sl1 ps)
+         )
+         (CTL_verifies ps
+            (implies
+               (EF (expr_writes sl1))
+               (AF (expr_writes sl1))
+            )
          )
       )
    )

@@ -176,7 +176,13 @@ sl_and_operator
 
    {
       /* TODO */
-      $result = ($sl_formula.result).and(($sl_non_empty_formula_list.list));
+      $result =
+         (
+            ($sl_formula.result)
+         ).and
+         (
+            Formula.and(($sl_non_empty_formula_list.list))
+         );
    }
 ;
 
@@ -190,7 +196,13 @@ sl_or_operator
 
    {
       /* TODO */
-      $result = ($sl_formula.result).or(($sl_non_empty_formula_list.list));
+      $result =
+         (
+            ($sl_formula.result)
+         ).or
+         (
+            Formula.or(($sl_non_empty_formula_list.list))
+         );
    }
 ;
 
@@ -411,7 +423,13 @@ bl_and_operator [Variable current_node]
 
    {
       /* TODO */
-      $result = ($bl_formula.result).and(($bl_formula_list.list));
+      $result =
+         (
+            ($bl_formula.result)
+         ).and
+         (
+            Formula.and(($bl_formula_list.list))
+         );
    }
 ;
 
@@ -425,7 +443,13 @@ bl_or_operator [Variable current_node]
 
    {
       /* TODO */
-      $result = ($bl_formula.result).or(($bl_formula_list.list));
+      $result =
+         (
+            ($bl_formula.result)
+         ).or
+         (
+            Formula.or(($bl_formula_list.list))
+         );
    }
 ;
 
