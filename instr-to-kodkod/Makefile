@@ -1,6 +1,9 @@
 ## Target(s) Configuration #####################################################
-MODEL_FILE = "../data/instructions/example_1.sl"
-LEVEL_DIR = "../data/level/"
+MODEL_FILES = $(wildcard ../data/instructions/*.mod)
+LEVEL_DIR = $(wildcard ../data/level/*.lvl)
+PROPERTY_FILE = ../data/property/unread_waveforms.pro
+VAR_PREFIX = "_anon_"
+
 ## Executables #################################################################
 JAVAC = javac
 JAVA = java
@@ -14,6 +17,7 @@ JAR_SOURCE = https://noot-noot.org/onera_2017/jar/
 REQUIRED_JARS = kodkod.jar org.sat4j.core.jar antlr-4.7-complete.jar
 
 ## Makefile Magic ##############################################################
+INPUT_FILES = $(MODEL_FILES) $(LEVEL_DIR) $(PROPERTY_FILE)
 SOURCES = $(wildcard src/*.java parser/*.java)
 CLASSES = $(SOURCES:.java=.class)
 
@@ -26,7 +30,7 @@ clean:
 	$(MAKE) -C parser clean
 
 run: parser/PropertyParser.java $(CLASSES) $(REQUIRED_JARS)
-	$(JAVA) -cp $(CLASSPATH) Main $(LEVEL_DIR) $(MODEL_FILE)
+	$(JAVA) -cp $(CLASSPATH) Main $(VAR_PREFIX) $(INPUT_FILES)
 
 %.class: %.java $(REQUIRED_JARS)
 	$(JAVAC) -cp $(CLASSPATH) $<

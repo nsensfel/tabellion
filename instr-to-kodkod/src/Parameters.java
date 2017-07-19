@@ -65,7 +65,7 @@ public class Parameters
          {
             model_files.add(args[i]);
          }
-         else if (args[i].endsWith(".lvl"))
+         else if (args[i].endsWith(".pro"))
          {
             if (has_pro_file)
             {
@@ -108,7 +108,7 @@ public class Parameters
          has_error = true;
       }
 
-      are_valid = has_error;
+      are_valid = !has_error;
    }
 
    public List<String> get_level_files ()
