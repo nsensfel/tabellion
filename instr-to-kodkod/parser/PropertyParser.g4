@@ -132,7 +132,14 @@ sl_predicate
 
    {
       /* TODO */
-      $result = null;
+      $result =
+         Expression.product
+         (
+            ($id_list.list)
+         ).in
+         (
+            Main.get_model().get_predicate_as_relation(($ID.text))
+         );
    }
 ;
 
@@ -357,7 +364,18 @@ bl_predicate [Variable current_node]
 
    {
       /* TODO */
-      $result = null;
+      $result =
+         current_node.product
+         (
+            Expression.product
+            (
+               ($id_list.list)
+            )
+         ).in
+         (
+            Main.get_model().get_predicate_as_relation(($ID.text))
+         );
+
    }
 ;
 

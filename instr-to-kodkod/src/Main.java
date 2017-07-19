@@ -31,6 +31,8 @@ public class Main
       {
          try
          {
+            System.out.println("Loading level file \"" + lvl + "\"...");
+
             VHDLLevel.add_to_model(MODEL, lvl);
          }
          catch (final Exception e)
@@ -59,6 +61,13 @@ public class Main
 
       try
       {
+         System.out.println
+         (
+            "Loading property file \""
+            + PARAMETERS.get_property_file()
+            + "\"..."
+         );
+
          return pro.generate_formula();
       }
       catch (final IOException e)
@@ -81,6 +90,8 @@ public class Main
       {
          try
          {
+            System.out.println("Loading model file \"" + mod + "\"...");
+
             MODEL.parse_file(mod);
          }
          catch (final Exception e)

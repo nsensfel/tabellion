@@ -19,6 +19,7 @@ REQUIRED_JARS = kodkod.jar org.sat4j.core.jar antlr-4.7-complete.jar
 ## Makefile Magic ##############################################################
 INPUT_FILES = $(MODEL_FILES) $(LEVEL_DIR) $(PROPERTY_FILE)
 SOURCES = $(wildcard src/*.java parser/*.java)
+GRAMMARS = $(wildcard parser/*.g4)
 CLASSES = $(SOURCES:.java=.class)
 
 ## Makefile Rules ##############################################################
@@ -39,5 +40,5 @@ run: parser/PropertyParser.java $(CLASSES) $(REQUIRED_JARS)
 	echo "Attempting to download missing jar '$@'"
 	$(DOWNLOADER) "$(JAR_SOURCE)/$@"
 
-parser/PropertyParser.java: antlr-4.7-complete.jar
+parser/PropertyParser.java: antlr-4.7-complete.jar $(GRAMMAR)
 	$(MAKE) -C parser

@@ -35,7 +35,12 @@ public class VHDLType
 
    public void flag_as_used ()
    {
-      is_used = true;
+      if (!is_used)
+      {
+         System.out.println("Enabling type: " + name);
+
+         is_used = true;
+      }
    }
 
    public boolean is_used ()
