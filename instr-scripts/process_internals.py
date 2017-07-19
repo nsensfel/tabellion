@@ -1,3 +1,18 @@
+def is_function_or_literal (
+    root,
+    ref
+):
+    source = root.find(".//el[@id=\"" + ref + "\"]")
+
+    if (source == None):
+        return True
+    elif (source.attrib.get("kind") == "function_declaration"):
+        return True
+    elif (source.attrib.get("kind") == "enumeration_literal"):
+        return True
+
+    return False
+
 def new_element_from_xml (
     inst_list_output,
     id_manager,
@@ -35,7 +50,7 @@ def new_element (
 class Process_Internals:
     def __init__ (self, root, xml, id_manager, wfm_manager, process_id, output):
         self.xml = xml
-        self.root_xml = root
+        self.xml_root = root
         self.id_manager = id_manager
         self.wfm_manager = wfm_manager
         self.output = output
@@ -128,13 +143,13 @@ class Process_Internals:
         for src_xml in sources_xml:
             ref = src_xml.attrib.get("ref")
 
-            if (self.root_xml.find(".//el[@id=\"" + ref + "\"]") == None):
+            if (is_function_or_literal(self.xml_root, ref)):
                 print(
                     "Assumed that \""
                     + src_xml.find("./..").attrib.get("identifier")
-                    + "\" is a function or literal (XML id: "
+                    + "\" is a function or literal (XML id: \""
                     + ref
-                    + ", could not find source)."
+                    + "\")."
                 )
 
                 continue
@@ -330,6 +345,19 @@ class Process_Internals:
         )
 
         for src_xml in sources_xml:
+            ref = src_xml.attrib.get("ref")
+
+            if (is_function_or_literal(self.xml_root, ref)):
+                print(
+                    "Assumed that \""
+                    + src_xml.find("./..").attrib.get("identifier")
+                    + "\" is a function or literal (XML id: \""
+                    + ref
+                    + "\")."
+                )
+
+                continue
+
             self.output.write(
                 "(expr_reads "
                 + node_id
@@ -372,6 +400,19 @@ class Process_Internals:
         )
 
         for src_xml in sources_xml:
+            ref = src_xml.attrib.get("ref")
+
+            if (is_function_or_literal(self.xml_root, ref)):
+                print(
+                    "Assumed that \""
+                    + src_xml.find("./..").attrib.get("identifier")
+                    + "\" is a function or literal (XML id: \""
+                    + ref
+                    + "\")."
+                )
+
+                continue
+
             self.output.write(
                 "(expr_reads "
                 + cond_node_id
@@ -482,6 +523,19 @@ class Process_Internals:
         )
 
         for src_xml in sources_xml:
+            ref = src_xml.attrib.get("ref")
+
+            if (is_function_or_literal(self.xml_root, ref)):
+                print(
+                    "Assumed that \""
+                    + src_xml.find("./..").attrib.get("identifier")
+                    + "\" is a function or literal (XML id: \""
+                    + ref
+                    + "\")."
+                )
+
+                continue
+
             self.output.write(
                 "(expr_reads "
                 + node_id

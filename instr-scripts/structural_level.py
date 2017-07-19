@@ -7,6 +7,21 @@ import id_manager
 import waveform_manager
 import process_internals
 
+def is_function_or_literal (
+    root,
+    ref
+):
+    source = root.find(".//el[@id=\"" + ref + "\"]")
+
+    if (source == None):
+        return True
+    elif (source.attrib.get("kind") == "function_declaration"):
+        return True
+    elif (source.attrib.get("kind") == "enumeration_literal"):
+        return True
+
+    return False
+
 ################################################################################
 ## Types #######################################################################
 ################################################################################
@@ -501,11 +516,26 @@ def handle_process (
         ".//*[@kind=\"simple_name\"]/named_entity"
     )
     for c in children:
-        inst_list_output.write(
-            "(is_accessed_by "
-            + wfm_manager.get_waveform_from_source(
+        ref = c.attrib.get("ref")
+
+        if (is_function_or_literal(root, ref)):
+            print(
+                "Assumed that \""
+                + c.find("./..").attrib.get("identifier")
+                + "\" is a function or literal (XML id: \""
+                + ref
+                + "\")."
+            )
+
+            continue
+
+        ref = wfm_manager.get_waveform_from_source(
                 id_manager.get_id_from_xml(c.attrib.get("ref"))
             )
+
+        inst_list_output.write(
+            "(is_accessed_by "
+            + ref
             + " "
             + local_id
             + ")\n"
@@ -851,6 +881,20 @@ def handle_generic (
         xml_id
     )
 
+    ## Matching Waveform #######################################################
+    #### Add Element ###########################################################
+    waveform_id = wfm_manager.get_waveform_from_source(local_id)
+    inst_list_output.write("(add_element waveform " + waveform_id + ")\n")
+
+    #### Link With Signal ######################################################
+    inst_list_output.write(
+        "(is_waveform_of "
+        + waveform_id
+        + " "
+        + local_id
+        + ")\n"
+    )
+
     ## Set Functions ###########################################################
     #### line
     string_id = new_element_from_string(
@@ -893,6 +937,7 @@ def handle_generic (
         + string_id
         + ")\n"
     )
+
 
     ## Set Unary Predicates ####################################################
     if (elem.attrib.get("has_class") == "true"):

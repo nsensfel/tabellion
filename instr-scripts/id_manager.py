@@ -11,6 +11,12 @@ class Id_Manager:
         result = str(self.next_id)
         self.next_id += 1
 
+        self.output.write(
+            "(map_xml_id PURE "
+            + result
+            + ")\n"
+        )
+
         return result
 
     def generate_new_id (self, xml_id):
