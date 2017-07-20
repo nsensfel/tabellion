@@ -31,7 +31,7 @@ public class IDs
 
       if (result == null)
       {
-         result = new IDs(type);
+         result = generate_new_id(type);
 
          FROM_XML.put(xml_id, result);
       }
@@ -55,6 +55,19 @@ public class IDs
       result = new IDs(type);
 
       ALL_IDS.add(result);
+
+      /* TODO: remove, it's for debug. */
+      if (type != null)
+      {
+         System.out.println
+         (
+            "[ID] ("
+            + result.get_type()
+            + " "
+            + result.get_value()
+            + ")"
+         );
+      }
 
       return result;
    }

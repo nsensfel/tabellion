@@ -20,8 +20,9 @@ public class Main
       XPE_FIND_ALL_VHDL_FILES =
          XMLManager.compile_or_die
             (
-               "./*/*/el[@kind=\"design_file\"][@file]"
-         );
+               //"./*/*/el[@kind=\"design_file\"][@file]"
+               "//el[@kind=\"design_file\"][@file]"
+            );
    }
 
    public static void main (final String... args)
@@ -76,6 +77,8 @@ public class Main
 
          return;
       }
+
+      parse_content(vhdl_files);
    }
 
    private static void parse_content (final Collection<Node> vhdl_files)
@@ -87,6 +90,7 @@ public class Main
 
       for (final Node f: vhdl_files)
       {
+         System.out.println("New VHDL file in the waiting list.");
          waiting_list.push(new VHDLFile(null, f));
       }
 
@@ -96,6 +100,7 @@ public class Main
 
          try
          {
+            System.out.println("Parsing XML...");
             children = waiting_list.pop().parse();
          }
          catch (final XPathExpressionException xpee)

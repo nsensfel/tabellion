@@ -8,14 +8,18 @@ import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/* If Statement Node */
+/* When Node */
 public class VHDLWNode extends VHDLNode
 {
-   private static final XPathExpression XPE_FIND_SUB_NODES;
+   private static final XPathExpression XPE_FIND_NAMED_ENTITIES;
 
    static
    {
-      XPE_FIND_SUB_NODES = XMLManager.compile_or_die("./el");
+      XPE_FIND_NAMED_ENTITIES =
+         XMLManager.compile_or_die
+         (
+            "./choice_expression//named_entity"
+         );
    }
 
    public VHDLWNode
@@ -61,6 +65,9 @@ public class VHDLWNode extends VHDLNode
       handle_predicate_has_option(local_id);
       handle_predicate_expr_reads(local_id);
 
+      /** Children ************************************************************/
+      //result.add(handle_body(local_id));
+
       return result;
    }
 
@@ -76,10 +83,7 @@ public class VHDLWNode extends VHDLNode
       (
          "label",
          local_id,
-         Strings.get_id_from_string
-         (
-            XMLManager.get_attribute(xml_node, "label")
-         )
+         Strings.get_id_from_string("")
       );
    }
 
@@ -149,7 +153,7 @@ public class VHDLWNode extends VHDLNode
       final int named_entities_count;
 
       named_entities =
-         (NodeList) XPE_FIND_SOURCES.evaluate
+         (NodeList) XPE_FIND_NAMED_ENTITIES.evaluate
          (
             xml_node,
             XPathConstants.NODESET

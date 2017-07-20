@@ -48,12 +48,11 @@ public class VHDLGeneric extends ParsableXML
       handle_predicate_has_visible_flag(local_id);
       handle_predicate_has_after_drivers_flag(local_id);
       handle_predicate_has_use_flag(local_id);
-      handle_predicate_has_guarded_signal_flag(local_id);
 
       /** Children ************************************************************/
       handle_child_waveform(local_id);
 
-      return null;
+      return result;
    }
 
    /***************************************************************************/
@@ -227,24 +226,6 @@ public class VHDLGeneric extends ParsableXML
       )
       {
          Predicates.add_entry("has_use_flag", local_id);
-      }
-   }
-
-   private void handle_predicate_has_guarded_signal_flag
-   (
-      final IDs local_id
-   )
-   {
-      if
-      (
-         XMLManager.get_attribute
-         (
-            xml_node,
-            "guarded_signal_flag"
-         ).equals("true")
-      )
-      {
-         Predicates.add_entry("has_guarded_signal_flag", local_id);
       }
    }
 

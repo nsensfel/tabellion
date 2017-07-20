@@ -15,8 +15,17 @@ public class VHDLEntity extends ParsableXML
 
    static
    {
-      XPE_FIND_PORTS = null; /* TODO */
-      XPE_FIND_GENERICS = null; /* TODO */
+      XPE_FIND_PORTS =
+         XMLManager.compile_or_die
+         (
+            "./port_chain/el[@kind=\"interface_signal_declaration\"]"
+         );
+
+      XPE_FIND_GENERICS =
+         XMLManager.compile_or_die
+         (
+            "./generic_chain/el[@kind=\"interface_constant_declaration\"]"
+         );
    }
 
    public VHDLEntity
@@ -265,7 +274,7 @@ public class VHDLEntity extends ParsableXML
       result = new ArrayList<ParsableXML>();
 
       generics =
-         (NodeList) XPE_FIND_PORTS.evaluate
+         (NodeList) XPE_FIND_GENERICS.evaluate
          (
             xml_node,
             XPathConstants.NODESET

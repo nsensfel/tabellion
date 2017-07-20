@@ -56,7 +56,7 @@ public class VHDLSignal extends ParsableXML
       /** Children ************************************************************/
       handle_child_waveform(local_id);
 
-      return null;
+      return result;
    }
 
    /***************************************************************************/

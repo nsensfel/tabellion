@@ -17,20 +17,23 @@ public class VHDLISNode extends VHDLNode
 
    static
    {
-      XPE_FIND_NAMED_ENTITIES = XMLManager.compile_or_die
-      (
-         "./condition//named_entity"
-      );
+      XPE_FIND_NAMED_ENTITIES =
+         XMLManager.compile_or_die
+         (
+            "./condition//named_entity"
+         );
 
-      XPE_FIND_TRUE_BRANCH = XMLManager.compile_or_die
-      (
-         "./sequential_statement_chain"
-      );
+      XPE_FIND_TRUE_BRANCH =
+         XMLManager.compile_or_die
+         (
+            "./sequential_statement_chain"
+         );
 
-      XPE_FIND_ELSE_BRANCH = XMLManager.compile_or_die
-      (
-         "./else_clause/sequential_statement_chain"
-      );
+      XPE_FIND_ELSE_BRANCH =
+         XMLManager.compile_or_die
+         (
+            "./else_clause/sequential_statement_chain"
+         );
    }
 
    public VHDLISNode
@@ -77,7 +80,7 @@ public class VHDLISNode extends VHDLNode
       handle_predicate_expr_reads(local_id);
 
       /** Children ************************************************************/
-      result.addAll(handle_true_branch(local_id));
+      result.add(handle_true_branch(local_id));
       result.addAll(handle_else_branch(local_id));
 
       return result;
@@ -200,16 +203,13 @@ public class VHDLISNode extends VHDLNode
    /***************************************************************************/
    /** Children ***************************************************************/
    /***************************************************************************/
-   private Collection<ParsableXML> handle_true_branch
+   private ParsableXML handle_true_branch
    (
       final IDs local_id
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final Node true_branch;
-
-      result = new ArrayList<ParsableXML>();
 
       true_branch =
          (Node) XPE_FIND_TRUE_BRANCH.evaluate
@@ -218,21 +218,19 @@ public class VHDLISNode extends VHDLNode
             XPathConstants.NODE
          );
 
-
-      result.add
-      (
-         new VHDLSSCNode
+      return
          (
-            parent_id,
-            true_branch,
-            local_id,
-            next_node,
-            (depth + 1),
-            new String[] {"COND_WAS_TRUE"}
-         )
-      );
+            new VHDLSSCNode
+            (
+               parent_id,
+               true_branch,
+               local_id,
+               next_node,
+               (depth + 1),
+               new String[] {"COND_WAS_TRUE"}
+            )
+         );
 
-      return result;
    }
 
    private Collection<ParsableXML> handle_else_branch
@@ -247,7 +245,7 @@ public class VHDLISNode extends VHDLNode
       result = new ArrayList<ParsableXML>();
 
       else_branch =
-         (Node) XPE_FIND_TRUE_BRANCH.evaluate
+         (Node) XPE_FIND_ELSE_BRANCH.evaluate
          (
             xml_node,
             XPathConstants.NODE

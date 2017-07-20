@@ -23,6 +23,16 @@ public class Waveforms
          result = IDs.generate_new_id("waveform");
 
          TO_WAVEFORM.put(source, result);
+
+         /* TODO: remove, it's for debug. */
+         System.out.println
+         (
+            "[WFM] ("
+            + source.get_value()
+            + "->"
+            + result.get_value()
+            + ")"
+         );
       }
 
       return result;

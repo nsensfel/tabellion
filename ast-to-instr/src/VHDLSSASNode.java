@@ -8,7 +8,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/* If Statement Node */
+/* Simple Signal Assignment Statement Node */
 public class VHDLSSASNode extends VHDLNode
 {
    private static final XPathExpression XPE_FIND_TARGET;
@@ -20,10 +20,11 @@ public class VHDLSSASNode extends VHDLNode
    {
       XPE_FIND_TARGET = XMLManager.compile_or_die("./target");
 
-      XPE_FIND_SOURCES = XMLManager.compile_or_die
-      (
-         "./waveform_chain//named_entity"
-      );
+      XPE_FIND_SOURCES =
+         XMLManager.compile_or_die
+         (
+            "./waveform_chain//named_entity"
+         );
 
       XPE_FIND_PREFIXED_NE = XMLManager.compile_or_die("./prefix/named_entity");
       XPE_FIND_NE = XMLManager.compile_or_die("./named_entity");

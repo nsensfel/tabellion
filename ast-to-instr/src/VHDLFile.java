@@ -24,7 +24,7 @@ public class VHDLFile extends ParsableXML
       XPE_FIND_ARCHITECTURES =
          XMLManager.compile_or_die
          (
-            "./*/*/library_unit[@kind=\"entity_declaration\"]"
+            "./*/*/library_unit[@kind=\"architecture_body\"]"
          );
    }
 
@@ -127,7 +127,7 @@ public class VHDLFile extends ParsableXML
       result = new ArrayList<ParsableXML>();
 
       architectures =
-         (NodeList) XPE_FIND_ENTITIES.evaluate
+         (NodeList) XPE_FIND_ARCHITECTURES.evaluate
          (
             xml_node,
             XPathConstants.NODESET

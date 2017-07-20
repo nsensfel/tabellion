@@ -8,7 +8,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/* If Statement Node */
+/* Case Statement Node */
 public class VHDLCSNode extends VHDLNode
 {
    private static final XPathExpression XPE_FIND_SOURCES;
@@ -17,20 +17,24 @@ public class VHDLCSNode extends VHDLNode
 
    static
    {
-      XPE_FIND_SOURCES = XMLManager.compile_or_die
-      (
-         "./expression//named_entity"
-      );
+      XPE_FIND_SOURCES =
+         XMLManager.compile_or_die
+         (
+            "./expression//named_entity"
+         );
 
-      XPE_FIND_OTHERS_BRANCH = XMLManager.compile_or_die
-      (
-         "./case_statement_alternative_chain/el[@kind=\"choice_by_others\"]"
-      );
+      XPE_FIND_OTHERS_BRANCH =
+         XMLManager.compile_or_die
+         (
+            "./case_statement_alternative_chain/el[@kind=\"choice_by_others\"]"
+         );
 
-      XPE_FIND_WHEN_BRANCHES = XMLManager.compile_or_die
-      (
-         "./case_statement_alternative_chain/el[@kind=\"choice_by_expression\"]"
-      );
+      XPE_FIND_WHEN_BRANCHES =
+         XMLManager.compile_or_die
+         (
+            "./case_statement_alternative_chain/el"
+            + "[@kind=\"choice_by_expression\"]"
+         );
    }
 
    public VHDLCSNode

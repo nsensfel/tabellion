@@ -24,6 +24,16 @@ public class Strings
          result = IDs.generate_new_id("string");
 
          TO_ID.put(string, result);
+
+         /* TODO: remove, it's for debug. */
+         System.out.println
+         (
+            "[STR] (\""
+            + string
+            + "\"->"
+            + result.get_value()
+            + ")"
+         );
       }
 
       return result;
