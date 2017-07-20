@@ -465,6 +465,7 @@ public class VHDLProcess extends ParsableXML
    (
       final IDs local_id
    )
+   throws XPathExpressionException
    {
       final Node start_node;
       final Collection<ParsableXML> result;

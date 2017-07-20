@@ -530,17 +530,18 @@ class Process_Internals:
                 []
             )
 
-        false_branch_xml = xml.find("./else_cause/sequential_statement_chain")
-
-        if (false_branch_xml == None):
-            exit_points += prev_nodes
-        else:
-            exit_points += self.handle_sequential_statement_chain (
-                false_branch_xml,
-                [cond_node_id],
-                (node_depth + 2),
-                ["COND_WAS_FALSE"]
-            )
+        # Re-reading this, I doubt this is ever found. Copy/paste mistake?
+#        false_branch_xml = xml.find("./else_cause/sequential_statement_chain")
+#
+#        if (false_branch_xml == None):
+#            exit_points += prev_nodes
+#        else:
+#            exit_points += self.handle_sequential_statement_chain (
+#                false_branch_xml,
+#                [cond_node_id],
+#                (node_depth + 2),
+#                ["COND_WAS_FALSE"]
+#            )
 
         return exit_points
 

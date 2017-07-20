@@ -11,15 +11,16 @@ import java.util.Collection;
 /* If Statement Node */
 public class VHDLISNode extends VHDLNode
 {
-   private static final XPathExpression XPE_FIND_CONDITION;
    private static final XPathExpression XPE_FIND_NAMED_ENTITIES;
    private static final XPathExpression XPE_FIND_TRUE_BRANCH;
    private static final XPathExpression XPE_FIND_ELSE_BRANCH;
 
    static
    {
-      XPE_FIND_CONDITION = XMLManager.compile_or_die("./condition");
-      XPE_FIND_NAMED_ENTITIES = XMLManager.compile_or_die(".//named_entity");
+      XPE_FIND_NAMED_ENTITIES = XMLManager.compile_or_die
+      (
+         "./condition//named_entity"
+      );
 
       XPE_FIND_TRUE_BRANCH = XMLManager.compile_or_die
       (
@@ -121,7 +122,7 @@ public class VHDLISNode extends VHDLNode
    {
       Functions.add_entry
       (
-         "kind",
+         "depth",
          local_id,
          Strings.get_id_from_string
          (

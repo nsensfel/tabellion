@@ -105,7 +105,7 @@ public class VHDLSSASNode extends VHDLNode
       (
          "kind",
          local_id,
-         Strings.get_id_from_string("if")
+         Strings.get_id_from_string("signal_assignement")
       );
    }
 
@@ -116,7 +116,7 @@ public class VHDLSSASNode extends VHDLNode
    {
       Functions.add_entry
       (
-         "kind",
+         "depth",
          local_id,
          Strings.get_id_from_string
          (
@@ -266,7 +266,7 @@ public class VHDLSSASNode extends VHDLNode
    /***************************************************************************/
    /** Children ***************************************************************/
    /***************************************************************************/
-   public void handle_next_node
+   private void handle_next_node
    (
       final IDs local_id
    )
