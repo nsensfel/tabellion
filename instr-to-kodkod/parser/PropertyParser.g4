@@ -131,7 +131,6 @@ sl_predicate
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          Expression.product
          (
@@ -175,7 +174,6 @@ sl_and_operator
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          (
             ($sl_formula.result)
@@ -195,7 +193,6 @@ sl_or_operator
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          (
             ($sl_formula.result)
@@ -214,7 +211,6 @@ sl_not_operator
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result = ($sl_formula.result).not();
    }
 ;
@@ -228,7 +224,6 @@ sl_implies_operator
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result = ($a.result).implies(($b.result));
    }
 ;
@@ -244,7 +239,6 @@ sl_exists_operator
    (WS*) R_PAREN
 
    {
-      /* TODO */
       $result =
          ($f.result).forSome
          (
@@ -269,7 +263,6 @@ sl_forall_operator
    (WS*) R_PAREN
 
    {
-      /* TODO */
       $result =
          ($f.result).forAll
          (
@@ -302,7 +295,6 @@ sl_ctl_verifies_operator
    (WS)* R_PAREN
 
    {
-      /* TODO */
 
       $result =
          ($f.result).forSome
@@ -375,7 +367,6 @@ bl_predicate [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          current_node.product
          (
@@ -422,7 +413,6 @@ bl_and_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          (
             ($bl_formula.result)
@@ -442,7 +432,6 @@ bl_or_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          (
             ($bl_formula.result)
@@ -461,7 +450,6 @@ bl_not_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result = ($bl_formula.result).not();
    }
 ;
@@ -475,7 +463,6 @@ bl_implies_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result = ($a.result).implies(($b.result));
    }
 ;
@@ -497,7 +484,6 @@ bl_ax_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          ($bl_formula.result).forAll
          (
@@ -528,7 +514,6 @@ bl_ex_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          ($bl_formula.result).forSome
          (
@@ -559,7 +544,6 @@ bl_ag_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          ($bl_formula.result).forAll
          (
@@ -597,7 +581,6 @@ bl_eg_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          ($bl_formula.result).forAll
          (
@@ -641,7 +624,6 @@ bl_af_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          ($bl_formula.result).forSome
          (
@@ -685,7 +667,6 @@ bl_ef_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          ($bl_formula.result).forSome
          (
@@ -731,7 +712,6 @@ bl_au_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          ($f1.result).forAll
          (
@@ -789,7 +769,6 @@ bl_eu_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      /* TODO */
       $result =
          ($f1.result).forAll
          (
