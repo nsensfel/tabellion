@@ -74,11 +74,10 @@ public class VHDLISNode extends VHDLNode
       /** Predicates **********************************************************/
       handle_predicate_has_option(local_id);
       handle_predicate_expr_reads(local_id);
-      handle_predicate_is_final(local_id);
 
       /** Children ************************************************************/
-      result.add(handle_true_branch(local_id));
-      result.add(handle_else_branch(local_id));
+      result.addAll(handle_true_branch(local_id));
+      result.addAll(handle_else_branch(local_id));
 
       return result;
    }
@@ -190,20 +189,11 @@ public class VHDLISNode extends VHDLNode
                local_id,
                Waveforms.get_associated_waveform_id
                (
-                  IDs.get_id_from_xml_id(ref, null)
+                  IDs.get_id_from_xml_id(ref, (String) null)
                )
             );
          }
       }
-   }
-
-   private void handle_predicate_is_final
-   (
-      final IDs local_id
-   )
-   {
-      /* TODO */
-      /* ((next_node == null) && !(has_else)) => is_final */
    }
 
    /***************************************************************************/
@@ -213,10 +203,91 @@ public class VHDLISNode extends VHDLNode
    (
       final IDs local_id
    )
+   throws XPathExpressionException
    {
-      /* TODO */
+      final Collection<ParsableXML> result;
+      final Node true_branch;
 
-      return null;
+      result = new ArrayList<ParsableXML>();
+
+      true_branch =
+         (Node) XPE_FIND_TRUE_BRANCH.evaluate
+         (
+            xml_node,
+            XPathConstants.NODE
+         );
+
+
+      result.add
+      (
+         new VHDLSSCNode
+         (
+            parent_id,
+            true_branch,
+            local_id,
+            next_node,
+            (depth + 1),
+            new String[] {"COND_WAS_TRUE"}
+         )
+      );
+
+      return result;
    }
 
+   private Collection<ParsableXML> handle_else_branch
+   (
+      final IDs local_id
+   )
+   throws XPathExpressionException
+   {
+      final Collection<ParsableXML> result;
+      final Node else_branch;
+
+      result = new ArrayList<ParsableXML>();
+
+      else_branch =
+         (Node) XPE_FIND_TRUE_BRANCH.evaluate
+         (
+            xml_node,
+            XPathConstants.NODE
+         );
+
+      if (else_branch == (Node) null)
+      {
+         if (next_node == (IDs) null)
+         {
+            Predicates.add_entry
+            (
+               "is_final",
+               local_id
+            );
+         }
+         else
+         {
+            Predicates.add_entry
+            (
+               "node_connect",
+               local_id,
+               next_node
+            );
+         }
+      }
+      else
+      {
+         result.add
+         (
+            new VHDLSSCNode
+            (
+               parent_id,
+               else_branch,
+               local_id,
+               next_node,
+               (depth + 1),
+               new String[] {"COND_WAS_FALSE"}
+            )
+         );
+      }
+
+      return result;
+   }
 }

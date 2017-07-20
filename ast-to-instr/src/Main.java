@@ -13,6 +13,7 @@ public class Main
 {
    private static final XPathExpression XPE_FIND_ALL_VHDL_FILES;
    private static Parameters PARAMETERS;
+   private static Document root;
 
    static
    {
@@ -25,7 +26,6 @@ public class Main
 
    public static void main (final String... args)
    {
-      final Document root;
       final Collection<Node> vhdl_files;
 
       PARAMETERS = new Parameters(args);
@@ -121,5 +121,10 @@ public class Main
    {
       /* TODO */
       return false;
+   }
+
+   public static Document get_xml_root ()
+   {
+      return root;
    }
 }

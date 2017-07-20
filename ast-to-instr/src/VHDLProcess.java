@@ -439,7 +439,7 @@ public class VHDLProcess extends ParsableXML
                "ref"
             );
 
-         if (!Main.node_is_function_or_literal(ref))
+         if (!Main.node_is_function_or_literal(xml_id))
          {
             Predicates.add_entry
             (
