@@ -10,14 +10,6 @@ import java.util.Collection;
 
 public class VHDLSignal extends ParsableXML
 {
-   private static final XPathExpression GET_ENTITIES;
-
-   static
-   {
-      /* TODO */
-      GET_ENTITIES = null;
-   }
-
    public VHDLSignal
    (
       final IDs parent_id,

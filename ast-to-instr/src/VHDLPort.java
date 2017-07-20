@@ -10,14 +10,6 @@ import java.util.Collection;
 
 public class VHDLPort extends ParsableXML
 {
-   private static final XPathExpression GET_ENTITIES;
-
-   static
-   {
-      /* TODO */
-      GET_ENTITIES = null;
-   }
-
    public VHDLPort
    (
       final IDs parent_id,

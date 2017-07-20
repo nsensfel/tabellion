@@ -35,6 +35,12 @@ public class IDs
 
          FROM_XML.put(xml_id, result);
       }
+      else if ((result.type == null) && (type != null))
+      {
+         /* This allows us to get an ID from a simple reference. */
+         /* TODO: Don't forget to report any (type == null) at the end. */
+         result.type = type;
+      }
 
       return result;
    }
@@ -54,8 +60,8 @@ public class IDs
    }
 
    /** Non-Static *************************************************************/
-   private final String type;
    private final int value;
+   private String type;
 
    private IDs (final String type)
    {

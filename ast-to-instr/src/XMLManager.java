@@ -71,7 +71,7 @@ public class XMLManager
    {
       final File file;
 
-      file = new File(filename, "r");
+      file = new File(filename);
 
       return DOC_BUILDER.parse(file);
    }
