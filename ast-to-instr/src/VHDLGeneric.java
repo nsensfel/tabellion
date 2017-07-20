@@ -8,7 +8,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class VHDLSignal extends ParsableXML
+public class VHDLGeneric extends ParsableXML
 {
    private static final XPathExpression GET_ENTITIES;
 
@@ -18,7 +18,7 @@ public class VHDLSignal extends ParsableXML
       GET_ENTITIES = null;
    }
 
-   public VHDLSignal
+   public VHDLGeneric
    (
       final IDs parent_id,
       final Node xml_node
@@ -39,10 +39,10 @@ public class VHDLSignal extends ParsableXML
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
-      local_id = IDs.get_id_from_xml_id(xml_id, "signal");
+      local_id = IDs.get_id_from_xml_id(xml_id, "generic");
 
       /** Parent **************************************************************/
-      handle_link_to_architecture(local_id);
+      handle_link_to_entity(local_id);
 
       /** Functions ***********************************************************/
       handle_function_line(local_id);
@@ -50,16 +50,13 @@ public class VHDLSignal extends ParsableXML
       handle_function_identifier(local_id);
 
       /** Predicates **********************************************************/
-      handle_predicate_has_disconnect_flag(local_id);
+      handle_predicate_has_class(local_id);
       handle_predicate_is_ref(local_id);
-      handle_predicate_has_active_flag(local_id);
       handle_predicate_has_identifier_list(local_id);
       handle_predicate_has_visible_flag(local_id);
       handle_predicate_has_after_drivers_flag(local_id);
       handle_predicate_has_use_flag(local_id);
       handle_predicate_has_guarded_signal_flag(local_id);
-
-      handle_predicate_is_of_kind(local_id);
 
       /** Children ************************************************************/
       handle_child_waveform(local_id);
@@ -70,12 +67,12 @@ public class VHDLSignal extends ParsableXML
    /***************************************************************************/
    /** Parents ****************************************************************/
    /***************************************************************************/
-   private void handle_link_to_architecture
+   private void handle_link_to_entity
    (
       final IDs local_id
    )
    {
-      Predicates.add_entry("belongs_to_architecture", local_id, parent_id);
+      Predicates.add_entry("is_port_of", local_id, parent_id);
    }
 
 
@@ -133,7 +130,7 @@ public class VHDLSignal extends ParsableXML
    /***************************************************************************/
    /** Predicates *************************************************************/
    /***************************************************************************/
-   private void handle_predicate_has_disconnect_flag
+   private void handle_predicate_has_class
    (
       final IDs local_id
    )
@@ -143,11 +140,11 @@ public class VHDLSignal extends ParsableXML
          XMLManager.get_attribute
          (
             xml_node,
-            "has_disconnect_flag"
+            "has_class"
          ).equals("true")
       )
       {
-         Predicates.add_entry("has_disconnect_flag", local_id);
+         Predicates.add_entry("has_class", local_id);
       }
    }
 
@@ -166,24 +163,6 @@ public class VHDLSignal extends ParsableXML
       )
       {
          Predicates.add_entry("is_ref", local_id);
-      }
-   }
-
-   private void handle_predicate_has_active_flag
-   (
-      final IDs local_id
-   )
-   {
-      if
-      (
-         XMLManager.get_attribute
-         (
-            xml_node,
-            "has_active_flag"
-         ).equals("true")
-      )
-      {
-         Predicates.add_entry("has_active_flag", local_id);
       }
    }
 
@@ -275,26 +254,6 @@ public class VHDLSignal extends ParsableXML
       {
          Predicates.add_entry("has_guarded_signal_flag", local_id);
       }
-   }
-
-   private void handle_predicate_is_of_kind
-   (
-      final IDs local_id
-   )
-   {
-      Predicates.add_entry
-      (
-         "is_of_kind",
-         local_id,
-         Strings.get_id_from_string
-         (
-            XMLManager.get_attribute
-            (
-               xml_node,
-               "signal_kind"
-            )
-         )
-      );
    }
 
    /***************************************************************************/

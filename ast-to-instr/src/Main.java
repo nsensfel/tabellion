@@ -16,25 +16,11 @@ public class Main
 
    static
    {
-      XPathExpression xpe;
-
-      try
-      {
-         xpe = XMLManager.compile("./*/*/el[@kind=\"design_file\"][@file]");
-      }
-      catch (final XPathExpressionException xpee)
-      {
-         xpe = null;
-
-         System.err.println
-         (
-            "[P] Invalid XPath expression (report as bug):"
+      XPE_FIND_ALL_VHDL_FILES =
+         XMLManager.compile_or_die
+            (
+               "./*/*/el[@kind=\"design_file\"][@file]"
          );
-
-         xpee.printStackTrace();
-      }
-
-      XPE_FIND_ALL_VHDL_FILES = xpe;
    }
 
    public static void main (final String... args)

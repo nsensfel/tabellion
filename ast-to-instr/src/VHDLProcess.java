@@ -14,13 +14,8 @@ public class VHDLProcess extends ParsableXML
 
    static
    {
+      /* TODO */
       GET_ENTITIES = null;
-      /* TODO
-         Main.get_xpath().compile
-         (
-         );
-      */
-       //     "./*/*/library_unit[@kind=\"entity_declaration\"]"
    }
 
    public VHDLProcess
@@ -42,7 +37,7 @@ public class VHDLProcess extends ParsableXML
 
       result = new ArrayList<ParsableXML>();
 
-      xml_id = null; /* TODO: elem.attrib.get("id") */
+      xml_id = XMLManager.get_attribute(xml_node, "id");
 
       local_id = IDs.get_id_from_xml_id(xml_id, "process");
 
@@ -61,6 +56,7 @@ public class VHDLProcess extends ParsableXML
       handle_predicate_has_passive_flag(local_id);
       handle_predicate_has_postponed_flag(local_id);
       handle_predicate_has_visible_flag(local_id);
+      handle_predicate_is_within_flag(local_id);
       handle_predicate_has_label(local_id);
       handle_predicate_has_is(local_id);
       handle_predicate_end_has_reserved_id(local_id);
@@ -73,7 +69,7 @@ public class VHDLProcess extends ParsableXML
       /** Children ************************************************************/
       result.addAll(handle_child_nodes(local_id));
 
-      return null;
+      return result;
    }
 
    /***************************************************************************/
@@ -84,18 +80,8 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            parent_id
-         };
-
-      /* TODO */
+      Predicates.add_entry("belongs_to_architecture", local_id, parent_id);
    }
-
 
    /***************************************************************************/
    /** Functions **************************************************************/
@@ -105,19 +91,15 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "line",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "line")
+         )
+      );
    }
 
    private void handle_function_column
@@ -125,19 +107,15 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "column",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "col")
+         )
+      );
    }
 
    private void handle_function_label
@@ -145,19 +123,15 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "label",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "label")
+         )
+      );
    }
 
    /***************************************************************************/
@@ -168,19 +142,17 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "seen_flag"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("has_seen_flag", local_id);
+      }
    }
 
    private void handle_predicate_end_has_postponed
@@ -188,19 +160,17 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "end_has_postponed"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("end_has_postponed", local_id);
+      }
    }
 
    private void handle_predicate_is_ref
@@ -208,19 +178,17 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "is_ref"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("is_ref", local_id);
+      }
    }
 
    private void handle_predicate_has_passive_flag
@@ -228,19 +196,17 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "passive_flag"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("has_passive_flag", local_id);
+      }
    }
 
    private void handle_predicate_has_postponed_flag
@@ -248,19 +214,17 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "postponed_flag"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("has_postponed_flag", local_id);
+      }
    }
 
    private void handle_predicate_has_visible_flag
@@ -268,19 +232,35 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "visible_flag"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("has_visible_flag", local_id);
+      }
+   }
 
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+   private void handle_predicate_is_within_flag
+   (
+      final IDs local_id
+   )
+   {
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "is_within_flag"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("is_within_flag", local_id);
+      }
    }
 
    private void handle_predicate_has_label
@@ -288,19 +268,17 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "has_label"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("has_label", local_id);
+      }
    }
 
    private void handle_predicate_has_is
@@ -308,19 +286,17 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "has_is"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("has_is", local_id);
+      }
    }
 
    private void handle_predicate_end_has_reserved_id
@@ -328,19 +304,17 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "end_has_reserved_id"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("end_has_reserved_id", local_id);
+      }
    }
 
    private void handle_predicate_end_has_identifier
@@ -348,19 +322,17 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "end_has_identifier"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("end_has_identifier", local_id);
+      }
    }
 
    private void handle_predicate_is_explicit_process
@@ -368,19 +340,17 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "is_ref"
+         ).equals("false")
+      )
+      {
+         Predicates.add_entry("is_explicit_process", local_id);
+      }
    }
 
    private void handle_predicate_is_in_sensitivity_list
@@ -388,19 +358,7 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      /* TODO */
    }
 
    private void handle_predicate_is_accessed_by
@@ -408,19 +366,7 @@ public class VHDLProcess extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      /* TODO */
    }
 
    /***************************************************************************/

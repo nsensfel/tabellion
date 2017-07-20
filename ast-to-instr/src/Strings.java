@@ -12,10 +12,11 @@ public class Strings
 
    private Strings () {} /* Utility class. */
 
-   public static IDs get_id_from_string (final String string)
+   public static IDs get_id_from_string (String string)
    {
       IDs result;
 
+      string = string.toLowerCase();
       result = TO_ID.get(string);
 
       if (result == null)

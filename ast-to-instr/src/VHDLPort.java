@@ -8,7 +8,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class VHDLSignal extends ParsableXML
+public class VHDLPort extends ParsableXML
 {
    private static final XPathExpression GET_ENTITIES;
 
@@ -18,7 +18,7 @@ public class VHDLSignal extends ParsableXML
       GET_ENTITIES = null;
    }
 
-   public VHDLSignal
+   public VHDLPort
    (
       final IDs parent_id,
       final Node xml_node
@@ -39,10 +39,10 @@ public class VHDLSignal extends ParsableXML
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
-      local_id = IDs.get_id_from_xml_id(xml_id, "signal");
+      local_id = IDs.get_id_from_xml_id(xml_id, "port");
 
       /** Parent **************************************************************/
-      handle_link_to_architecture(local_id);
+      handle_link_to_entity(local_id);
 
       /** Functions ***********************************************************/
       handle_function_line(local_id);
@@ -51,15 +51,17 @@ public class VHDLSignal extends ParsableXML
 
       /** Predicates **********************************************************/
       handle_predicate_has_disconnect_flag(local_id);
+      handle_predicate_has_class(local_id);
       handle_predicate_is_ref(local_id);
       handle_predicate_has_active_flag(local_id);
       handle_predicate_has_identifier_list(local_id);
       handle_predicate_has_visible_flag(local_id);
       handle_predicate_has_after_drivers_flag(local_id);
       handle_predicate_has_use_flag(local_id);
+      handle_predicate_has_open_flag(local_id);
       handle_predicate_has_guarded_signal_flag(local_id);
 
-      handle_predicate_is_of_kind(local_id);
+      handle_predicate_has_mode(local_id);
 
       /** Children ************************************************************/
       handle_child_waveform(local_id);
@@ -70,12 +72,12 @@ public class VHDLSignal extends ParsableXML
    /***************************************************************************/
    /** Parents ****************************************************************/
    /***************************************************************************/
-   private void handle_link_to_architecture
+   private void handle_link_to_entity
    (
       final IDs local_id
    )
    {
-      Predicates.add_entry("belongs_to_architecture", local_id, parent_id);
+      Predicates.add_entry("is_port_of", local_id, parent_id);
    }
 
 
@@ -148,6 +150,24 @@ public class VHDLSignal extends ParsableXML
       )
       {
          Predicates.add_entry("has_disconnect_flag", local_id);
+      }
+   }
+
+   private void handle_predicate_has_class
+   (
+      final IDs local_id
+   )
+   {
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "has_class"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("has_class", local_id);
       }
    }
 
@@ -259,6 +279,24 @@ public class VHDLSignal extends ParsableXML
       }
    }
 
+   private void handle_predicate_has_open_flag
+   (
+      final IDs local_id
+   )
+   {
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "open_flag"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("has_open_flag", local_id);
+      }
+   }
+
    private void handle_predicate_has_guarded_signal_flag
    (
       final IDs local_id
@@ -277,24 +315,34 @@ public class VHDLSignal extends ParsableXML
       }
    }
 
-   private void handle_predicate_is_of_kind
+   private void handle_predicate_has_mode
    (
       final IDs local_id
    )
    {
-      Predicates.add_entry
+      if
       (
-         "is_of_kind",
-         local_id,
-         Strings.get_id_from_string
+         XMLManager.get_attribute
          (
-            XMLManager.get_attribute
+            xml_node,
+            "has_mode"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry
+         (
+            "has_mode",
+            local_id,
+            Strings.get_id_from_string
             (
-               xml_node,
-               "signal_kind"
+               XMLManager.get_attribute
+               (
+                  xml_node,
+                  "mode"
+               )
             )
-         )
-      );
+         );
+      }
    }
 
    /***************************************************************************/

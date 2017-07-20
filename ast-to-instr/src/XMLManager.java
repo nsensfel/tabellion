@@ -82,6 +82,23 @@ public class XMLManager
       return XPATH.compile(expression);
    }
 
+   public static XPathExpression compile_or_die (final String expression)
+   {
+      try
+      {
+         return XPATH.compile(expression);
+      }
+      catch (final XPathExpressionException xpee)
+      {
+         System.err.println("[P] Invalid XPathExpression (report as bug):");
+         xpee.printStackTrace();
+
+         System.exit(-1);
+      }
+
+      return null; /* Because Java. */
+   }
+
    public static Collection<Node> node_list_to_node_collection
    (
       final NodeList nl
@@ -100,5 +117,10 @@ public class XMLManager
       }
 
       return result;
+   }
+
+   public static String get_attribute (final Node n, final String attr)
+   {
+      return n.getAttributes().getNamedItem(attr).getNodeValue();
    }
 }

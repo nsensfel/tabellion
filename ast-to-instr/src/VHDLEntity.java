@@ -10,17 +10,13 @@ import java.util.Collection;
 
 public class VHDLEntity extends ParsableXML
 {
-   private static final XPathExpression GET_ENTITIES;
+   private static final XPathExpression XPE_FIND_PORTS;
+   private static final XPathExpression XPE_FIND_GENERICS;
 
    static
    {
-      GET_ENTITIES = null;
-      /* TODO
-         Main.get_xpath().compile
-         (
-         );
-      */
-       //     "./*/*/library_unit[@kind=\"entity_declaration\"]"
+      XPE_FIND_PORTS = null; /* TODO */
+      XPE_FIND_GENERICS = null; /* TODO */
    }
 
    public VHDLEntity
@@ -42,7 +38,7 @@ public class VHDLEntity extends ParsableXML
 
       result = new ArrayList<ParsableXML>();
 
-      xml_id = null; /* TODO: elem.attrib.get("id") */
+      xml_id = XMLManager.get_attribute(xml_node, "id");
 
       local_id = IDs.get_id_from_xml_id(xml_id, "entity");
 
@@ -65,7 +61,7 @@ public class VHDLEntity extends ParsableXML
       result.addAll(handle_child_ports(local_id));
       result.addAll(handle_child_generics(local_id));
 
-      return null;
+      return result;
    }
 
    /***************************************************************************/
@@ -76,16 +72,7 @@ public class VHDLEntity extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            parent_id
-         };
-
-      /* TODO */
+      Predicates.add_entry("is_in_file", local_id, parent_id);
    }
 
 
@@ -97,19 +84,15 @@ public class VHDLEntity extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "line",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "line")
+         )
+      );
    }
 
    private void handle_function_column
@@ -117,19 +100,15 @@ public class VHDLEntity extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "column",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "col")
+         )
+      );
    }
 
    private void handle_function_identifier
@@ -137,19 +116,15 @@ public class VHDLEntity extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "identifier",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "col")
+         )
+      );
    }
 
    /***************************************************************************/
@@ -160,19 +135,17 @@ public class VHDLEntity extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "has_begin"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("has_begin", local_id);
+      }
    }
 
    private void handle_predicate_has_visible_flag
@@ -180,19 +153,17 @@ public class VHDLEntity extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "visible_flag"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("has_visible_flag", local_id);
+      }
    }
 
    private void handle_predicate_is_withing_flag
@@ -200,19 +171,17 @@ public class VHDLEntity extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "is_within_flag"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("is_within_flag", local_id);
+      }
    }
 
    private void handle_predicate_end_has_reserved_id
@@ -220,19 +189,17 @@ public class VHDLEntity extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "end_has_reserved_id"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("end_has_reserved_id", local_id);
+      }
    }
 
    private void handle_predicate_end_has_identifier
@@ -240,19 +207,17 @@ public class VHDLEntity extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "end_has_identifier"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("end_has_identifier", local_id);
+      }
    }
 
    /***************************************************************************/
@@ -265,17 +230,26 @@ public class VHDLEntity extends ParsableXML
    throws XPathExpressionException
    {
       final Collection<ParsableXML> result;
-      final NodeList entities;
+      final NodeList ports;
+      final int childrens_count;
 
-      entities =
-         (NodeList) GET_ENTITIES.evaluate
+      result = new ArrayList<ParsableXML>();
+
+      ports =
+         (NodeList) XPE_FIND_PORTS.evaluate
          (
             xml_node,
             XPathConstants.NODESET
          );
 
-      /* TODO */
-      return null;
+      childrens_count = ports.getLength();
+
+      for (int i = 0; i < childrens_count; ++i)
+      {
+         result.add(new VHDLPort(local_id, ports.item(i)));
+      }
+
+      return result;
    }
 
    private Collection<ParsableXML> handle_child_generics
@@ -285,8 +259,25 @@ public class VHDLEntity extends ParsableXML
    throws XPathExpressionException
    {
       final Collection<ParsableXML> result;
+      final NodeList generics;
+      final int childrens_count;
 
-      /* TODO */
-      return null;
+      result = new ArrayList<ParsableXML>();
+
+      generics =
+         (NodeList) XPE_FIND_PORTS.evaluate
+         (
+            xml_node,
+            XPathConstants.NODESET
+         );
+
+      childrens_count = generics.getLength();
+
+      for (int i = 0; i < childrens_count; ++i)
+      {
+         result.add(new VHDLGeneric(local_id, generics.item(i)));
+      }
+
+      return result;
    }
 }

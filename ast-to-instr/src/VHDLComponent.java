@@ -10,17 +10,13 @@ import java.util.Collection;
 
 public class VHDLComponent extends ParsableXML
 {
-   private static final XPathExpression GET_ENTITIES;
+   private static final XPathExpression XPE_FIND_PORT_MAPS;
+   private static final XPathExpression XPE_FIND_GENERIC_MAPS;
 
    static
    {
-      GET_ENTITIES = null;
-      /* TODO
-         Main.get_xpath().compile
-         (
-         );
-      */
-       //     "./*/*/library_unit[@kind=\"entity_declaration\"]"
+      XPE_FIND_PORT_MAPS = null; /* TODO */
+      XPE_FIND_GENERIC_MAPS = null; /* TODO */
    }
 
    public VHDLComponent
@@ -42,7 +38,7 @@ public class VHDLComponent extends ParsableXML
 
       result = new ArrayList<ParsableXML>();
 
-      xml_id = null; /* TODO: elem.attrib.get("id") */
+      xml_id = XMLManager.get_attribute(xml_node, "id");
 
       local_id = IDs.get_id_from_xml_id(xml_id, "component");
 
@@ -59,7 +55,7 @@ public class VHDLComponent extends ParsableXML
       handle_predicate_port_maps(local_id);
       handle_predicate_generic_maps(local_id);
 
-      return null;
+      return result;
    }
 
    /***************************************************************************/
@@ -70,16 +66,7 @@ public class VHDLComponent extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            parent_id
-         };
-
-      /* TODO */
+      Predicates.add_entry("belongs_to_architecture", local_id, parent_id);
    }
 
    private void handle_link_to_entity
@@ -87,18 +74,8 @@ public class VHDLComponent extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            parent_id
-         };
-
       /* TODO */
    }
-
 
    /***************************************************************************/
    /** Functions **************************************************************/
@@ -108,19 +85,15 @@ public class VHDLComponent extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "line",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "line")
+         )
+      );
    }
 
    private void handle_function_column
@@ -128,19 +101,15 @@ public class VHDLComponent extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "column",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "col")
+         )
+      );
    }
 
    private void handle_function_label
@@ -148,19 +117,15 @@ public class VHDLComponent extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "label",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "label")
+         )
+      );
    }
 
    /***************************************************************************/
@@ -171,19 +136,7 @@ public class VHDLComponent extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      /* TODO */
    }
 
    private void handle_predicate_generic_maps
@@ -191,18 +144,6 @@ public class VHDLComponent extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      /* TODO */
    }
 }

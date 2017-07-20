@@ -10,17 +10,29 @@ import java.util.Collection;
 
 public class VHDLArchitecture extends ParsableXML
 {
-   private static final XPathExpression GET_ENTITIES;
+   private static final XPathExpression XPE_FIND_SIGNALS;
+   private static final XPathExpression XPE_FIND_PROCESSES;
+   private static final XPathExpression XPE_FIND_COMPONENTS;
 
    static
    {
-      GET_ENTITIES = null;
-      /* TODO
-         Main.get_xpath().compile
+      XPE_FIND_SIGNALS =
+         XMLManager.compile_or_die
          (
+            "./*/el[@kind=\"signal_declaration\"]"
          );
-      */
-       //     "./*/*/library_unit[@kind=\"entity_declaration\"]"
+
+      XPE_FIND_PROCESSES =
+         XMLManager.compile_or_die
+         (
+            "./*/el[@kind=\"sensitized_process_statement\"]"
+         );
+
+      XPE_FIND_COMPONENTS =
+         XMLManager.compile_or_die
+         (
+            "./*/el[@kind=\"component_instantiation_statement\"]"
+         );
    }
 
    public VHDLArchitecture
@@ -42,7 +54,7 @@ public class VHDLArchitecture extends ParsableXML
 
       result = new ArrayList<ParsableXML>();
 
-      xml_id = null; /* TODO: elem.attrib.get("id") */
+      xml_id = XMLManager.get_attribute(xml_node, "id");
 
       local_id = IDs.get_id_from_xml_id(xml_id, "architecture");
 
@@ -67,7 +79,7 @@ public class VHDLArchitecture extends ParsableXML
       result.addAll(handle_child_processes(local_id));
       result.addAll(handle_child_components(local_id));
 
-      return null;
+      return result;
    }
 
    /***************************************************************************/
@@ -78,16 +90,7 @@ public class VHDLArchitecture extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            parent_id
-         };
-
-      /* TODO */
+      Predicates.add_entry("is_in_file", local_id, parent_id);
    }
 
    private void handle_link_to_entity
@@ -95,8 +98,6 @@ public class VHDLArchitecture extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
       /* TODO */
    }
 
@@ -109,19 +110,15 @@ public class VHDLArchitecture extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "line",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "line")
+         )
+      );
    }
 
    private void handle_function_column
@@ -129,19 +126,15 @@ public class VHDLArchitecture extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "column",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "col")
+         )
+      );
    }
 
    private void handle_function_identifier
@@ -149,19 +142,15 @@ public class VHDLArchitecture extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "identifier",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "identifier")
+         )
+      );
    }
 
    /***************************************************************************/
@@ -172,19 +161,10 @@ public class VHDLArchitecture extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if (XMLManager.get_attribute(xml_node, "foreign_flag").equals("true"))
+      {
+         Predicates.add_entry("has_foreign_flag", local_id);
+      }
    }
 
    private void handle_predicate_has_visible_flag
@@ -192,19 +172,10 @@ public class VHDLArchitecture extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if (XMLManager.get_attribute(xml_node, "visible_flag").equals("true"))
+      {
+         Predicates.add_entry("has_visible_flag", local_id);
+      }
    }
 
    private void handle_predicate_is_withing_flag
@@ -212,19 +183,10 @@ public class VHDLArchitecture extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if (XMLManager.get_attribute(xml_node, "is_within_flag").equals("true"))
+      {
+         Predicates.add_entry("is_within_flag", local_id);
+      }
    }
 
    private void handle_predicate_end_has_reserved_id
@@ -232,19 +194,17 @@ public class VHDLArchitecture extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "end_has_reserved_id"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("end_has_reserved_id", local_id);
+      }
    }
 
    private void handle_predicate_end_has_identifier
@@ -252,19 +212,17 @@ public class VHDLArchitecture extends ParsableXML
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      if
+      (
+         XMLManager.get_attribute
+         (
+            xml_node,
+            "end_has_identifier"
+         ).equals("true")
+      )
+      {
+         Predicates.add_entry("end_has_identifier", local_id);
+      }
    }
 
    /***************************************************************************/
@@ -277,17 +235,26 @@ public class VHDLArchitecture extends ParsableXML
    throws XPathExpressionException
    {
       final Collection<ParsableXML> result;
-      final NodeList entities;
+      final NodeList signals;
+      final int childrens_count;
 
-      entities =
-         (NodeList) GET_ENTITIES.evaluate
+      result = new ArrayList<ParsableXML>();
+
+      signals =
+         (NodeList) XPE_FIND_SIGNALS.evaluate
          (
             xml_node,
             XPathConstants.NODESET
          );
 
-      /* TODO */
-      return null;
+      childrens_count = signals.getLength();
+
+      for (int i = 0; i < childrens_count; ++i)
+      {
+         result.add(new VHDLSignal(local_id, signals.item(i)));
+      }
+
+      return result;
    }
 
    private Collection<ParsableXML> handle_child_processes
@@ -297,9 +264,26 @@ public class VHDLArchitecture extends ParsableXML
    throws XPathExpressionException
    {
       final Collection<ParsableXML> result;
+      final NodeList processes;
+      final int childrens_count;
 
-      /* TODO */
-      return null;
+      result = new ArrayList<ParsableXML>();
+
+      processes =
+         (NodeList) XPE_FIND_PROCESSES.evaluate
+         (
+            xml_node,
+            XPathConstants.NODESET
+         );
+
+      childrens_count = processes.getLength();
+
+      for (int i = 0; i < childrens_count; ++i)
+      {
+         result.add(new VHDLProcess(local_id, processes.item(i)));
+      }
+
+      return result;
    }
 
    private Collection<ParsableXML> handle_child_components
@@ -309,8 +293,25 @@ public class VHDLArchitecture extends ParsableXML
    throws XPathExpressionException
    {
       final Collection<ParsableXML> result;
+      final NodeList components;
+      final int childrens_count;
 
-      /* TODO */
-      return null;
+      result = new ArrayList<ParsableXML>();
+
+      components =
+         (NodeList) XPE_FIND_COMPONENTS.evaluate
+         (
+            xml_node,
+            XPathConstants.NODESET
+         );
+
+      childrens_count = components.getLength();
+
+      for (int i = 0; i < childrens_count; ++i)
+      {
+         result.add(new VHDLComponent(local_id, components.item(i)));
+      }
+
+      return result;
    }
 }

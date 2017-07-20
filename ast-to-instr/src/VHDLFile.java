@@ -10,17 +10,22 @@ import java.util.Collection;
 
 public class VHDLFile extends ParsableXML
 {
-   private static final XPathExpression GET_ENTITIES;
+   private static final XPathExpression XPE_FIND_ENTITIES;
+   private static final XPathExpression XPE_FIND_ARCHITECTURES;
 
    static
    {
-      GET_ENTITIES = null;
-      /* TODO
-         Main.get_xpath().compile
+      XPE_FIND_ENTITIES =
+         XMLManager.compile_or_die
          (
+            "./*/*/library_unit[@kind=\"entity_declaration\"]"
          );
-      */
-       //     "./*/*/library_unit[@kind=\"entity_declaration\"]"
+
+      XPE_FIND_ARCHITECTURES =
+         XMLManager.compile_or_die
+         (
+            "./*/*/library_unit[@kind=\"entity_declaration\"]"
+         );
    }
 
    public VHDLFile
@@ -42,7 +47,7 @@ public class VHDLFile extends ParsableXML
 
       result = new ArrayList<ParsableXML>();
 
-      xml_id = null; /* TODO: elem.attrib.get("id") */
+      xml_id = XMLManager.get_attribute(xml_node, "id");
 
       local_id = IDs.get_id_from_xml_id(xml_id, "file");
 
@@ -55,29 +60,31 @@ public class VHDLFile extends ParsableXML
       result.addAll(handle_child_entities(local_id));
       result.addAll(handle_child_architectures(local_id));
 
-      return null;
+      return result;
    }
 
+   /***************************************************************************/
+   /** Functions **************************************************************/
+   /***************************************************************************/
    private void handle_function_filename
    (
       final IDs local_id
    )
    {
-      final IDs params[];
-
-      params =
-         new IDs[]
-         {
-            local_id,
-            Strings.get_id_from_string
-            (
-               null /* TODO: get attribute */
-            )
-         };
-
-      /* Functions.add_entry("filename", params); */
+      Functions.add_entry
+      (
+         "filename",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "file")
+         )
+      );
    }
 
+   /***************************************************************************/
+   /** Children ***************************************************************/
+   /***************************************************************************/
    private Collection<ParsableXML> handle_child_entities
    (
       final IDs local_id
@@ -86,16 +93,25 @@ public class VHDLFile extends ParsableXML
    {
       final Collection<ParsableXML> result;
       final NodeList entities;
+      final int childrens_count;
+
+      result = new ArrayList<ParsableXML>();
 
       entities =
-         (NodeList) GET_ENTITIES.evaluate
+         (NodeList) XPE_FIND_ENTITIES.evaluate
          (
             xml_node,
             XPathConstants.NODESET
          );
 
-      /* TODO */
-      return null;
+      childrens_count = entities.getLength();
+
+      for (int i = 0; i < childrens_count; ++i)
+      {
+         result.add(new VHDLEntity(local_id, entities.item(i)));
+      }
+
+      return result;
    }
 
    private Collection<ParsableXML> handle_child_architectures
@@ -105,8 +121,25 @@ public class VHDLFile extends ParsableXML
    throws XPathExpressionException
    {
       final Collection<ParsableXML> result;
+      final NodeList architectures;
+      final int childrens_count;
 
-      /* TODO */
-      return null;
+      result = new ArrayList<ParsableXML>();
+
+      architectures =
+         (NodeList) XPE_FIND_ENTITIES.evaluate
+         (
+            xml_node,
+            XPathConstants.NODESET
+         );
+
+      childrens_count = architectures.getLength();
+
+      for (int i = 0; i < childrens_count; ++i)
+      {
+         result.add(new VHDLArchitecture(local_id, architectures.item(i)));
+      }
+
+      return result;
    }
 }
