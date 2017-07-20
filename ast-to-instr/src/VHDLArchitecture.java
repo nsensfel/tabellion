@@ -236,7 +236,7 @@ public class VHDLArchitecture extends ParsableXML
    {
       final Collection<ParsableXML> result;
       final NodeList signals;
-      final int childrens_count;
+      final int children_count;
 
       result = new ArrayList<ParsableXML>();
 
@@ -247,9 +247,9 @@ public class VHDLArchitecture extends ParsableXML
             XPathConstants.NODESET
          );
 
-      childrens_count = signals.getLength();
+      children_count = signals.getLength();
 
-      for (int i = 0; i < childrens_count; ++i)
+      for (int i = 0; i < children_count; ++i)
       {
          result.add(new VHDLSignal(local_id, signals.item(i)));
       }
@@ -265,7 +265,7 @@ public class VHDLArchitecture extends ParsableXML
    {
       final Collection<ParsableXML> result;
       final NodeList processes;
-      final int childrens_count;
+      final int children_count;
 
       result = new ArrayList<ParsableXML>();
 
@@ -276,9 +276,9 @@ public class VHDLArchitecture extends ParsableXML
             XPathConstants.NODESET
          );
 
-      childrens_count = processes.getLength();
+      children_count = processes.getLength();
 
-      for (int i = 0; i < childrens_count; ++i)
+      for (int i = 0; i < children_count; ++i)
       {
          result.add(new VHDLProcess(local_id, processes.item(i)));
       }
@@ -294,7 +294,7 @@ public class VHDLArchitecture extends ParsableXML
    {
       final Collection<ParsableXML> result;
       final NodeList components;
-      final int childrens_count;
+      final int children_count;
 
       result = new ArrayList<ParsableXML>();
 
@@ -305,9 +305,9 @@ public class VHDLArchitecture extends ParsableXML
             XPathConstants.NODESET
          );
 
-      childrens_count = components.getLength();
+      children_count = components.getLength();
 
-      for (int i = 0; i < childrens_count; ++i)
+      for (int i = 0; i < children_count; ++i)
       {
          result.add(new VHDLComponent(local_id, components.item(i)));
       }

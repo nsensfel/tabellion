@@ -93,7 +93,7 @@ public class VHDLFile extends ParsableXML
    {
       final Collection<ParsableXML> result;
       final NodeList entities;
-      final int childrens_count;
+      final int children_count;
 
       result = new ArrayList<ParsableXML>();
 
@@ -104,9 +104,9 @@ public class VHDLFile extends ParsableXML
             XPathConstants.NODESET
          );
 
-      childrens_count = entities.getLength();
+      children_count = entities.getLength();
 
-      for (int i = 0; i < childrens_count; ++i)
+      for (int i = 0; i < children_count; ++i)
       {
          result.add(new VHDLEntity(local_id, entities.item(i)));
       }
@@ -122,7 +122,7 @@ public class VHDLFile extends ParsableXML
    {
       final Collection<ParsableXML> result;
       final NodeList architectures;
-      final int childrens_count;
+      final int children_count;
 
       result = new ArrayList<ParsableXML>();
 
@@ -133,9 +133,9 @@ public class VHDLFile extends ParsableXML
             XPathConstants.NODESET
          );
 
-      childrens_count = architectures.getLength();
+      children_count = architectures.getLength();
 
-      for (int i = 0; i < childrens_count; ++i)
+      for (int i = 0; i < children_count; ++i)
       {
          result.add(new VHDLArchitecture(local_id, architectures.item(i)));
       }

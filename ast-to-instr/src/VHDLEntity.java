@@ -231,7 +231,7 @@ public class VHDLEntity extends ParsableXML
    {
       final Collection<ParsableXML> result;
       final NodeList ports;
-      final int childrens_count;
+      final int children_count;
 
       result = new ArrayList<ParsableXML>();
 
@@ -242,9 +242,9 @@ public class VHDLEntity extends ParsableXML
             XPathConstants.NODESET
          );
 
-      childrens_count = ports.getLength();
+      children_count = ports.getLength();
 
-      for (int i = 0; i < childrens_count; ++i)
+      for (int i = 0; i < children_count; ++i)
       {
          result.add(new VHDLPort(local_id, ports.item(i)));
       }
@@ -260,7 +260,7 @@ public class VHDLEntity extends ParsableXML
    {
       final Collection<ParsableXML> result;
       final NodeList generics;
-      final int childrens_count;
+      final int children_count;
 
       result = new ArrayList<ParsableXML>();
 
@@ -271,9 +271,9 @@ public class VHDLEntity extends ParsableXML
             XPathConstants.NODESET
          );
 
-      childrens_count = generics.getLength();
+      children_count = generics.getLength();
 
-      for (int i = 0; i < childrens_count; ++i)
+      for (int i = 0; i < children_count; ++i)
       {
          result.add(new VHDLGeneric(local_id, generics.item(i)));
       }

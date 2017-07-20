@@ -116,4 +116,10 @@ public class Main
          }
       }
    }
+
+   public static boolean node_is_function_or_literal (final String xml_id)
+   {
+      /* TODO */
+      return false;
+   }
 }

@@ -11,11 +11,25 @@ import java.util.Collection;
 /* If Statement Node */
 public class VHDLISNode extends VHDLNode
 {
-   private static final XPathExpression XPE_FIND_SUB_NODES;
+   private static final XPathExpression XPE_FIND_CONDITION;
+   private static final XPathExpression XPE_FIND_NAMED_ENTITIES;
+   private static final XPathExpression XPE_FIND_TRUE_BRANCH;
+   private static final XPathExpression XPE_FIND_ELSE_BRANCH;
 
    static
    {
-      XPE_FIND_SUB_NODES = XMLManager.compile_or_die("./el");
+      XPE_FIND_CONDITION = XMLManager.compile_or_die("./condition");
+      XPE_FIND_NAMED_ENTITIES = XMLManager.compile_or_die(".//named_entity");
+
+      XPE_FIND_TRUE_BRANCH = XMLManager.compile_or_die
+      (
+         "./sequential_statement_chain"
+      );
+
+      XPE_FIND_ELSE_BRANCH = XMLManager.compile_or_die
+      (
+         "./else_clause/sequential_statement_chain"
+      );
    }
 
    public VHDLISNode
@@ -41,7 +55,168 @@ public class VHDLISNode extends VHDLNode
    public Collection<ParsableXML> parse ()
    throws XPathExpressionException
    {
+      final Collection<ParsableXML> result;
+      final String xml_id;
+      final IDs local_id;
+
+      result = new ArrayList<ParsableXML>();
+
+      xml_id = XMLManager.get_attribute(xml_node, "id");
+
+      local_id = IDs.get_id_from_xml_id(xml_id, "node");
+
+      /** Functions ***********************************************************/
+      handle_function_label(local_id);
+      handle_function_kind(local_id);
+      handle_function_depth(local_id);
+      handle_function_expression(local_id);
+
+      /** Predicates **********************************************************/
+      handle_predicate_has_option(local_id);
+      handle_predicate_expr_reads(local_id);
+      handle_predicate_is_final(local_id);
+
+      /** Children ************************************************************/
+      result.add(handle_true_branch(local_id));
+      result.add(handle_else_branch(local_id));
+
+      return result;
+   }
+
+   /***************************************************************************/
+   /** Functions **************************************************************/
+   /***************************************************************************/
+   private void handle_function_label
+   (
+      final IDs local_id
+   )
+   {
+      Functions.add_entry
+      (
+         "label",
+         local_id,
+         Strings.get_id_from_string
+         (
+            XMLManager.get_attribute(xml_node, "label")
+         )
+      );
+   }
+
+   private void handle_function_kind
+   (
+      final IDs local_id
+   )
+   {
+      Functions.add_entry
+      (
+         "kind",
+         local_id,
+         Strings.get_id_from_string("if")
+      );
+   }
+
+   private void handle_function_depth
+   (
+      final IDs local_id
+   )
+   {
+      Functions.add_entry
+      (
+         "kind",
+         local_id,
+         Strings.get_id_from_string
+         (
+            Integer.toString(depth)
+         )
+      );
+   }
+
+   private void handle_function_expression
+   (
+      final IDs local_id
+   )
+   {
       /* TODO */
+   }
+
+   /***************************************************************************/
+   /** Predicates *************************************************************/
+   /***************************************************************************/
+   private void handle_predicate_has_option
+   (
+      final IDs local_id
+   )
+   {
+      for (final String s: attributes)
+      {
+         Predicates.add_entry
+         (
+            "has_option",
+            local_id,
+            Strings.get_id_from_string(s)
+         );
+      }
+   }
+
+   private void handle_predicate_expr_reads
+   (
+      final IDs local_id
+   )
+   throws XPathExpressionException
+   {
+      final NodeList named_entities;
+      final int named_entities_count;
+
+      named_entities =
+         (NodeList) XPE_FIND_NAMED_ENTITIES.evaluate
+         (
+            xml_node,
+            XPathConstants.NODESET
+         );
+
+      named_entities_count = named_entities.getLength();
+
+      for (int i = 0; i < named_entities_count; ++i)
+      {
+         final String ref;
+
+         ref = XMLManager.get_attribute(named_entities.item(0), "ref");
+
+         if (!Main.node_is_function_or_literal(ref))
+         {
+            Predicates.add_entry
+            (
+               "expr_reads",
+               local_id,
+               Waveforms.get_associated_waveform_id
+               (
+                  IDs.get_id_from_xml_id(ref, null)
+               )
+            );
+         }
+      }
+   }
+
+   private void handle_predicate_is_final
+   (
+      final IDs local_id
+   )
+   {
+      /* TODO */
+      /* ((next_node == null) && !(has_else)) => is_final */
+   }
+
+   /***************************************************************************/
+   /** Children ***************************************************************/
+   /***************************************************************************/
+   private Collection<ParsableXML> handle_true_branch
+   (
+      final IDs local_id
+   )
+   {
+      /* TODO */
+
       return null;
    }
+
 }
