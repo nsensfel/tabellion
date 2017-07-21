@@ -5,8 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 /* Case Statement Node */
 public class VHDLCSNode extends VHDLNode
@@ -57,14 +56,14 @@ public class VHDLCSNode extends VHDLNode
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final String xml_id;
       final IDs local_id;
-
-      result = new ArrayList<ParsableXML>();
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
@@ -81,10 +80,8 @@ public class VHDLCSNode extends VHDLNode
       handle_predicate_expr_reads(local_id);
 
       /** Children ************************************************************/
-      result.addAll(handle_when_branches(local_id));
-      result.addAll(handle_others_branch(local_id));
-
-      return result;
+      handle_when_branches(local_id, waiting_list);
+      handle_others_branch(local_id, waiting_list);
    }
 
    /***************************************************************************/
@@ -204,17 +201,15 @@ public class VHDLCSNode extends VHDLNode
    /***************************************************************************/
    /** Children ***************************************************************/
    /***************************************************************************/
-   private Collection<ParsableXML> handle_when_branches
+   private void handle_when_branches
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final NodeList when_branches;
       final int when_branches_length;
-
-      result = new ArrayList<ParsableXML>();
 
       when_branches =
          (NodeList) XPE_FIND_WHEN_BRANCHES.evaluate
@@ -228,7 +223,7 @@ public class VHDLCSNode extends VHDLNode
 
       for (int i = 0; i < when_branches_length; ++i)
       {
-         result.add
+         waiting_list.add
          (
             new VHDLWNode
             (
@@ -240,20 +235,16 @@ public class VHDLCSNode extends VHDLNode
             )
          );
       }
-
-      return result;
    }
 
-   private Collection<ParsableXML> handle_others_branch
+   private void handle_others_branch
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final Node others_branch;
-
-      result = new ArrayList<ParsableXML>();
 
       others_branch =
          (Node) XPE_FIND_OTHERS_BRANCH.evaluate
@@ -284,7 +275,7 @@ public class VHDLCSNode extends VHDLNode
       }
       else
       {
-         result.add
+         waiting_list.push
          (
             new VHDLWNode
             (
@@ -296,7 +287,5 @@ public class VHDLCSNode extends VHDLNode
             )
          );
       }
-
-      return result;
    }
 }

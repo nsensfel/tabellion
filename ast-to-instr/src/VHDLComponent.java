@@ -5,17 +5,29 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 public class VHDLComponent extends ParsableXML
 {
    private static final XPathExpression XPE_FIND_PORT_MAPS;
+   private static final XPathExpression XPE_FIND_REAL_PORTS;
    private static final XPathExpression XPE_FIND_GENERIC_MAPS;
 
    static
    {
-      XPE_FIND_PORT_MAPS = null; /* TODO */
+      XPE_FIND_PORT_MAPS =
+         XMLManager.compile_or_die
+         (
+            "./el[@kind=\"association_element_by_expression\"]"
+         );
+
+      XPE_FIND_REAL_PORTS =
+         XMLManager.compile_or_die
+         (
+            "./port_chain/el[@kind=\"interface_signal_declaration\"]"
+         );
+
+      /* TODO */
       XPE_FIND_GENERIC_MAPS = null; /* TODO */
    }
 
@@ -29,14 +41,14 @@ public class VHDLComponent extends ParsableXML
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final String xml_id;
       final IDs local_id;
-
-      result = new ArrayList<ParsableXML>();
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
@@ -54,8 +66,6 @@ public class VHDLComponent extends ParsableXML
       /** Predicates **********************************************************/
       handle_predicate_port_maps(local_id);
       handle_predicate_generic_maps(local_id);
-
-      return result;
    }
 
    /***************************************************************************/

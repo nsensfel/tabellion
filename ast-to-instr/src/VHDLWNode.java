@@ -5,8 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 /* When Node */
 public class VHDLWNode extends VHDLNode
@@ -49,14 +48,14 @@ public class VHDLWNode extends VHDLNode
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final String xml_id;
       final IDs local_id;
-
-      result = new ArrayList<ParsableXML>();
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
@@ -73,9 +72,7 @@ public class VHDLWNode extends VHDLNode
       handle_predicate_expr_reads(local_id);
 
       /** Children ************************************************************/
-      result.add(handle_body(local_id));
-
-      return result;
+      handle_body(local_id, waiting_list);
    }
 
    /***************************************************************************/
@@ -193,9 +190,10 @@ public class VHDLWNode extends VHDLNode
    /** Children ***************************************************************/
    /***************************************************************************/
 
-   private ParsableXML handle_body
+   private void handle_body
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
@@ -208,17 +206,17 @@ public class VHDLWNode extends VHDLNode
             XPathConstants.NODE
          );
 
-      return
+      waiting_list.push
+      (
+         new VHDLSSCNode
          (
-            new VHDLSSCNode
-            (
-               parent_id,
-               body,
-               local_id,
-               next_node,
-               (depth + 1),
-               new String[] {"COND_WAS_TRUE"}
-            )
-         );
+            parent_id,
+            body,
+            local_id,
+            next_node,
+            (depth + 1),
+            new String[] {"COND_WAS_TRUE"}
+         )
+      );
    }
 }

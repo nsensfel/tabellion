@@ -101,7 +101,7 @@ public class Main
          try
          {
             System.out.println("Parsing XML...");
-            children = waiting_list.pop().parse();
+            waiting_list.pop().parse(waiting_list);
          }
          catch (final XPathExpressionException xpee)
          {
@@ -114,17 +114,47 @@ public class Main
 
             return;
          }
-
-         for (final ParsableXML c: children)
-         {
-            waiting_list.push(c);
-         }
       }
    }
 
    public static boolean node_is_function_or_literal (final String xml_id)
+   throws XPathExpressionException
    {
-      /* TODO */
+      final XPathExpression xpe_find_el_from_id;
+      final Node n;
+      final String kind;
+
+      xpe_find_el_from_id =
+         XMLManager.compile_or_die
+         (
+            ".//el[@id=\""
+            + xml_id
+            + "\"]"
+         );
+
+      n =
+         (Node) xpe_find_el_from_id.evaluate
+         (
+            root,
+            XPathConstants.NODE
+         );
+
+      if (n == (Node) null)
+      {
+         return true;
+      }
+
+      kind = XMLManager.get_attribute(n, "kind");
+
+      if (kind.equals("function_declaration"))
+      {
+         return true;
+      }
+      else if (kind.equals("enumeration_literal"))
+      {
+         return true;
+      }
+
       return false;
    }
 

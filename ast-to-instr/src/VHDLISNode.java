@@ -5,8 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 /* If Statement Node */
 public class VHDLISNode extends VHDLNode
@@ -56,14 +55,14 @@ public class VHDLISNode extends VHDLNode
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final String xml_id;
       final IDs local_id;
-
-      result = new ArrayList<ParsableXML>();
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
@@ -80,10 +79,8 @@ public class VHDLISNode extends VHDLNode
       handle_predicate_expr_reads(local_id);
 
       /** Children ************************************************************/
-      result.add(handle_true_branch(local_id));
-      result.addAll(handle_else_branch(local_id));
-
-      return result;
+      handle_true_branch(local_id, waiting_list);
+      handle_else_branch(local_id, waiting_list);
    }
 
    /***************************************************************************/
@@ -203,9 +200,10 @@ public class VHDLISNode extends VHDLNode
    /***************************************************************************/
    /** Children ***************************************************************/
    /***************************************************************************/
-   private ParsableXML handle_true_branch
+   private void handle_true_branch
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
@@ -218,31 +216,28 @@ public class VHDLISNode extends VHDLNode
             XPathConstants.NODE
          );
 
-      return
+      waiting_list.push
+      (
+         new VHDLSSCNode
          (
-            new VHDLSSCNode
-            (
-               parent_id,
-               true_branch,
-               local_id,
-               next_node,
-               (depth + 1),
-               new String[] {"COND_WAS_TRUE"}
-            )
-         );
-
+            parent_id,
+            true_branch,
+            local_id,
+            next_node,
+            (depth + 1),
+            new String[] {"COND_WAS_TRUE"}
+         )
+      );
    }
 
-   private Collection<ParsableXML> handle_else_branch
+   private void handle_else_branch
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final Node else_branch;
-
-      result = new ArrayList<ParsableXML>();
 
       else_branch =
          (Node) XPE_FIND_ELSE_BRANCH.evaluate
@@ -273,7 +268,7 @@ public class VHDLISNode extends VHDLNode
       }
       else
       {
-         result.add
+         waiting_list.push
          (
             new VHDLSSCNode
             (
@@ -286,7 +281,5 @@ public class VHDLISNode extends VHDLNode
             )
          );
       }
-
-      return result;
    }
 }

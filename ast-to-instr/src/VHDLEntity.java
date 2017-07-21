@@ -5,8 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 public class VHDLEntity extends ParsableXML
 {
@@ -38,14 +37,14 @@ public class VHDLEntity extends ParsableXML
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final String xml_id;
       final IDs local_id;
-
-      result = new ArrayList<ParsableXML>();
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
@@ -67,10 +66,8 @@ public class VHDLEntity extends ParsableXML
       handle_predicate_end_has_identifier(local_id);
 
       /** Children ************************************************************/
-      result.addAll(handle_child_ports(local_id));
-      result.addAll(handle_child_generics(local_id));
-
-      return result;
+      handle_child_ports(local_id, waiting_list);
+      handle_child_generics(local_id, waiting_list);
    }
 
    /***************************************************************************/
@@ -232,17 +229,15 @@ public class VHDLEntity extends ParsableXML
    /***************************************************************************/
    /** Children ***************************************************************/
    /***************************************************************************/
-   private Collection<ParsableXML> handle_child_ports
+   private void handle_child_ports
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final NodeList ports;
       final int children_count;
-
-      result = new ArrayList<ParsableXML>();
 
       ports =
          (NodeList) XPE_FIND_PORTS.evaluate
@@ -255,23 +250,19 @@ public class VHDLEntity extends ParsableXML
 
       for (int i = 0; i < children_count; ++i)
       {
-         result.add(new VHDLPort(local_id, ports.item(i)));
+         waiting_list.push(new VHDLPort(local_id, ports.item(i)));
       }
-
-      return result;
    }
 
-   private Collection<ParsableXML> handle_child_generics
+   private void handle_child_generics
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final NodeList generics;
       final int children_count;
-
-      result = new ArrayList<ParsableXML>();
 
       generics =
          (NodeList) XPE_FIND_GENERICS.evaluate
@@ -284,9 +275,7 @@ public class VHDLEntity extends ParsableXML
 
       for (int i = 0; i < children_count; ++i)
       {
-         result.add(new VHDLGeneric(local_id, generics.item(i)));
+         waiting_list.push(new VHDLGeneric(local_id, generics.item(i)));
       }
-
-      return result;
    }
 }

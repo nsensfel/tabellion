@@ -5,8 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 public class VHDLArchitecture extends ParsableXML
 {
@@ -45,14 +44,14 @@ public class VHDLArchitecture extends ParsableXML
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final String xml_id;
       final IDs local_id;
-
-      result = new ArrayList<ParsableXML>();
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
@@ -75,11 +74,9 @@ public class VHDLArchitecture extends ParsableXML
       handle_predicate_end_has_identifier(local_id);
 
       /** Children ************************************************************/
-      result.addAll(handle_child_signals(local_id));
-      result.addAll(handle_child_processes(local_id));
-      result.addAll(handle_child_components(local_id));
-
-      return result;
+      handle_child_signals(local_id, waiting_list);
+      handle_child_processes(local_id, waiting_list);
+      handle_child_components(local_id, waiting_list);
    }
 
    /***************************************************************************/
@@ -228,17 +225,15 @@ public class VHDLArchitecture extends ParsableXML
    /***************************************************************************/
    /** Children ***************************************************************/
    /***************************************************************************/
-   private Collection<ParsableXML> handle_child_signals
+   private void handle_child_signals
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final NodeList signals;
       final int children_count;
-
-      result = new ArrayList<ParsableXML>();
 
       signals =
          (NodeList) XPE_FIND_SIGNALS.evaluate
@@ -251,23 +246,19 @@ public class VHDLArchitecture extends ParsableXML
 
       for (int i = 0; i < children_count; ++i)
       {
-         result.add(new VHDLSignal(local_id, signals.item(i)));
+         waiting_list.push(new VHDLSignal(local_id, signals.item(i)));
       }
-
-      return result;
    }
 
-   private Collection<ParsableXML> handle_child_processes
+   private void handle_child_processes
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final NodeList processes;
       final int children_count;
-
-      result = new ArrayList<ParsableXML>();
 
       processes =
          (NodeList) XPE_FIND_PROCESSES.evaluate
@@ -280,23 +271,19 @@ public class VHDLArchitecture extends ParsableXML
 
       for (int i = 0; i < children_count; ++i)
       {
-         result.add(new VHDLProcess(local_id, processes.item(i)));
+         waiting_list.push(new VHDLProcess(local_id, processes.item(i)));
       }
-
-      return result;
    }
 
-   private Collection<ParsableXML> handle_child_components
+   private void handle_child_components
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final NodeList components;
       final int children_count;
-
-      result = new ArrayList<ParsableXML>();
 
       components =
          (NodeList) XPE_FIND_COMPONENTS.evaluate
@@ -309,9 +296,7 @@ public class VHDLArchitecture extends ParsableXML
 
       for (int i = 0; i < children_count; ++i)
       {
-         result.add(new VHDLComponent(local_id, components.item(i)));
+         waiting_list.push(new VHDLComponent(local_id, components.item(i)));
       }
-
-      return result;
    }
 }

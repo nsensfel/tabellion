@@ -5,8 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 public class VHDLProcess extends ParsableXML
 {
@@ -45,14 +44,14 @@ public class VHDLProcess extends ParsableXML
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final String xml_id;
       final IDs local_id;
-
-      result = new ArrayList<ParsableXML>();
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
@@ -84,9 +83,7 @@ public class VHDLProcess extends ParsableXML
       handle_predicate_is_accessed_by(local_id);
 
       /** Children ************************************************************/
-      result.addAll(handle_child_node(local_id));
-
-      return result;
+      handle_child_node(local_id, waiting_list);
    }
 
    /***************************************************************************/
@@ -461,14 +458,14 @@ public class VHDLProcess extends ParsableXML
    /***************************************************************************/
    /** Children ***************************************************************/
    /***************************************************************************/
-   private Collection<ParsableXML> handle_child_node
+   private void handle_child_node
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
       final Node start_node;
-      final Collection<ParsableXML> result;
 
       start_node =
          (Node) XPE_FIND_START_NODE.evaluate
@@ -477,9 +474,7 @@ public class VHDLProcess extends ParsableXML
             XPathConstants.NODE
          );
 
-      result = new ArrayList<ParsableXML>();
-
-      result.add
+      waiting_list.push
       (
          new VHDLSSCNode
          (
@@ -491,7 +486,5 @@ public class VHDLProcess extends ParsableXML
             new String[0] /* No attributes. */
          )
       );
-
-      return result;
    }
 }

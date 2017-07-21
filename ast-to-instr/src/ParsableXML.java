@@ -1,7 +1,6 @@
 import org.w3c.dom.Node;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 import javax.xml.xpath.XPathExpressionException;
 
@@ -20,9 +19,12 @@ public abstract class ParsableXML
       this.xml_node = xml_node;
    }
 
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      return new ArrayList<ParsableXML>();
+
    }
 }

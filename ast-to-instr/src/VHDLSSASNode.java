@@ -5,8 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 /* Simple Signal Assignment Statement Node */
 public class VHDLSSASNode extends VHDLNode
@@ -50,10 +49,12 @@ public class VHDLSSASNode extends VHDLNode
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-
       final String xml_id;
       final IDs local_id;
 
@@ -74,8 +75,6 @@ public class VHDLSSASNode extends VHDLNode
 
       /** Children ************************************************************/
       handle_next_node(local_id);
-
-      return (new ArrayList<ParsableXML>());
    }
 
    /***************************************************************************/

@@ -5,8 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 public class VHDLPort extends ParsableXML
 {
@@ -20,14 +19,14 @@ public class VHDLPort extends ParsableXML
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final String xml_id;
       final IDs local_id;
-
-      result = new ArrayList<ParsableXML>();
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
@@ -57,8 +56,6 @@ public class VHDLPort extends ParsableXML
 
       /** Children ************************************************************/
       handle_child_waveform(local_id);
-
-      return result;
    }
 
    /***************************************************************************/

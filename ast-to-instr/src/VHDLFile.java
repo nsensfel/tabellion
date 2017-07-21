@@ -5,8 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 public class VHDLFile extends ParsableXML
 {
@@ -38,14 +37,14 @@ public class VHDLFile extends ParsableXML
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final String xml_id;
       final IDs local_id;
-
-      result = new ArrayList<ParsableXML>();
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
@@ -57,10 +56,8 @@ public class VHDLFile extends ParsableXML
       /** Predicates **********************************************************/
 
       /** Children ************************************************************/
-      result.addAll(handle_child_entities(local_id));
-      result.addAll(handle_child_architectures(local_id));
-
-      return result;
+      handle_child_entities(local_id, waiting_list);
+      handle_child_architectures(local_id, waiting_list);
    }
 
    /***************************************************************************/
@@ -85,17 +82,15 @@ public class VHDLFile extends ParsableXML
    /***************************************************************************/
    /** Children ***************************************************************/
    /***************************************************************************/
-   private Collection<ParsableXML> handle_child_entities
+   private void handle_child_entities
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final NodeList entities;
       final int children_count;
-
-      result = new ArrayList<ParsableXML>();
 
       entities =
          (NodeList) XPE_FIND_ENTITIES.evaluate
@@ -108,23 +103,19 @@ public class VHDLFile extends ParsableXML
 
       for (int i = 0; i < children_count; ++i)
       {
-         result.add(new VHDLEntity(local_id, entities.item(i)));
+         waiting_list.push(new VHDLEntity(local_id, entities.item(i)));
       }
-
-      return result;
    }
 
-   private Collection<ParsableXML> handle_child_architectures
+   private void handle_child_architectures
    (
-      final IDs local_id
+      final IDs local_id,
+      final Stack<ParsableXML> waiting_list
    )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final NodeList architectures;
       final int children_count;
-
-      result = new ArrayList<ParsableXML>();
 
       architectures =
          (NodeList) XPE_FIND_ARCHITECTURES.evaluate
@@ -137,9 +128,10 @@ public class VHDLFile extends ParsableXML
 
       for (int i = 0; i < children_count; ++i)
       {
-         result.add(new VHDLArchitecture(local_id, architectures.item(i)));
+         waiting_list.push
+         (
+            new VHDLArchitecture(local_id, architectures.item(i))
+         );
       }
-
-      return result;
    }
 }

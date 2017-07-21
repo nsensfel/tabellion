@@ -5,8 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
 
 /* Sequential Statement Chain Node */
 /* Not actually a node in the resulting model, though. */
@@ -43,15 +42,15 @@ public class VHDLSSCNode extends VHDLNode
    }
 
    @Override
-   public Collection<ParsableXML> parse ()
+   public void parse
+   (
+      final Stack<ParsableXML> waiting_list
+   )
    throws XPathExpressionException
    {
-      final Collection<ParsableXML> result;
       final NodeList sub_nodes;
       final int intermediary_nodes_count;
       int i;
-
-      result = new ArrayList<ParsableXML>();
 
       sub_nodes =
          (NodeList) XPE_FIND_SUB_NODES.evaluate
@@ -77,14 +76,12 @@ public class VHDLSSCNode extends VHDLNode
                "node"
             );
 
-         result.add(get_vhdl_node(sub_nodes.item(i), next_node, i));
+         waiting_list.push(get_vhdl_node(sub_nodes.item(i), next_node, i));
       }
 
-      result.add(get_vhdl_node(sub_nodes.item(i), next_node, i));
+      waiting_list.push(get_vhdl_node(sub_nodes.item(i), next_node, i));
 
       handle_backward_connection(sub_nodes.item(0));
-
-      return result;
    }
 
    private ParsableXML get_vhdl_node
