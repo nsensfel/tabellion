@@ -7,7 +7,7 @@ public class IDs
 {
    /** Static *****************************************************************/
    private static final Map<String, IDs> FROM_XML;
-   private static final Collection<IDs> ALL_IDS;
+   private static final OutputFile XML_MAP_OUTPUT;
    private static int next_id;
 
    static
@@ -15,12 +15,29 @@ public class IDs
       next_id = 0;
 
       FROM_XML = new HashMap<String, IDs>();
-      ALL_IDS = new ArrayList<IDs>();
-   }
 
+      /* TODO: filename as a param? */
+      XML_MAP_OUTPUT = OutputFile.new_output_file("xml_to_instr.map");
+   }
 
    public static IDs get_id_from_xml_id
    (
+      final String xml_id,
+      final String type
+   )
+   {
+      return
+         get_id_from_xml_id
+         (
+            Main.get_main_output(),
+            xml_id,
+            type
+         );
+   }
+
+   public static IDs get_id_from_xml_id
+   (
+      final OutputFile output,
       final String xml_id,
       final String type
    )
@@ -31,15 +48,24 @@ public class IDs
 
       if (result == null)
       {
-         result = generate_new_id(type);
+         result = generate_new_id(output, type);
 
          FROM_XML.put(xml_id, result);
+
+         XML_MAP_OUTPUT.write("(xml->instr ");
+         XML_MAP_OUTPUT.write(xml_id);
+         XML_MAP_OUTPUT.write(" ");
+         XML_MAP_OUTPUT.write(Integer.toString(result.get_value()));
+         XML_MAP_OUTPUT.write(")");
+         XML_MAP_OUTPUT.insert_newline();
+
       }
       else if ((result.type == null) && (type != null))
       {
          /* This allows us to get an ID from a simple reference. */
-         /* TODO: Don't forget to report any (type == null) at the end. */
          result.type = type;
+
+         result.add_to_output(output);
       }
 
       return result;
@@ -50,23 +76,22 @@ public class IDs
       final String type
    )
    {
+      return generate_new_id(Main.get_main_output(), type);
+   }
+
+   public static IDs generate_new_id
+   (
+      final OutputFile output,
+      final String type
+   )
+   {
       final IDs result;
 
       result = new IDs(type);
 
-      ALL_IDS.add(result);
-
-      /* TODO: remove, it's for debug. */
       if (type != null)
       {
-         System.out.println
-         (
-            "[ID] ("
-            + result.get_type()
-            + " "
-            + result.get_value()
-            + ")"
-         );
+         result.add_to_output(output);
       }
 
       return result;
@@ -93,5 +118,15 @@ public class IDs
    public int get_value ()
    {
       return value;
+   }
+
+   private void add_to_output (final OutputFile output)
+   {
+      output.write("(add_element ");
+      output.write(type);
+      output.write(" ");
+      output.write(Integer.toString(value));
+      output.write(")");
+      output.insert_newline();
    }
 }

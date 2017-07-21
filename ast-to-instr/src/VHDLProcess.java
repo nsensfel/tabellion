@@ -478,6 +478,12 @@ public class VHDLProcess extends ParsableXML
       (
          new VHDLSSCNode
          (
+            OutputFile.new_output_file
+            (
+               "cfg_" /* TODO: Prefix as parameter? */
+               + Integer.toString(local_id.get_value())
+               + ".mod" /* TODO: Suffix as parameter? */
+            ),
             local_id,
             start_node,
             null, /* There is nothing before this sequence. */

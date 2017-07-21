@@ -6,15 +6,26 @@ public class Functions
       final IDs... params
    )
    {
-      System.out.print("[FUN] (");
-      System.out.print(function_name);
+      add_entry(Main.get_main_output(), function_name, params);
+   }
+
+   public static void add_entry
+   (
+      final OutputFile output,
+      final String function_name,
+      final IDs... params
+   )
+   {
+      output.write("(set_function ");
+
+      output.write(function_name);
 
       for (final IDs param: params)
       {
-         System.out.print(" " + param.get_value());
+         output.write(" " + param.get_value());
       }
 
-      System.out.println(")");
-      /* TODO */
+      output.write(")");
+      output.insert_newline();
    }
 }

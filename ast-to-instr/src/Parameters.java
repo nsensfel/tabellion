@@ -41,6 +41,11 @@ public class Parameters
       return xml_file;
    }
 
+   public String get_main_output_filename()
+   {
+      return "structural.mod";
+   }
+
    public boolean are_valid ()
    {
       return are_valid;

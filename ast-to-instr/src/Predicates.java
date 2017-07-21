@@ -6,15 +6,26 @@ public class Predicates
       final IDs... params
    )
    {
-      System.out.print("[PRE] (");
-      System.out.print(predicate_name);
+      add_entry(Main.get_main_output(), predicate_name, params);
+   }
+
+   public static void add_entry
+   (
+      final OutputFile output,
+      final String predicate_name,
+      final IDs... params
+   )
+   {
+      output.write("(");
+
+      output.write(predicate_name);
 
       for (final IDs param: params)
       {
-         System.out.print(" " + param.get_value());
+         output.write(" " + param.get_value());
       }
 
-      System.out.println(")");
-      /* TODO */
+      output.write(")");
+      output.insert_newline();
    }
 }

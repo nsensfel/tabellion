@@ -21,6 +21,7 @@ public class VHDLSSCNode extends VHDLNode
 
    public VHDLSSCNode
    (
+      final OutputFile output,
       final IDs parent_id,
       final Node xml_node,
       final IDs prev_node, /* can't simply forward ref to SSC */
@@ -31,6 +32,7 @@ public class VHDLSSCNode extends VHDLNode
    {
       super
       (
+         output,
          parent_id,
          xml_node,
          next_node,
@@ -68,6 +70,7 @@ public class VHDLSSCNode extends VHDLNode
          next_node =
             IDs.get_id_from_xml_id
             (
+               output,
                XMLManager.get_attribute
                (
                   sub_nodes.item(i + 1),
@@ -108,15 +111,42 @@ public class VHDLSSCNode extends VHDLNode
 
       if (node_kind.equals("if_statement"))
       {
-         return new VHDLISNode(parent_id, node, next_node, depth, attributes);
+         return
+            new VHDLISNode
+            (
+               output,
+               parent_id,
+               node,
+               next_node,
+               depth,
+               attributes
+            );
       }
       else if (node_kind.equals("simple_signal_assignment_statement"))
       {
-         return new VHDLSSASNode(parent_id, node, next_node, depth, attributes);
+         return
+            new VHDLSSASNode
+            (
+               output,
+               parent_id,
+               node,
+               next_node,
+               depth,
+               attributes
+            );
       }
       else if (node_kind.equals("case_statement"))
       {
-         return new VHDLCSNode(parent_id, node, next_node, depth, attributes);
+         return
+            new VHDLCSNode
+            (
+               output,
+               parent_id,
+               node,
+               next_node,
+               depth,
+               attributes
+            );
       }
 
       System.err.println
@@ -141,6 +171,7 @@ public class VHDLSSCNode extends VHDLNode
       first_node_id =
          IDs.get_id_from_xml_id
          (
+            output,
             XMLManager.get_attribute
             (
                first_node,
@@ -154,6 +185,7 @@ public class VHDLSSCNode extends VHDLNode
          /* First node of the process */
          Predicates.add_entry
          (
+            output,
             "is_start_node",
             first_node_id,
             parent_id
@@ -164,6 +196,7 @@ public class VHDLSSCNode extends VHDLNode
          /* First node of the process */
          Predicates.add_entry
          (
+            output,
             "connect_to",
             prev_node,
             first_node_id

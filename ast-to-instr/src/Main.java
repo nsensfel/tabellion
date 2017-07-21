@@ -13,7 +13,8 @@ public class Main
 {
    private static final XPathExpression XPE_FIND_ALL_VHDL_FILES;
    private static Parameters PARAMETERS;
-   private static Document root;
+   private static Document XML_ROOT;
+   private static OutputFile MAIN_OUTPUT;
 
    static
    {
@@ -38,7 +39,7 @@ public class Main
 
       try
       {
-         root = XMLManager.get_document(PARAMETERS.get_xml_file());
+         XML_ROOT = XMLManager.get_document(PARAMETERS.get_xml_file());
       }
       catch (final Exception e)
       {
@@ -54,6 +55,12 @@ public class Main
          return;
       }
 
+      MAIN_OUTPUT =
+         OutputFile.new_output_file
+         (
+            PARAMETERS.get_main_output_filename()
+         );
+
       try
       {
          vhdl_files =
@@ -61,7 +68,7 @@ public class Main
             (
                (NodeList) XPE_FIND_ALL_VHDL_FILES.evaluate
                (
-                  root,
+                  XML_ROOT,
                   XPathConstants.NODESET
                )
             );
@@ -79,6 +86,8 @@ public class Main
       }
 
       parse_content(vhdl_files);
+
+      OutputFile.close_all();
    }
 
    private static void parse_content (final Collection<Node> vhdl_files)
@@ -90,7 +99,6 @@ public class Main
 
       for (final Node f: vhdl_files)
       {
-         System.out.println("New VHDL file in the waiting list.");
          waiting_list.push(new VHDLFile(null, f));
       }
 
@@ -100,7 +108,6 @@ public class Main
 
          try
          {
-            System.out.println("Parsing XML...");
             waiting_list.pop().parse(waiting_list);
          }
          catch (final XPathExpressionException xpee)
@@ -135,7 +142,7 @@ public class Main
       n =
          (Node) xpe_find_el_from_id.evaluate
          (
-            root,
+            XML_ROOT,
             XPathConstants.NODE
          );
 
@@ -160,6 +167,11 @@ public class Main
 
    public static Document get_xml_root ()
    {
-      return root;
+      return XML_ROOT;
+   }
+
+   public static OutputFile get_main_output ()
+   {
+      return MAIN_OUTPUT;
    }
 }

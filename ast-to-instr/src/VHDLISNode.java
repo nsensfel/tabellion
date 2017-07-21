@@ -37,6 +37,7 @@ public class VHDLISNode extends VHDLNode
 
    public VHDLISNode
    (
+      final OutputFile output,
       final IDs parent_id,
       final Node xml_node,
       final IDs next_node,
@@ -46,6 +47,7 @@ public class VHDLISNode extends VHDLNode
    {
       super
       (
+         output,
          parent_id,
          xml_node,
          next_node,
@@ -66,7 +68,7 @@ public class VHDLISNode extends VHDLNode
 
       xml_id = XMLManager.get_attribute(xml_node, "id");
 
-      local_id = IDs.get_id_from_xml_id(xml_id, "node");
+      local_id = IDs.get_id_from_xml_id(output, xml_id, "node");
 
       /** Functions ***********************************************************/
       handle_function_label(local_id);
@@ -93,6 +95,7 @@ public class VHDLISNode extends VHDLNode
    {
       Functions.add_entry
       (
+         output,
          "label",
          local_id,
          Strings.get_id_from_string
@@ -109,6 +112,7 @@ public class VHDLISNode extends VHDLNode
    {
       Functions.add_entry
       (
+         output,
          "kind",
          local_id,
          Strings.get_id_from_string("if")
@@ -122,6 +126,7 @@ public class VHDLISNode extends VHDLNode
    {
       Functions.add_entry
       (
+         output,
          "depth",
          local_id,
          Strings.get_id_from_string
@@ -151,6 +156,7 @@ public class VHDLISNode extends VHDLNode
       {
          Predicates.add_entry
          (
+            output,
             "has_option",
             local_id,
             Strings.get_id_from_string(s)
@@ -186,6 +192,7 @@ public class VHDLISNode extends VHDLNode
          {
             Predicates.add_entry
             (
+               output,
                "expr_reads",
                local_id,
                Waveforms.get_associated_waveform_id
@@ -220,6 +227,7 @@ public class VHDLISNode extends VHDLNode
       (
          new VHDLSSCNode
          (
+            output,
             parent_id,
             true_branch,
             local_id,
@@ -252,6 +260,7 @@ public class VHDLISNode extends VHDLNode
          {
             Predicates.add_entry
             (
+               output,
                "is_final",
                local_id
             );
@@ -260,6 +269,7 @@ public class VHDLISNode extends VHDLNode
          {
             Predicates.add_entry
             (
+               output,
                "node_connect",
                local_id,
                next_node
@@ -272,6 +282,7 @@ public class VHDLISNode extends VHDLNode
          (
             new VHDLSSCNode
             (
+               output,
                parent_id,
                else_branch,
                local_id,

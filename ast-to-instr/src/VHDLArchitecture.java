@@ -9,12 +9,19 @@ import java.util.Stack;
 
 public class VHDLArchitecture extends ParsableXML
 {
+   private static final XPathExpression XPE_FIND_ENTITY_NAME;
    private static final XPathExpression XPE_FIND_SIGNALS;
    private static final XPathExpression XPE_FIND_PROCESSES;
    private static final XPathExpression XPE_FIND_COMPONENTS;
 
    static
    {
+      XPE_FIND_ENTITY_NAME =
+         XMLManager.compile_or_die
+         (
+            "./entity_name/named_entity"
+         );
+
       XPE_FIND_SIGNALS =
          XMLManager.compile_or_die
          (
@@ -94,8 +101,41 @@ public class VHDLArchitecture extends ParsableXML
    (
       final IDs local_id
    )
+   throws XPathExpressionException
    {
-      /* TODO */
+      final Node entity_name;
+
+      entity_name =
+         (Node) XPE_FIND_ENTITY_NAME.evaluate
+         (
+            xml_node,
+            XPathConstants.NODE
+         );
+
+      if (entity_name == (Node) null)
+      {
+         System.err.println
+         (
+            "[W] Could not find entity the associated with architecture "
+            + local_id
+            + " (XML ID: "
+            + XMLManager.get_attribute(xml_node, "id")
+            + ")."
+         );
+
+         return;
+      }
+
+      Predicates.add_entry
+      (
+         "is_architecture_of",
+         local_id,
+         IDs.get_id_from_xml_id
+         (
+            XMLManager.get_attribute(entity_name, "ref"),
+            "entity"
+         )
+      );
    }
 
 
