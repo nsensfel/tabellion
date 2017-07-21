@@ -9,12 +9,19 @@ import java.util.Stack;
 
 public class VHDLComponent extends ParsableXML
 {
+   private static final XPathExpression XPE_FIND_INST_UNIT;
+   private static final XPathExpression XPE_FIND_BASE_NAME;
+
    private static final XPathExpression XPE_FIND_PORT_MAPS;
    private static final XPathExpression XPE_FIND_REAL_PORTS;
+
    private static final XPathExpression XPE_FIND_GENERIC_MAPS;
 
    static
    {
+      XPE_FIND_INST_UNIT = XMLManager.compile_or_die("./instantiated_unit");
+      XPE_FIND_BASE_NAME = XMLManager.compile_or_die("./base_name");
+
       XPE_FIND_PORT_MAPS =
          XMLManager.compile_or_die
          (
@@ -27,7 +34,6 @@ public class VHDLComponent extends ParsableXML
             "./port_chain/el[@kind=\"interface_signal_declaration\"]"
          );
 
-      /* TODO */
       XPE_FIND_GENERIC_MAPS = null; /* TODO */
    }
 
@@ -79,12 +85,120 @@ public class VHDLComponent extends ParsableXML
       Predicates.add_entry("belongs_to_architecture", local_id, parent_id);
    }
 
+   private Node find_entity_from_internal_ref (Node current_node)
+   throws XPathExpressionException
+   {
+      XPathExpression current_query;
+
+      /*
+       * Get the item containing the reference to the internal description
+       * of this component.
+       */
+      current_node =
+         (Node) XPE_FIND_BASE_NAME.evaluate
+         (
+            current_node,
+            XPathConstants.NODE
+         );
+
+      /* Get the referenced component declaration. */
+      current_query =
+         XMLManager.compile_or_die
+         (
+            "./../../declaration_chain/el[@kind=\"component_declaration\"]"
+            + "[@id=\""
+            + XMLManager.get_attribute(current_node, "ref")
+            + "\"]"
+         );
+      current_node =
+         (Node) current_query.evaluate
+         (
+            xml_node,
+            XPathConstants.NODE
+         );
+
+      /* Actually get the entity. */
+      current_query =
+         XMLManager.compile_or_die
+         (
+            ".//library_unit[@kind=\"entity_declaration\"][@identifier=\""
+            + XMLManager.get_attribute(current_node, "identifier")
+            + "\"]"
+         );
+
+      return
+         (Node) current_query.evaluate
+         (
+            current_node,
+            XPathConstants.NODE
+         );
+   }
+
    private void handle_link_to_entity
    (
       final IDs local_id
    )
+   throws XPathExpressionException
    {
-      /* TODO */
+      final String kind;
+      Node current_node;
+
+      current_node =
+         (Node) XPE_FIND_INST_UNIT.evaluate
+         (
+            xml_node,
+            XPathConstants.NODE
+         );
+
+      kind = XMLManager.get_attribute(current_node, "kind");
+
+      if (kind.equals("simple_name"))
+      {
+         current_node = find_entity_from_internal_ref(current_node);
+      }
+      else if (kind.equals("entity_aspect_entity"))
+      {
+         /* TODO */
+         //current_node = find_entity_from_external_ref(current_node);
+      }
+      else
+      {
+         System.err.println
+         (
+            "[E] Unsupported component instantiation type for element "
+            + local_id.get_value()
+            + " (XML_ID: "
+            + XMLManager.get_attribute(xml_node, "id")
+            + ")."
+         );
+
+         return;
+      }
+
+      if (current_node == (Node) null)
+      {
+         System.err.println
+         (
+            "[E] Could not find any entity for the component instantiation "
+            + local_id.get_value()
+            + " (XML_ID: "
+            + XMLManager.get_attribute(xml_node, "id")
+            + ")."
+         );
+
+         return;
+      }
+
+      Predicates.add_entry
+      (
+         "is_component_of",
+         local_id,
+         IDs.get_id_from_xml_id
+         (
+            XMLManager.get_attribute(current_node, "id"),
+            "entity"
+         )
+      );
    }
 
    /***************************************************************************/

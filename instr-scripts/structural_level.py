@@ -234,9 +234,9 @@ def handle_component_external_ref (
 
     inst_list_output.write(
         "(is_component_of "
-        + component.attrib.get("id")
+        + id_manager.get_id_from_xml(component.attrib.get("id"))
         + " "
-        + linked_entity_id
+        + id_manager.get_id_from_xml(linked_entity_id)
         + ")\n"
     )
 
