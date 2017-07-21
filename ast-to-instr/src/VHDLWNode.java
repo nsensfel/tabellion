@@ -12,6 +12,7 @@ import java.util.Collection;
 public class VHDLWNode extends VHDLNode
 {
    private static final XPathExpression XPE_FIND_NAMED_ENTITIES;
+   private static final XPathExpression XPE_FIND_BODY;
 
    static
    {
@@ -19,6 +20,12 @@ public class VHDLWNode extends VHDLNode
          XMLManager.compile_or_die
          (
             "./choice_expression//named_entity"
+         );
+
+      XPE_FIND_BODY =
+         XMLManager.compile_or_die
+         (
+            "./associated_chain"
          );
    }
 
@@ -66,7 +73,7 @@ public class VHDLWNode extends VHDLNode
       handle_predicate_expr_reads(local_id);
 
       /** Children ************************************************************/
-      //result.add(handle_body(local_id));
+      result.add(handle_body(local_id));
 
       return result;
    }
@@ -180,5 +187,38 @@ public class VHDLWNode extends VHDLNode
             );
          }
       }
+   }
+
+   /***************************************************************************/
+   /** Children ***************************************************************/
+   /***************************************************************************/
+
+   private ParsableXML handle_body
+   (
+      final IDs local_id
+   )
+   throws XPathExpressionException
+   {
+      final Node body;
+
+      body =
+         (Node) XPE_FIND_BODY.evaluate
+         (
+            xml_node,
+            XPathConstants.NODE
+         );
+
+      return
+         (
+            new VHDLSSCNode
+            (
+               parent_id,
+               body,
+               local_id,
+               next_node,
+               (depth + 1),
+               new String[] {"COND_WAS_TRUE"}
+            )
+         );
    }
 }
