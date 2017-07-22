@@ -55,6 +55,10 @@ public class ControlFlow
          {
             success = handle_add_connect_to(input);
          }
+         else if (input[0].equals("is_terminal"))
+         {
+            success = handle_is_terminal(input);
+         }
          else
          {
             continue;
@@ -106,6 +110,21 @@ public class ControlFlow
       return true;
    }
 
+   private static boolean handle_is_terminal
+   (
+      final String[] input
+   )
+   {
+      if (input.length != 2)
+      {
+         return false;
+      }
+
+      Node.handle_is_terminal(input[1]);
+
+      return true;
+   }
+
    private static boolean handle_add_connect_to
    (
       final String[] input
@@ -118,4 +137,6 @@ public class ControlFlow
 
       return Node.handle_connect_to(input[1], input[2]);
    }
+
+   private ControlFlow () {} /* Utility Class */
 }

@@ -5,28 +5,6 @@ public class Path
    private final ArrayList<Node> nodes;
    private final Node last_node;
 
-   private Path (final Node start)
-   {
-      nodes = new ArrayList<Node>();
-
-      nodes.add(start);
-
-      last_node = start;
-   }
-
-   private Path (final ArrayList<Node> nodes, final Node last_node)
-   {
-      this.nodes = nodes;
-      this.last_node = last_node;
-
-      this.nodes.add(last_node);
-   }
-
-   private Path add_step (final Node n)
-   {
-      return new Path((ArrayList<Node>) nodes.clone(), n);
-   }
-
    public static Collection<Path> get_all_paths_from (final String root)
    {
       final Collection<Path> result;
@@ -68,6 +46,10 @@ public class Path
          }
          else
          {
+            if (current_node.is_terminal())
+            {
+               result.add(current_path);
+            }
             for (final Node next: next_nodes)
             {
                waiting_list.push(current_path.add_step(next));
@@ -76,6 +58,28 @@ public class Path
       }
 
       return result;
+   }
+
+   private Path (final Node start)
+   {
+      nodes = new ArrayList<Node>();
+
+      nodes.add(start);
+
+      last_node = start;
+   }
+
+   private Path (final ArrayList<Node> nodes, final Node last_node)
+   {
+      this.nodes = nodes;
+      this.last_node = last_node;
+
+      this.nodes.add(last_node);
+   }
+
+   private Path add_step (final Node n)
+   {
+      return new Path((ArrayList<Node>) nodes.clone(), n);
    }
 
    public Collection<List<Node>> get_all_subpaths ()

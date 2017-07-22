@@ -22,3 +22,4 @@
 (add_predicate node_connect node node)
 (add_predicate expr_writes node waveform)
 (add_predicate expr_reads node waveform)
+(add_predicate is_terminal node)

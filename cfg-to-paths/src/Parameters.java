@@ -22,7 +22,7 @@ public class Parameters
       );
    }
 
-   public Parameters (String... args)
+   public Parameters (final String... args)
    {
       if (args.length != 4)
       {

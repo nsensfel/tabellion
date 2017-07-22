@@ -268,7 +268,7 @@ public class VHDLCSNode extends VHDLNode
             Predicates.add_entry
             (
                output,
-               "is_final",
+               "is_terminal",
                local_id
             );
          }
