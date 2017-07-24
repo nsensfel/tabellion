@@ -34,7 +34,7 @@
 ;;;; Port ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate is_port_of port entity)
 (add_predicate has_disconnect_flag port)
-(add_predicate is_of_mode port string)
+(add_predicate has_mode port string)
 (add_predicate has_class port)
 (add_predicate is_ref port)
 (add_predicate has_active_flag port)

@@ -18,12 +18,13 @@ CLASSES = $(SOURCES:.java=.class)
 
 ## Makefile Rules ##############################################################
 
-all: $(CLASSES)
+all: structural.mod
 
 clean:
 	rm -f $(CLASSES)
+	rm -f *.mod
 
-run: $(CLASSES) $(REQUIRED_JARS)
+structural.mod: $(CLASSES) $(REQUIRED_JARS) $(INPUT_FILE)
 	$(JAVA) -cp $(CLASSPATH) Main $(INPUT_FILE)
 
 %.class: %.java $(REQUIRED_JARS)

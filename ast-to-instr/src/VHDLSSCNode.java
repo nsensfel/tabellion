@@ -197,7 +197,7 @@ public class VHDLSSCNode extends VHDLNode
          Predicates.add_entry
          (
             output,
-            "connect_to",
+            "node_connect",
             prev_node,
             first_node_id
          );

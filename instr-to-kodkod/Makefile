@@ -1,6 +1,6 @@
 ## Target(s) Configuration #####################################################
 #MODEL_FILES = $(wildcard ../data/instructions/*.mod)
-MODEL_FILES = ../instr-scripts/structural.mod $(wildcard ../instr-scripts/pfp_*.mod) $(wildcard ../cfg-to-paths/pfp_*.mod)
+MODEL_FILES = ../ast-to-instr/structural.mod $(wildcard ../ast-to-instr/cfg_*.mod) $(wildcard ../cfg-to-paths/*.mod)
 LEVEL_DIR = $(wildcard ../data/level/*.lvl)
 #PROPERTY_FILE = ../data/property/unread_waveforms.pro
 #PROPERTY_FILE = ../data/property/impossible_processes.pro
@@ -28,12 +28,18 @@ CLASSES = $(SOURCES:.java=.class)
 ## Makefile Rules ##############################################################
 
 all: parser/PropertyParser.java $(CLASSES)
+	$(MAKE) -C ../ast-to-instr
+	$(MAKE) -C ../cfg-to-paths
 
 clean:
 	rm -f $(CLASSES)
 	$(MAKE) -C parser clean
+	$(MAKE) -C ../ast-to-instr clean
+	$(MAKE) -C ../cfg-to-paths clean
 
 run: parser/PropertyParser.java $(CLASSES) $(REQUIRED_JARS)
+	$(MAKE) -C ../ast-to-instr
+	$(MAKE) -C ../cfg-to-paths
 	$(JAVA) -cp $(CLASSPATH) Main $(VAR_PREFIX) $(INPUT_FILES)
 
 %.class: %.java $(REQUIRED_JARS)
