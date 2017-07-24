@@ -178,23 +178,7 @@ public class VHDLSSASNode extends VHDLNode
 
       for (int i = 0; i < sources_count; ++i)
       {
-         final String ref;
-
-         ref = XMLManager.get_attribute(sources.item(0), "ref");
-
-         if (!Main.node_is_function_or_literal(ref))
-         {
-            Predicates.add_entry
-            (
-               output,
-               "expr_reads",
-               local_id,
-               Waveforms.get_associated_waveform_id
-               (
-                  IDs.get_id_from_xml_id(ref, (String) null)
-               )
-            );
-         }
+         handle_expression("expr_reads", local_id, sources.item(0));
       }
    }
 
