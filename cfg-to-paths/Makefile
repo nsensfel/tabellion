@@ -1,6 +1,6 @@
 ## Target(s) Configuration #####################################################
 MODEL_FILES = $(wildcard ../ast-to-instr/cfg_*.mod)
-OUTPUT_FILES = $(patsubst ../ast-to-inst/%.mod,%.cfg.mod,$(MODEL_FILES))
+OUTPUT_FILES = $(patsubst ../ast-to-instr/%.mod,%.cfg.mod,$(MODEL_FILES))
 
 ## Executables #################################################################
 JAVAC = javac
@@ -29,5 +29,5 @@ clean:
 	$(JAVAC) -cp $(CLASSPATH) $<
 
 %.cfg.mod: ../ast-to-instr/%.mod $(CLASSES)
-	$(eval ROOT_NODE := $(shell head -n 2 $< | tail -n 1 | grep "[0-9]\+" -o))
+	$(eval ROOT_NODE := $(shell head -n 1 $< | grep "[0-9]\+" -o))
 	$(JAVA) -cp $(CLASSPATH) Main $< $(ROOT_NODE) "p$(ROOT_NODE)_" $@
