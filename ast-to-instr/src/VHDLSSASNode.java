@@ -22,7 +22,7 @@ public class VHDLSSASNode extends VHDLNode
       XPE_FIND_SOURCES =
          XMLManager.compile_or_die
          (
-            "./waveform_chain//named_entity"
+            "./waveform_chain"/* //named_entity" */
          );
 
       XPE_FIND_PREFIXED_NE = XMLManager.compile_or_die("./prefix/named_entity");
@@ -164,22 +164,16 @@ public class VHDLSSASNode extends VHDLNode
    )
    throws XPathExpressionException
    {
-      final NodeList sources;
-      final int sources_count;
+      final Node sources;
 
       sources =
-         (NodeList) XPE_FIND_SOURCES.evaluate
+         (Node) XPE_FIND_SOURCES.evaluate
          (
             xml_node,
-            XPathConstants.NODESET
+            XPathConstants.NODE
          );
 
-      sources_count = sources.getLength();
-
-      for (int i = 0; i < sources_count; ++i)
-      {
-         handle_expression("expr_reads", local_id, sources.item(0));
-      }
+      handle_expression(local_id, sources);
    }
 
    private void handle_predicate_expr_writes

@@ -10,16 +10,16 @@ import java.util.Stack;
 /* If Statement Node */
 public class VHDLISNode extends VHDLNode
 {
-   private static final XPathExpression XPE_FIND_NAMED_ENTITIES;
+   private static final XPathExpression XPE_FIND_SOURCES;
    private static final XPathExpression XPE_FIND_TRUE_BRANCH;
    private static final XPathExpression XPE_FIND_ELSE_BRANCH;
 
    static
    {
-      XPE_FIND_NAMED_ENTITIES =
+      XPE_FIND_SOURCES =
          XMLManager.compile_or_die
          (
-            "./condition//named_entity"
+            "./condition" /* //named_entity" */
          );
 
       XPE_FIND_TRUE_BRANCH =
@@ -170,38 +170,16 @@ public class VHDLISNode extends VHDLNode
    )
    throws XPathExpressionException
    {
-      final NodeList named_entities;
-      final int named_entities_count;
+      final Node sources;
 
-      named_entities =
-         (NodeList) XPE_FIND_NAMED_ENTITIES.evaluate
+      sources =
+         (Node) XPE_FIND_SOURCES.evaluate
          (
             xml_node,
-            XPathConstants.NODESET
+            XPathConstants.NODE
          );
 
-      named_entities_count = named_entities.getLength();
-
-      for (int i = 0; i < named_entities_count; ++i)
-      {
-         final String ref;
-
-         ref = XMLManager.get_attribute(named_entities.item(0), "ref");
-
-         if (!Main.node_is_function_or_literal(ref))
-         {
-            Predicates.add_entry
-            (
-               output,
-               "expr_reads",
-               local_id,
-               Waveforms.get_associated_waveform_id
-               (
-                  IDs.get_id_from_xml_id(ref, (String) null)
-               )
-            );
-         }
-      }
+      handle_expression(local_id, sources);
    }
 
    /***************************************************************************/

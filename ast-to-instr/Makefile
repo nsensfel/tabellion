@@ -1,4 +1,4 @@
-INPUT_FILE = ../data/ast/*.xml
+INPUT_FILE = ../data/ast/best_chronometer_ever.xml
 
 ## Executables #################################################################
 JAVAC = javac
