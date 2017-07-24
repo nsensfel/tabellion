@@ -97,11 +97,12 @@ tag_item
 ;
 
 id_list
-   returns [List<Variable> list]
+   returns [List<Variable> list, boolean has_joker]
 
    @init
    {
       final List<Variable> result = new ArrayList<Variable>();
+      boolean used_joker = false;
    }
 
    :
@@ -109,12 +110,21 @@ id_list
       (WS)+
       ID
       {
-         result.add(Main.get_variable_manager().get_variable(($ID.text)));
+         if (($ID.text).equals("_"))
+         {
+            used_joker = true;
+            result.add((Variable) null);
+         }
+         else
+         {
+            result.add(Main.get_variable_manager().get_variable(($ID.text)));
+         }
       }
    )*
 
    {
       $list = result;
+      $has_joker = used_joker;
    }
 ;
 
@@ -131,14 +141,45 @@ sl_predicate
    (WS)* R_PAREN
 
    {
-      $result =
-         Expression.product
-         (
-            ($id_list.list)
-         ).in
-         (
-            Main.get_model().get_predicate_as_relation(($ID.text))
-         );
+      final Expression predicate;
+      final List<Variable> ids;
+
+
+      if (($id_list.has_joker))
+      {
+         final List<IntConstant> columns;
+         final int params_length;
+
+         ids = new ArrayList<Variable>();
+         columns = new ArrayList<IntConstant>();
+
+         params_length = ($id_list.list).size();
+
+         for (int i = 0; i < params_length; ++i)
+         {
+            if (($id_list.list).get(i) != (Variable) null)
+            {
+               columns.add(IntConstant.constant(i));
+               ids.add(($id_list.list).get(i));
+            }
+         }
+
+         predicate =
+            Main.get_model().get_predicate_as_relation
+            (
+               ($ID.text)
+            ).project
+            (
+               (IntExpression[]) columns.toArray()
+            );
+      }
+      else
+      {
+         predicate = Main.get_model().get_predicate_as_relation(($ID.text));
+         ids = ($id_list.list);
+      }
+
+      $result = Expression.product(ids).in(predicate);
    }
 ;
 
@@ -367,18 +408,45 @@ bl_predicate [Variable current_node]
    (WS)* R_PAREN
 
    {
-      $result =
-         current_node.product
-         (
-            Expression.product
-            (
-               ($id_list.list)
-            )
-         ).in
-         (
-            Main.get_model().get_predicate_as_relation(($ID.text))
-         );
+      final Expression predicate;
+      final List<Variable> ids;
 
+
+      if (($id_list.has_joker))
+      {
+         final List<IntConstant> columns;
+         final int params_length;
+
+         ids = new ArrayList<Variable>();
+         columns = new ArrayList<IntConstant>();
+
+         params_length = ($id_list.list).size();
+
+         for (int i = 0; i < params_length; ++i)
+         {
+            if (($id_list.list).get(i) != (Variable) null)
+            {
+               columns.add(IntConstant.constant(i + 1)); // Offset for the node
+               ids.add(($id_list.list).get(i));
+            }
+         }
+
+         predicate =
+            Main.get_model().get_predicate_as_relation
+            (
+               ($ID.text)
+            ).project
+            (
+               (IntExpression[]) columns.toArray()
+            );
+      }
+      else
+      {
+         predicate = Main.get_model().get_predicate_as_relation(($ID.text));
+         ids = ($id_list.list);
+      }
+
+      $result = current_node.product(Expression.product(ids)).in(predicate);
    }
 ;
 
