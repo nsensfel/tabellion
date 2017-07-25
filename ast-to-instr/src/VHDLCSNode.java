@@ -181,7 +181,7 @@ public class VHDLCSNode extends VHDLNode
             XPathConstants.NODE
          );
 
-      handle_expression(local_id, sources);
+      handle_read_expr_predicates(local_id, sources);
    }
 
    /***************************************************************************/

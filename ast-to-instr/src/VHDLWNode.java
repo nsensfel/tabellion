@@ -168,7 +168,11 @@ public class VHDLWNode extends VHDLNode
             XPathConstants.NODE
          );
 
-      handle_expression(local_id, sources);
+      if (sources != (Node) null)
+      {
+         /* Not "others" */
+         handle_read_expr_predicates(local_id, sources);
+      }
    }
 
    /***************************************************************************/

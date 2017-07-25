@@ -22,7 +22,7 @@ public class VHDLSSASNode extends VHDLNode
       XPE_FIND_SOURCES =
          XMLManager.compile_or_die
          (
-            "./waveform_chain"/* //named_entity" */
+            "./waveform_chain/el/we_value"/* //named_entity" */
          );
 
       XPE_FIND_PREFIXED_NE = XMLManager.compile_or_die("./prefix/named_entity");
@@ -173,7 +173,7 @@ public class VHDLSSASNode extends VHDLNode
             XPathConstants.NODE
          );
 
-      handle_expression(local_id, sources);
+      handle_read_expr_predicates(local_id, sources);
    }
 
    private void handle_predicate_expr_writes

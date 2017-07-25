@@ -1,49 +1,12 @@
 import org.w3c.dom.Node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathExpression;
 
 public abstract class VHDLNode extends ParsableXML
 {
-   /** Static *****************************************************************/
-   private static XPathExpression XPE_FIND_EXPR_NAMED_ENTITIES;
-
-   static
-   {
-      XPE_FIND_EXPR_NAMED_ENTITIES =
-         XMLManager.compile_or_die
-         (
-            ".//named_entity"
-         );
-   }
-
-   protected void handle_expression
-   (
-      final IDs local_id,
-      final Node expression_start
-   )
-   throws XPathExpressionException
-   {
-      final String ref;
-
-      ref = XMLManager.get_attribute(expression_start, "ref");
-
-      if (!Main.node_is_function_or_literal(ref))
-      {
-         Predicates.add_entry
-         (
-            output,
-            "expr_reads",
-            local_id,
-            Waveforms.get_associated_waveform_id
-            (
-               IDs.get_id_from_xml_id(ref, (String) null)
-            )
-         );
-      }
-   }
-
-   /** Non-Static *************************************************************/
    protected final IDs next_node;
    protected final int depth;
    protected final String[] attributes;
@@ -67,4 +30,87 @@ public abstract class VHDLNode extends ParsableXML
       this.attributes = attributes;
    }
 
+   protected void handle_read_expr_predicates
+   (
+      final IDs local_id,
+      final Node expr_node
+   )
+   throws XPathExpressionException
+   {
+      final List<IDs> elements;
+      final StringBuilder structure;
+      final int elements_count;
+
+      elements = new ArrayList<IDs>();
+      structure = new StringBuilder();
+
+      Expressions.process(elements, structure, expr_node);
+
+      Predicates.add_entry
+      (
+         output,
+         "is_read_structure",
+         local_id,
+         Strings.get_id_from_string
+         (
+            structure.toString()
+         )
+      );
+
+      elements_count = elements.size();
+
+      for (int i = 0; i < elements_count; ++i)
+      {
+         Predicates.add_entry
+         (
+            output,
+            "is_read_element",
+            local_id,
+            Strings.get_id_from_string(Integer.toString(i)),
+            elements.get(i)
+         );
+      }
+   }
+
+   protected void handle_written_expr_predicates
+   (
+      final IDs local_id,
+      final Node expr_node
+   )
+   throws XPathExpressionException
+   {
+      final List<IDs> elements;
+      final StringBuilder structure;
+      final int elements_count;
+
+      elements = new ArrayList<IDs>();
+      structure = new StringBuilder();
+
+      Expressions.process(elements, structure, expr_node);
+
+      Predicates.add_entry
+      (
+         output,
+         "is_written_structure",
+         local_id,
+         Strings.get_id_from_string
+         (
+            structure.toString()
+         )
+      );
+
+      elements_count = elements.size();
+
+      for (int i = 0; i < elements_count; ++i)
+      {
+         Predicates.add_entry
+         (
+            output,
+            "is_written_element",
+            local_id,
+            Strings.get_id_from_string(Integer.toString(i)),
+            elements.get(i)
+         );
+      }
+   }
 }
