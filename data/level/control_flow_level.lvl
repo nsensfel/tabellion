@@ -20,6 +20,11 @@
 (add_predicate has_option node string)
 (add_predicate has_depth node node_depth)
 (add_predicate node_connect node node)
+
+;;; To be removed soon.
 (add_predicate expr_writes node waveform)
-(add_predicate expr_reads node waveform)
+
+(add_predicate is_read_structure node string)
+(add_predicate is_read_element node string waveform)
+(add_predicate is_read_element node string string)
 (add_predicate is_terminal node)

@@ -39,6 +39,26 @@ tag_existing
 
       for (final String[] tag_var: tags)
       {
+         final Relation type_as_relation;
+
+         type_as_relation = Main.get_model().get_type_as_relation(tag_var[1]);
+
+         if (type_as_relation == (Relation) null)
+         {
+            System.err.println
+            (
+               "[F] The property uses an unknown type: \""
+               + tag_var[1]
+               + "\" in its tag_existing (l."
+               + ($TAG_EXISTING_KW.getLine())
+               + " c."
+               + ($TAG_EXISTING_KW.getCharPositionInLine())
+               + ")."
+            );
+
+            System.exit(-1);
+         }
+
          $result =
             $result.forSome
             (
@@ -47,7 +67,7 @@ tag_existing
                   tag_var[0]
                ).oneOf
                (
-                  Main.get_model().get_type_as_relation(tag_var[1])
+                  type_as_relation
                )
             );
 
@@ -143,7 +163,29 @@ sl_predicate
    {
       final Expression predicate;
       final List<Variable> ids;
+      final Relation predicate_as_relation;
 
+      predicate_as_relation =
+         Main.get_model().get_predicate_as_relation
+         (
+            ($ID.text)
+         );
+
+      if (predicate_as_relation == (Relation) null)
+      {
+         System.err.println
+         (
+            "[F] The property uses an unknown predicate: \""
+            + ($ID.text)
+            + "\" at structural level. (l."
+            + ($ID.getLine())
+            + " c."
+            + ($ID.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
 
       if (($id_list.has_joker))
       {
@@ -165,17 +207,14 @@ sl_predicate
          }
 
          predicate =
-            Main.get_model().get_predicate_as_relation
-            (
-               ($ID.text)
-            ).project
+            predicate_as_relation.project
             (
                (IntExpression[]) columns.toArray()
             );
       }
       else
       {
-         predicate = Main.get_model().get_predicate_as_relation(($ID.text));
+         predicate = predicate_as_relation;
          ids = ($id_list.list);
       }
 
@@ -280,6 +319,30 @@ sl_exists_operator
    (WS*) R_PAREN
 
    {
+      final Relation type_as_relation;
+
+      type_as_relation =
+         Main.get_model().get_type_as_relation
+         (
+            ($type.text)
+         );
+
+      if (type_as_relation == (Relation) null)
+      {
+         System.err.println
+         (
+            "[F] The property uses an unknown type: \""
+            + ($type.text)
+            + "\" in an \"exists\" at structural level (l."
+            + ($type.getLine())
+            + " c."
+            + ($type.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
       $result =
          ($f.result).forSome
          (
@@ -288,7 +351,7 @@ sl_exists_operator
                ($var.text)
             ).oneOf
             (
-               Main.get_model().get_type_as_relation(($type.text))
+               type_as_relation
             )
          );
    }
@@ -304,6 +367,30 @@ sl_forall_operator
    (WS*) R_PAREN
 
    {
+      final Relation type_as_relation;
+
+      type_as_relation =
+         Main.get_model().get_type_as_relation
+         (
+            ($type.text)
+         );
+
+      if (type_as_relation == (Relation) null)
+      {
+         System.err.println
+         (
+            "[F] The property uses an unknown type: \""
+            + ($type.text)
+            + "\" in a \"forall\" at structural level (l."
+            + ($type.getLine())
+            + " c."
+            + ($type.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
       $result =
          ($f.result).forAll
          (
@@ -312,7 +399,7 @@ sl_forall_operator
                ($var.text)
             ).oneOf
             (
-               Main.get_model().get_type_as_relation(($type.text))
+               type_as_relation
             )
          );
    }
@@ -344,7 +431,10 @@ sl_ctl_verifies_operator
             (
                Main.get_variable_manager().get_variable(($ps.text)).join
                (
-                  Main.get_model().get_predicate_as_relation("is_start_node").transpose()
+                  Main.get_model().get_predicate_as_relation
+                  (
+                     "is_start_node"
+                  ).transpose()
                )
             )
          );
@@ -410,7 +500,29 @@ bl_predicate [Variable current_node]
    {
       final Expression predicate;
       final List<Variable> ids;
+      final Relation predicate_as_relation;
 
+      predicate_as_relation =
+         Main.get_model().get_predicate_as_relation
+         (
+            ($ID.text)
+         );
+
+      if (predicate_as_relation == (Relation) null)
+      {
+         System.err.println
+         (
+            "[F] The property uses an unknown predicate: \""
+            + ($ID.text)
+            + "\" at behavioral level (l."
+            + ($ID.getLine())
+            + " c."
+            + ($ID.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
 
       if (($id_list.has_joker))
       {
@@ -432,17 +544,14 @@ bl_predicate [Variable current_node]
          }
 
          predicate =
-            Main.get_model().get_predicate_as_relation
-            (
-               ($ID.text)
-            ).project
+            predicate_as_relation.project
             (
                (IntExpression[]) columns.toArray()
             );
       }
       else
       {
-         predicate = Main.get_model().get_predicate_as_relation(($ID.text));
+         predicate = predicate_as_relation;
          ids = ($id_list.list);
       }
 
@@ -811,7 +920,10 @@ bl_au_operator [Variable current_node]
             (
                current_node.join
                (
-                  Main.get_model().get_predicate_as_relation("is_path_of").transpose()
+                  Main.get_model().get_predicate_as_relation
+                  (
+                     "is_path_of"
+                  ).transpose()
                )
             )
          );
@@ -867,7 +979,10 @@ bl_eu_operator [Variable current_node]
             (
                current_node.join
                (
-                  Main.get_model().get_predicate_as_relation("is_path_of").transpose()
+                  Main.get_model().get_predicate_as_relation
+                  (
+                     "is_path_of"
+                  ).transpose()
                )
             )
          );

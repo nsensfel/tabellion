@@ -5,6 +5,7 @@ public class Parameters
 {
    private final List<String> level_files;
    private final List<String> model_files;
+   private final List<String> map_files;
    private final String property_file;
    private final String var_prefix;
 
@@ -25,6 +26,7 @@ public class Parameters
          + "\t- Property files have a \".pro\" extension.\n"
          + "\t- Model files have a \".mod\" extension.\n"
          + "\t- Level files have a \".lvl\" extension.\n"
+         + "\t- Map files have a \".map\" extension.\n"
          + "\t- The files may be given in any order."
       );
    }
@@ -36,6 +38,7 @@ public class Parameters
 
       level_files = new ArrayList<String>();
       model_files = new ArrayList<String>();
+      map_files = new ArrayList<String>();
 
       if (args.length < 2)
       {
@@ -64,6 +67,10 @@ public class Parameters
          else if (args[i].endsWith(".mod"))
          {
             model_files.add(args[i]);
+         }
+         else if (args[i].endsWith(".map"))
+         {
+            map_files.add(args[i]);
          }
          else if (args[i].endsWith(".pro"))
          {
@@ -117,6 +124,11 @@ public class Parameters
    }
 
    public List<String> get_model_files ()
+   {
+      return model_files;
+   }
+
+   public List<String> get_map_files ()
    {
       return model_files;
    }
