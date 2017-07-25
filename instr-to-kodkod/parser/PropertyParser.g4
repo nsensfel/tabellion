@@ -189,11 +189,11 @@ sl_predicate
 
       if (($id_list.has_joker))
       {
-         final List<IntConstant> columns;
+         final List<IntExpression> columns;
          final int params_length;
 
          ids = new ArrayList<Variable>();
-         columns = new ArrayList<IntConstant>();
+         columns = new ArrayList<IntExpression>();
 
          params_length = ($id_list.list).size();
 
@@ -209,7 +209,7 @@ sl_predicate
          predicate =
             predicate_as_relation.project
             (
-               (IntExpression[]) columns.toArray()
+               columns.toArray(new IntExpression[columns.size()])
             );
       }
       else
@@ -526,13 +526,16 @@ bl_predicate [Variable current_node]
 
       if (($id_list.has_joker))
       {
-         final List<IntConstant> columns;
+         final List<IntExpression> columns;
          final int params_length;
 
          ids = new ArrayList<Variable>();
-         columns = new ArrayList<IntConstant>();
+         columns = new ArrayList<IntExpression>();
 
          params_length = ($id_list.list).size();
+
+         /* We always keep the node id. */
+         columns.add(IntConstant.constant(0));
 
          for (int i = 0; i < params_length; ++i)
          {
@@ -546,7 +549,7 @@ bl_predicate [Variable current_node]
          predicate =
             predicate_as_relation.project
             (
-               (IntExpression[]) columns.toArray()
+               columns.toArray(new IntExpression[columns.size()])
             );
       }
       else

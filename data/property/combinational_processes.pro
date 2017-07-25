@@ -9,7 +9,7 @@
                (CTL_verifies ps
                   (EF
                      (and
-                        (expr_reads sl1)
+                        (is_read_element _ sl1)
                         (expr_writes target)
                         (not
                            (AX
