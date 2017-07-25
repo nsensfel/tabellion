@@ -350,4 +350,29 @@ public class VHDLModel
          return t.get_as_relation();
       }
    }
+
+   public Relation get_atom_as_relation
+   (
+      final String type,
+      final String id
+   )
+   {
+      final VHDLType t;
+
+      t = types.get(type);
+
+      if (t == null)
+      {
+         return null;
+      }
+      else
+      {
+         return t.get_member_as_relation(id);
+      }
+   }
+
+   public VHDLType get_string_type ()
+   {
+      return types.get("string");
+   }
 }

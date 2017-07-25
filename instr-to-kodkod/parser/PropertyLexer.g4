@@ -29,3 +29,4 @@ EU_OPERATOR_KW: '(EU' SEP;
 WS: SEP;
 
 ID: [a-zA-Z0-9_]+;
+STRING: '"' ~('\r' | '\n' | '"')* '"';

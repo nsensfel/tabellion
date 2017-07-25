@@ -128,9 +128,9 @@ public class Parameters
       return model_files;
    }
 
-   public List<String> get_map_files ()
+   public List<String> get_mapping_files ()
    {
-      return model_files;
+      return map_files;
    }
 
    public String get_property_file ()

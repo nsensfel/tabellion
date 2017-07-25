@@ -25,7 +25,10 @@ public class VHDLType
 
    public void add_member (final String id)
    {
-      members.put(id, Relation.unary(id));
+      if (!members.containsKey(id))
+      {
+         members.put(id, Relation.unary(id));
+      }
    }
 
    public String get_name ()

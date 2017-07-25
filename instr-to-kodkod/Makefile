@@ -5,7 +5,8 @@ MAP_FILES = $(wildcard ../ast-to-instr/*.map)
 LEVEL_DIR = $(wildcard ../data/level/*.lvl)
 #PROPERTY_FILE = ../data/property/unread_waveforms.pro
 #PROPERTY_FILE = ../data/property/impossible_processes.pro
-PROPERTY_FILE = ../data/property/combinational_processes.pro
+PROPERTY_FILE = ../data/property/incrementer.pro
+#PROPERTY_FILE = ../data/property/combinational_processes.pro
 VAR_PREFIX = "_anon_"
 
 ## Executables #################################################################

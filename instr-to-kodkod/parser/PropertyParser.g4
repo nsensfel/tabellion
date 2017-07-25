@@ -116,29 +116,50 @@ tag_item
    }
 ;
 
+id_or_string
+   returns [Expression value]
+
+   :
+   ID
+   {
+     if (($ID.text).equals("_"))
+      {
+         $value = null;
+      }
+      else
+      {
+         $value = Main.get_variable_manager().get_variable(($ID.text));
+      }
+   }
+
+   |
+   STRING
+   {
+      $value = Main.get_string_manager().get_string_as_relation(($STRING.text));
+      System.out.println("Using (STR \"" + ($STRING.text) + "\" " + ($value) + ")");
+   }
+;
+
 id_list
-   returns [List<Variable> list, boolean has_joker]
+   returns [List<Expression> list, boolean has_joker]
 
    @init
    {
-      final List<Variable> result = new ArrayList<Variable>();
+      final List<Expression> result = new ArrayList<Expression>();
       boolean used_joker = false;
    }
 
    :
    (
       (WS)+
-      ID
+      id_or_string
       {
-         if (($ID.text).equals("_"))
+         if (($id_or_string.value) == (Expression) null)
          {
             used_joker = true;
-            result.add((Variable) null);
          }
-         else
-         {
-            result.add(Main.get_variable_manager().get_variable(($ID.text)));
-         }
+
+         result.add(($id_or_string.value));
       }
    )*
 
@@ -162,7 +183,7 @@ sl_predicate
 
    {
       final Expression predicate;
-      final List<Variable> ids;
+      final List<Expression> ids;
       final Relation predicate_as_relation;
 
       predicate_as_relation =
@@ -192,14 +213,14 @@ sl_predicate
          final List<IntExpression> columns;
          final int params_length;
 
-         ids = new ArrayList<Variable>();
+         ids = new ArrayList<Expression>();
          columns = new ArrayList<IntExpression>();
 
          params_length = ($id_list.list).size();
 
          for (int i = 0; i < params_length; ++i)
          {
-            if (($id_list.list).get(i) != (Variable) null)
+            if (($id_list.list).get(i) != (Expression) null)
             {
                columns.add(IntConstant.constant(i));
                ids.add(($id_list.list).get(i));
@@ -499,7 +520,7 @@ bl_predicate [Variable current_node]
 
    {
       final Expression predicate;
-      final List<Variable> ids;
+      final List<Expression> ids;
       final Relation predicate_as_relation;
 
       predicate_as_relation =
@@ -529,7 +550,7 @@ bl_predicate [Variable current_node]
          final List<IntExpression> columns;
          final int params_length;
 
-         ids = new ArrayList<Variable>();
+         ids = new ArrayList<Expression>();
          columns = new ArrayList<IntExpression>();
 
          params_length = ($id_list.list).size();
@@ -539,7 +560,7 @@ bl_predicate [Variable current_node]
 
          for (int i = 0; i < params_length; ++i)
          {
-            if (($id_list.list).get(i) != (Variable) null)
+            if (($id_list.list).get(i) != (Expression) null)
             {
                columns.add(IntConstant.constant(i + 1)); // Offset for the node
                ids.add(($id_list.list).get(i));

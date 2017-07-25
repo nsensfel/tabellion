@@ -8,6 +8,7 @@ import kodkod.engine.satlab.*;
 import kodkod.instance.*;
 
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.Iterator;
 
 public class Main
@@ -15,6 +16,7 @@ public class Main
    private static Parameters PARAMETERS;
    private static VHDLModel MODEL;
    private static VariableManager VARIABLE_MANAGER;
+   private static StringManager STRING_MANAGER;
 
    public static VHDLModel get_model ()
    {
@@ -24,6 +26,11 @@ public class Main
    public static VariableManager get_variable_manager ()
    {
       return VARIABLE_MANAGER;
+   }
+
+   public static StringManager get_string_manager ()
+   {
+      return STRING_MANAGER;
    }
 
    private static boolean load_levels ()
@@ -113,6 +120,103 @@ public class Main
       return true;
    }
 
+   private static boolean load_mapping_file (final String filename)
+   throws FileNotFoundException
+   {
+      final QuickParser qp;
+      String[] input;
+      boolean success;
+
+      qp = new QuickParser(filename);
+
+      for (;;)
+      {
+         try
+         {
+            input = qp.parse_line();
+
+            if (input == null)
+            {
+               qp.finalize();
+
+               return false;
+            }
+            else if (input.length == 0)
+            {
+               qp.finalize();
+
+               break;
+            }
+         }
+         catch (final IOException e)
+         {
+            System.err.println
+            (
+               "[E] IO error while parsing file \""
+               + filename
+               + "\":"
+               /* FIXME: can be null */
+               + e.getMessage()
+            );
+
+            return false;
+         }
+
+         if
+         (
+            (!STRING_MANAGER.handle_mapping_instruction(input))
+            /* && (!_____.handle_mapping_instruction(input)) */
+            /* Yeah, we don't handle those */
+            && (!input[0].equals("xml->instr"))
+         )
+         {
+            System.err.println
+            (
+               "[E] An erroneous instruction was found in file \""
+               + filename
+               + "\"."
+            );
+
+            try
+            {
+               qp.finalize();
+            }
+            catch (final Exception e)
+            {
+               System.err.println("[E] Additionally:");
+               e.printStackTrace();
+            }
+
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   private static boolean load_mappings ()
+   {
+      try
+      {
+         for (final String file: PARAMETERS.get_mapping_files())
+         {
+            if (!load_mapping_file(file))
+            {
+               return false;
+            }
+         }
+      }
+      catch (final Exception e)
+      {
+         System.err.println("[F] Could not load mappings:");
+         e.printStackTrace();
+
+         System.exit(-1);
+      }
+
+      return true;
+   }
+
    public static void main (final String... args)
    {
       /*
@@ -143,6 +247,14 @@ public class Main
 
       /* 1/ Load Levels (Types + predicates) */
       if (!load_levels())
+      {
+         return;
+      }
+
+      /* 2/ Load Mappings (to allow references in the property). */
+      STRING_MANAGER = new StringManager();
+
+      if (!load_mappings())
       {
          return;
       }
