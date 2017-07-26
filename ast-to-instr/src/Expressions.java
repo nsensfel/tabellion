@@ -19,6 +19,7 @@ public class Expressions
    private static final XPathExpression XPE_GET_INDEX_LIST;
    private static final XPathExpression XPE_GET_NAMED_ENTITY;
    private static final XPathExpression XPE_GET_PREFIX_NAMED_ENTITY;
+   private static final XPathExpression XPE_GET_PREFIX;
 
    static
    {
@@ -29,7 +30,7 @@ public class Expressions
       XPE_GET_FUN_PARAMETERS =
          XMLManager.compile_or_die
          (
-            "./parameter_association_chain/el"
+            "./parameter_association_chain/el/actual"
          );
 
       XPE_GET_INDEX_LIST = XMLManager.compile_or_die("./index_list/el");
@@ -40,6 +41,8 @@ public class Expressions
          (
             "./prefix/named_entity"
          );
+
+      XPE_GET_PREFIX = XMLManager.compile_or_die("./prefix");
    }
 
    private static enum Operator
@@ -266,7 +269,7 @@ public class Expressions
          final int params_length;
 
          named_entity =
-            (Node) XPE_GET_PREFIX_NAMED_ENTITY.evaluate
+            (Node) XPE_GET_PREFIX/*_NAMED_ENTITY*/.evaluate
             (
                current_node,
                XPathConstants.NODE
@@ -274,17 +277,26 @@ public class Expressions
 
          structure.append("(?");
 
+         /*
+          * TODO: Handle functions better, like:
+           elements.add
+           (
+              IDs.get_id_from_xml_id
+              (
+                 XMLManager.get_attribute(named_entity, "ref"),
+                 null
+              )
+           );
+          * But for now, we'll just use the function's name as string:
+          */
          elements.add
          (
-            Waveforms.get_associated_waveform_id
+            Strings.get_id_from_string
             (
-               IDs.get_id_from_xml_id
-               (
-                  XMLManager.get_attribute(named_entity, "ref"),
-                  null
-               )
+               XMLManager.get_attribute(named_entity, "identifier")
             )
          );
+
 
          params =
             (NodeList) XPE_GET_FUN_PARAMETERS.evaluate

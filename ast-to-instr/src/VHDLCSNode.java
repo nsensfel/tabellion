@@ -75,7 +75,6 @@ public class VHDLCSNode extends VHDLNode
       handle_function_label(local_id);
       handle_function_kind(local_id);
       handle_function_depth(local_id);
-      handle_function_expression(local_id);
 
       /** Predicates **********************************************************/
       handle_predicate_has_option(local_id);
@@ -136,14 +135,6 @@ public class VHDLCSNode extends VHDLNode
             Integer.toString(depth)
          )
       );
-   }
-
-   private void handle_function_expression
-   (
-      final IDs local_id
-   )
-   {
-      /* TODO */
    }
 
    /***************************************************************************/

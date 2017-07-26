@@ -28,3 +28,7 @@
 (add_predicate is_read_element node string waveform)
 (add_predicate is_read_element node string string)
 (add_predicate is_terminal node)
+
+(add_function label node string)
+(add_function kind node string)
+(add_function depth node string)

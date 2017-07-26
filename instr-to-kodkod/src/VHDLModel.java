@@ -25,7 +25,12 @@ public class VHDLModel
       }
    }
 
-   public boolean add_predicate (final String name, final String[] signature)
+   public boolean add_predicate
+   (
+      final String name,
+      final String[] signature,
+      final boolean is_function
+   )
    {
       final VHDLPredicate p;
       final VHDLType[] true_signature;
@@ -55,7 +60,11 @@ public class VHDLModel
 
       if (p == null)
       {
-         predicates.put(name, new VHDLPredicate(name, true_signature));
+         predicates.put
+         (
+            name,
+            new VHDLPredicate(name, true_signature, false)
+         );
       }
       else
       {
@@ -113,7 +122,15 @@ public class VHDLModel
          }
          else if (input[0].equals("set_function"))
          {
-            success = handle_set_function(input);
+            if (input.length < 2)
+            {
+               success = false;
+            }
+            success =
+               handle_predicate
+               (
+                  Arrays.copyOfRange(input, 1, input.length)
+               );
          }
          else
          {
@@ -126,7 +143,9 @@ public class VHDLModel
             (
                "[E] An erroneous instruction was found in file \""
                + filename
-               + "\"."
+               + "\": \"("
+               + String.join(" ", input)
+               + ")\")"
             );
 
             try
@@ -186,30 +205,6 @@ public class VHDLModel
       return true;
    }
 
-   private boolean handle_set_function (final String... cmd)
-   {
-      if (cmd.length != 4)
-      {
-         System.err.println
-         (
-            "[E] Badly formed \"set_function\" instruction: \""
-            + String.join(" ", cmd)
-            + "\"."
-         );
-
-         return false;
-      }
-
-      /*
-      System.err.println
-      (
-         "[W] \"set_function\" instructions are ignored."
-      );
-      */
-
-      return true;
-   }
-
    private boolean handle_predicate (final String... cmd)
    {
       final VHDLPredicate p;
@@ -256,7 +251,6 @@ public class VHDLModel
 
       for (int i = 0; i < params.length; ++i)
       {
-         /* TODO: check if the IDs are registered in the corresponding type. */
          params[i] = cmd[i + 1];
 
          if (!p.accepts_as_nth_param(i, params[i]))

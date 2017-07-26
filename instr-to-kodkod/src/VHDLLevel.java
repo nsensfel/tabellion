@@ -60,7 +60,11 @@ public class VHDLLevel
          }
          else if (input[0].equals("add_predicate"))
          {
-            success = handle_add_predicate(input, m);
+            success = handle_add_predicate(input, m, false);
+         }
+         else if (input[0].equals("add_function"))
+         {
+            success = handle_add_predicate(input, m, true);
          }
          else
          {
@@ -128,7 +132,8 @@ public class VHDLLevel
    private static boolean handle_add_predicate
    (
       final String[] cmd,
-      final VHDLModel m
+      final VHDLModel m,
+      final boolean is_function
    )
    {
       final String[] signature;
@@ -137,7 +142,8 @@ public class VHDLLevel
       {
          System.err.println
          (
-            "[E] Badly formed \"add_predicate\" instruction: \""
+            "[E] Badly formed \"add_predicate\" or \"add_function\""
+            + " instruction: \""
             + String.join(" ", cmd)
             + "\"."
          );
@@ -152,6 +158,6 @@ public class VHDLLevel
          signature[i - 2] = cmd[i];
       }
 
-      return m.add_predicate(cmd[1], signature);
+      return m.add_predicate(cmd[1], signature, is_function);
    }
 }

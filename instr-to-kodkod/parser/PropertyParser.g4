@@ -116,7 +116,7 @@ tag_item
    }
 ;
 
-id_or_string
+id_or_string_or_fun [Variable current_node]
    returns [Expression value]
 
    :
@@ -138,9 +138,15 @@ id_or_string
       $value = Main.get_string_manager().get_string_as_relation(($STRING.text));
       System.out.println("Using (STR \"" + ($STRING.text) + "\" " + ($value) + ")");
    }
+
+   |
+   function[current_node]
+   {
+      $value = ($function.result);
+   }
 ;
 
-id_list
+id_list [Variable current_node]
    returns [List<Expression> list, boolean has_joker]
 
    @init
@@ -152,14 +158,14 @@ id_list
    :
    (
       (WS)+
-      id_or_string
+      id_or_string_or_fun[current_node]
       {
-         if (($id_or_string.value) == (Expression) null)
+         if (($id_or_string_or_fun.value) == (Expression) null)
          {
             used_joker = true;
          }
 
-         result.add(($id_or_string.value));
+         result.add(($id_or_string_or_fun.value));
       }
    )*
 
@@ -169,16 +175,12 @@ id_list
    }
 ;
 
-/******************************************************************************/
-/** Structural Level **********************************************************/
-/******************************************************************************/
-
-sl_predicate
+predicate [Variable current_node]
    returns [Formula result]:
 
    (WS)* L_PAREN
       ID
-      id_list
+      id_list[current_node]
    (WS)* R_PAREN
 
    {
@@ -198,7 +200,7 @@ sl_predicate
          (
             "[F] The property uses an unknown predicate: \""
             + ($ID.text)
-            + "\" at structural level. (l."
+            + "\" (l."
             + ($ID.getLine())
             + " c."
             + ($ID.getCharPositionInLine())
@@ -212,17 +214,30 @@ sl_predicate
       {
          final List<IntExpression> columns;
          final int params_length;
+         final int offset;
 
          ids = new ArrayList<Expression>();
          columns = new ArrayList<IntExpression>();
 
          params_length = ($id_list.list).size();
 
+         if (current_node == null)
+         {
+            offset = 0;
+         }
+         else
+         {
+            offset = 1;
+
+            ids.add(current_node);
+            columns.add(IntConstant.constant(0));
+         }
+
          for (int i = 0; i < params_length; ++i)
          {
             if (($id_list.list).get(i) != (Expression) null)
             {
-               columns.add(IntConstant.constant(i));
+               columns.add(IntConstant.constant(i + offset));
                ids.add(($id_list.list).get(i));
             }
          }
@@ -237,12 +252,85 @@ sl_predicate
       {
          predicate = predicate_as_relation;
          ids = ($id_list.list);
+
+         if (current_node != null)
+         {
+            ids.add(0, current_node);
+         }
       }
 
       $result = Expression.product(ids).in(predicate);
    }
 ;
 
+function [Variable current_node]
+   returns [Expression result]:
+
+   (WS)* L_BRAKT
+      ID
+      id_list[current_node]
+   (WS)* R_BRAKT
+
+   {
+      final Expression predicate;
+      final List<Expression> ids;
+      final Relation predicate_as_relation;
+
+      predicate_as_relation =
+         Main.get_model().get_predicate_as_relation
+         (
+            ($ID.text)
+         );
+
+      if (predicate_as_relation == (Relation) null)
+      {
+         System.err.println
+         (
+            "[F] The property uses an unknown predicate: \""
+            + ($ID.text)
+            + "\" (l."
+            + ($ID.getLine())
+            + " c."
+            + ($ID.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
+      if (($id_list.has_joker))
+      {
+         System.err.println
+         (
+            "[F] The property uses a joker inside a function: \""
+            + ($ID.text)
+            + "\" (l."
+            + ($ID.getLine())
+            + " c."
+            + ($ID.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+      else
+      {
+         predicate = predicate_as_relation;
+         ids = ($id_list.list);
+
+         if (current_node != null)
+         {
+            ids.add(0, current_node);
+         }
+
+         $result = Expression.product(ids).join(predicate);
+      }
+   }
+;
+
+/******************************************************************************/
+/** Structural Level **********************************************************/
+/******************************************************************************/
 sl_non_empty_formula_list
    returns [List<Formula> list]
 
@@ -466,9 +554,9 @@ sl_ctl_verifies_operator
 sl_formula
    returns [Formula result]:
 
-   sl_predicate
+   predicate[null]
    {
-      $result = ($sl_predicate.result);
+      $result = ($predicate.result);
    }
 
    | sl_and_operator
@@ -510,79 +598,6 @@ sl_formula
 /******************************************************************************/
 /** Behavioral Level **********************************************************/
 /******************************************************************************/
-bl_predicate [Variable current_node]
-   returns [Formula result]:
-
-   (WS)* L_PAREN
-      ID
-      id_list
-   (WS)* R_PAREN
-
-   {
-      final Expression predicate;
-      final List<Expression> ids;
-      final Relation predicate_as_relation;
-
-      predicate_as_relation =
-         Main.get_model().get_predicate_as_relation
-         (
-            ($ID.text)
-         );
-
-      if (predicate_as_relation == (Relation) null)
-      {
-         System.err.println
-         (
-            "[F] The property uses an unknown predicate: \""
-            + ($ID.text)
-            + "\" at behavioral level (l."
-            + ($ID.getLine())
-            + " c."
-            + ($ID.getCharPositionInLine())
-            + ")."
-         );
-
-         System.exit(-1);
-      }
-
-      if (($id_list.has_joker))
-      {
-         final List<IntExpression> columns;
-         final int params_length;
-
-         ids = new ArrayList<Expression>();
-         columns = new ArrayList<IntExpression>();
-
-         params_length = ($id_list.list).size();
-
-         /* We always keep the node id. */
-         columns.add(IntConstant.constant(0));
-
-         for (int i = 0; i < params_length; ++i)
-         {
-            if (($id_list.list).get(i) != (Expression) null)
-            {
-               columns.add(IntConstant.constant(i + 1)); // Offset for the node
-               ids.add(($id_list.list).get(i));
-            }
-         }
-
-         predicate =
-            predicate_as_relation.project
-            (
-               columns.toArray(new IntExpression[columns.size()])
-            );
-      }
-      else
-      {
-         predicate = predicate_as_relation;
-         ids = ($id_list.list);
-      }
-
-      $result = current_node.product(Expression.product(ids)).in(predicate);
-   }
-;
-
 bl_formula_list [Variable current_node]
    returns [List<Formula> list]
 
@@ -1017,9 +1032,9 @@ bl_eu_operator [Variable current_node]
 bl_formula [Variable current_node]
    returns [Formula result]:
 
-   bl_predicate[current_node]
+   predicate[current_node]
    {
-      $result = ($bl_predicate.result);
+      $result = ($predicate.result);
    }
    | bl_and_operator[current_node]
    {

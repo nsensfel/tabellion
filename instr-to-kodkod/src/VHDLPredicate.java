@@ -14,11 +14,18 @@ public class VHDLPredicate
    private final String name;
    private final int arity;
    private final Relation as_relation;
+   private final boolean is_function;
    private boolean is_used;
 
-   public VHDLPredicate (final String name, final VHDLType[] signature)
+   public VHDLPredicate
+   (
+      final String name,
+      final VHDLType[] signature,
+      final boolean is_function
+   )
    {
       this.name = name;
+      this.is_function = is_function;
       arity = signature.length;
 
       signatures = new ArrayList<VHDLType[]>();
@@ -43,6 +50,11 @@ public class VHDLPredicate
    public int get_arity ()
    {
       return arity;
+   }
+
+   public boolean is_function ()
+   {
+      return is_function;
    }
 
    public Relation get_as_relation ()

@@ -30,6 +30,9 @@
 (add_predicate end_has_reserved_id entity)
 (add_predicate end_has_identifier entity)
 (add_predicate is_simulation_scenario entity)
+(add_function line entity string)
+(add_function column entity string)
+(add_function identifier entity string)
 
 ;;;; Port ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate is_port_of port entity)
@@ -45,6 +48,9 @@
 (add_predicate has_open_flag port)
 (add_predicate has_guarded_signal_flag port)
 (add_predicate is_of_kind port string)
+(add_function line port string)
+(add_function column port string)
+(add_function identifier port string)
 
 ;;;; Generic ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate is_generic_of generic entity)
@@ -54,8 +60,11 @@
 (add_predicate has_visible_flag generic)
 (add_predicate has_after_drivers_flag generic)
 (add_predicate is_of_type generic type)
+(add_function line generic string)
+(add_function column generic string)
+(add_function identifier generic string)
 
-;;;; File ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Architecture ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate is_in_file architecture file)
 (add_predicate is_architecture_of architecture entity)
 (add_predicate has_foreign_flag architecture)
@@ -63,6 +72,9 @@
 (add_predicate is_within_flag architecture)
 (add_predicate end_has_reserved_id architecture)
 (add_predicate end_has_identifier architecture)
+(add_function line architecture string)
+(add_function column architecture string)
+(add_function identifier architecture string)
 
 ;;;; Signal ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate belongs_to_architecture signal architecture)
@@ -77,6 +89,9 @@
 (add_predicate has_guarded_flag signal)
 (add_predicate is_of_kind signal string)
 (add_predicate is_of_type signal type)
+(add_function line signal string)
+(add_function column signal string)
+(add_function identifier signal string)
 
 ;;;; Process ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate belongs_to_architecture process architecture)
@@ -92,17 +107,27 @@
 (add_predicate end_has_reserved_id process)
 (add_predicate end_has_identifier process)
 (add_predicate is_explicit_process process)
+(add_function line process string)
+(add_function column process string)
+(add_function label process string)
+
+;;;; File ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add_function filename file string)
 
 ;;;; Component ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate is_component_of component entity)
 (add_predicate belongs_to_architecture component architecture)
 (add_predicate port_maps component waveform port)
+(add_function line component string)
+(add_function column component string)
+(add_function label component string)
 
 ;;;; Waveform ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate is_in_sensitivity_list waveform process)
 (add_predicate is_accessed_by waveform process)
 (add_predicate is_waveform_of waveform signal)
 (add_predicate is_waveform_of waveform port)
+(add_predicate is_waveform_of waveform generic)
 
 ;;;; String ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate string_matches string string)
