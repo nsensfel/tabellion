@@ -7,6 +7,8 @@ public class StringManager
 {
    private final Map<String, String> TO_ID;
    private final VHDLType string_type;
+   private final String anon_string_prefix;
+   private int anon_string_count;
 
    private static String cleanup_string (final String str)
    {
@@ -17,6 +19,8 @@ public class StringManager
    {
       TO_ID = new HashMap<String, String>();
       string_type = Main.get_model().get_string_type();
+      anon_string_prefix = "_string_"; /* TODO: use a program param. */
+      anon_string_count = 0;
    }
 
 
@@ -25,20 +29,17 @@ public class StringManager
       final String str
    )
    {
-      final String id;
+      String id;
 
       id = TO_ID.get(cleanup_string(str));
 
       if (id == null)
       {
-         System.err.println
-         (
-            "[F] There is no mapping associated with the string \""
-            + str
-            + "\", and anonymous strings are not yet supported."
-         );
+         id = (anon_string_prefix + anon_string_count);
 
-         System.exit(-1);
+         string_type.add_member(id);
+
+         TO_ID.put(str, id);
       }
       else
       {
