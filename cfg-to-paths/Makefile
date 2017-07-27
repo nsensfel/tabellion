@@ -28,6 +28,8 @@ clean:
 %.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $<
 
+PATTERN = 's/\(is_start_node ([0-9]+).*/\1/p'
+
 %.cfg.mod: ../ast-to-instr/%.mod $(CLASSES)
-	$(eval ROOT_NODE := $(shell head -n 1 $< | grep "[0-9]\+" -o))
+	$(eval ROOT_NODE := $(shell cat $< | grep 'is_start_node' | sed -En $(PATTERN)))
 	$(JAVA) -cp $(CLASSPATH) Main $< $(ROOT_NODE) "p$(ROOT_NODE)_" $@
