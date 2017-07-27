@@ -18,7 +18,7 @@ public class Strings
 
    public static IDs get_id_from_string
    (
-      String string
+      final String string
    )
    {
       return get_id_from_string(Main.get_main_output(), string);

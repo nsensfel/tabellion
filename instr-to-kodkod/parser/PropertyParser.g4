@@ -1028,6 +1028,152 @@ bl_eu_operator [Variable current_node]
    }
 ;
 
+/**** Depth Operators *********************************************************/
+bl_depth_no_parent_operator [Variable current_node]
+   returns [Formula result]
+
+   @init
+   {
+      final Variable node_of_path, node_for_f, chosen_path;
+
+      node_of_path = Main.get_variable_manager().generate_new_variable();
+      node_for_f = Main.get_variable_manager().generate_new_variable();
+      chosen_path = Main.get_variable_manager().generate_new_variable();
+   }
+
+   :
+   (WS)* DEPTH_NO_PARENT_OPERATOR_KW
+      bl_formula[node_for_f]
+   (WS)* R_PAREN
+
+   {
+      final Relation depth_relation;
+
+      depth_relation = Main.get_model().get_predicate_as_relation("depth");
+
+      $result =
+         node_of_path.join
+         (
+            depth_relation
+         ).product
+         (
+            node_for_f.join(depth_relation)
+         ).in
+         (
+            Main.get_model().get_predicate_as_relation("is_lower_than")
+         ).not
+         (
+            /* (not (is_lower_than [depth node_of_path] [depth node_for_f])) */
+         ).forAll
+         (
+            node_of_path.oneOf
+            (
+               node_for_f.join
+               (
+                  chosen_path.join
+                  (
+                     Main.get_model().get_predicate_as_relation("is_before")
+                  ).transpose()
+               )
+            )
+         ).and
+         (
+            ($bl_formula.result)
+         ).forSome
+         (
+            node_for_f.oneOf
+            (
+               chosen_path.join
+               (
+                  Main.get_model().get_predicate_as_relation("contains_node")
+               )
+            )
+         ).forAll
+         (
+            chosen_path.oneOf
+            (
+               current_node.join
+               (
+                  Main.get_model().get_predicate_as_relation
+                  (
+                     "is_path_of"
+                  ).transpose()
+               )
+            )
+         );
+   }
+;
+
+bl_depth_no_change_operator [Variable current_node]
+   returns [Formula result]
+
+   @init
+   {
+      final Variable node_of_path, node_for_f, chosen_path;
+
+      node_of_path = Main.get_variable_manager().generate_new_variable();
+      node_for_f = Main.get_variable_manager().generate_new_variable();
+      chosen_path = Main.get_variable_manager().generate_new_variable();
+   }
+
+   :
+   (WS)* DEPTH_NO_PARENT_OPERATOR_KW
+      bl_formula[node_for_f]
+   (WS)* R_PAREN
+
+   {
+      final Relation depth_relation;
+
+      depth_relation = Main.get_model().get_predicate_as_relation("depth");
+
+      $result =
+         node_of_path.join
+         (
+            depth_relation
+         ).eq
+         (
+            node_for_f.join(depth_relation)
+         /* (eq? [depth node_of_path] [depth node_for_f]) */
+         ).forAll
+         (
+            node_of_path.oneOf
+            (
+               node_for_f.join
+               (
+                  chosen_path.join
+                  (
+                     Main.get_model().get_predicate_as_relation("is_before")
+                  ).transpose()
+               )
+            )
+         ).and
+         (
+            ($bl_formula.result)
+         ).forSome
+         (
+            node_for_f.oneOf
+            (
+               chosen_path.join
+               (
+                  Main.get_model().get_predicate_as_relation("contains_node")
+               )
+            )
+         ).forAll
+         (
+            chosen_path.oneOf
+            (
+               current_node.join
+               (
+                  Main.get_model().get_predicate_as_relation
+                  (
+                     "is_path_of"
+                  ).transpose()
+               )
+            )
+         );
+   }
+;
+
 /**** Formula Definition ******************************************************/
 bl_formula [Variable current_node]
    returns [Formula result]:
@@ -1083,5 +1229,13 @@ bl_formula [Variable current_node]
    | bl_eu_operator[current_node]
    {
       $result = ($bl_eu_operator.result);
+   }
+   | bl_depth_no_parent_operator[current_node]
+   {
+      $result = ($bl_depth_no_parent_operator.result);
+   }
+   | bl_depth_no_change_operator[current_node]
+   {
+      $result = ($bl_depth_no_change_operator.result);
    }
 ;

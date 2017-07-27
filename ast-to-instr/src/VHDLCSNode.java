@@ -130,10 +130,7 @@ public class VHDLCSNode extends VHDLNode
          output,
          "depth",
          local_id,
-         Strings.get_id_from_string
-         (
-            Integer.toString(depth)
-         )
+         Depths.get_id_from_depth(new Integer(depth))
       );
    }
 

@@ -28,6 +28,9 @@ EF_OPERATOR_KW: '(EF' SEP;
 AU_OPERATOR_KW: '(AU' SEP;
 EU_OPERATOR_KW: '(EU' SEP;
 
+DEPTH_NO_PARENT_OPERATOR_KW: '(does_not_reach_parent_before' SEP;
+DEPTH_NO_CHANGE_OPERATOR_KW: '(does_not_change_depth_before' SEP;
+
 WS: SEP;
 
 ID: [a-zA-Z0-9_]+;

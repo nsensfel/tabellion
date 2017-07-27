@@ -87,6 +87,8 @@ public class Main
 
       parse_content(vhdl_files);
 
+      Depths.generate_predicates();
+
       OutputFile.close_all();
    }
 

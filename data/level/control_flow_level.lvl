@@ -5,7 +5,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (add_type node)
-(add_type node_depth)
+(add_type depth)
 
 ;; Redundancies
 (add_type process)
@@ -16,9 +16,7 @@
 ;; PREDICATES DECLARATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate is_start_node node process)
-(add_predicate has_kind node string)
 (add_predicate has_option node string)
-(add_predicate has_depth node node_depth)
 (add_predicate node_connect node node)
 
 ;;; To be removed soon.
@@ -29,6 +27,8 @@
 (add_predicate is_read_element node string string)
 (add_predicate is_terminal node)
 
+(add_predicate is_lower_than depth depth)
+
 (add_function label node string)
 (add_function kind node string)
-(add_function depth node string)
+(add_function depth node depth)

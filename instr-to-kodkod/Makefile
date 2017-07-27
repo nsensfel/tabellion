@@ -1,6 +1,10 @@
 ## Target(s) Configuration #####################################################
 #MODEL_FILES = $(wildcard ../data/instructions/*.mod)
-MODEL_FILES = ../ast-to-instr/structural.mod $(wildcard ../ast-to-instr/cfg_*.mod) $(wildcard ../cfg-to-paths/*.mod)
+MODEL_FILES = \
+	../ast-to-instr/structural.mod \
+	../ast-to-instr/depths.mod \
+	$(wildcard ../ast-to-instr/cfg_*.mod) \
+	$(wildcard ../cfg-to-paths/*.mod)
 MAP_FILES = $(wildcard ../ast-to-instr/*.map)
 LEVEL_DIR = $(wildcard ../data/level/*.lvl)
 #PROPERTY_FILE = ../data/property/unread_waveforms.pro
