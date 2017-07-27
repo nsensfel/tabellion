@@ -60,13 +60,16 @@ public class Depths
          --current_depth
       )
       {
-         Predicates.add_entry
-         (
-            DEPTHS_OUTPUT,
-            "is_lower_than",
-            get_id_from_depth(new Integer(current_depth - 1)),
-            get_id_from_depth(new Integer(current_depth))
-         );
+         for (int i = 0; i < current_depth; ++i)
+         {
+            Predicates.add_entry
+            (
+               DEPTHS_OUTPUT,
+               "is_lower_than",
+               get_id_from_depth(new Integer(i)),
+               get_id_from_depth(new Integer(current_depth))
+            );
+         }
       }
    }
 }

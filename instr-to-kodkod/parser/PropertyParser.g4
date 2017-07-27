@@ -1047,9 +1047,10 @@ bl_depth_no_parent_operator [Variable current_node]
    (WS)* R_PAREN
 
    {
-      final Relation depth_relation;
+      final Relation depth_relation, lower_than_relation;
 
       depth_relation = Main.get_model().get_predicate_as_relation("depth");
+      lower_than_relation = Main.get_model().get_predicate_as_relation("depth");
 
       $result =
          node_of_path.join
@@ -1057,13 +1058,13 @@ bl_depth_no_parent_operator [Variable current_node]
             depth_relation
          ).product
          (
-            node_for_f.join(depth_relation)
+            current_node.join(depth_relation)
          ).in
          (
-            Main.get_model().get_predicate_as_relation("is_lower_than")
+            lower_than_relation
          ).not
          (
-            /* (not (is_lower_than [depth node_of_path] [depth node_for_f])) */
+            /* (not (is_lower_than [depth node_of_path] [depth current_node])) */
          ).forAll
          (
             node_of_path.oneOf
@@ -1078,7 +1079,19 @@ bl_depth_no_parent_operator [Variable current_node]
             )
          ).and
          (
-            ($bl_formula.result)
+            ($bl_formula.result).and
+            (
+               current_node.join
+               (
+                  depth_relation
+               ).product
+               (
+                  node_for_f
+               ).in
+               (
+                  lower_than_relation
+               ).not()
+            )
          ).forSome
          (
             node_for_f.oneOf
