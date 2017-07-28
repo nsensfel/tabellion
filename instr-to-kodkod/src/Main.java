@@ -76,7 +76,7 @@ public class Main
             + "\"..."
          );
 
-         return pro.generate_formula();
+         return pro.generate_base_formula();
       }
       catch (final IOException e)
       {

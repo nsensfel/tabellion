@@ -345,6 +345,16 @@ public class VHDLModel
       }
    }
 
+   public boolean type_exists (final String name)
+   {
+      return types.containsKey(name);
+   }
+
+   public boolean predicate_exists (final String name)
+   {
+      return predicates.containsKey(name);
+   }
+
    public Relation get_atom_as_relation
    (
       final String type,

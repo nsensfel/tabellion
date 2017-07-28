@@ -25,80 +25,17 @@ tag_existing
 
    (WS)* TAG_EXISTING_KW
       L_PAREN
-         tag_list
+      (tag_item)+
       R_PAREN
-   (WS)* sl_formula
+   (WS)* formula[null]
    (WS)* R_PAREN
 
    {
-      final List<String[]> tags;
-
-      $result = ($sl_formula.result);
-
-      tags = ($tag_list.list);
-
-      for (final String[] tag_var: tags)
-      {
-         final Relation type_as_relation;
-
-         type_as_relation = Main.get_model().get_type_as_relation(tag_var[1]);
-
-         if (type_as_relation == (Relation) null)
-         {
-            System.err.println
-            (
-               "[F] The property uses an unknown type: \""
-               + tag_var[1]
-               + "\" in its tag_existing (l."
-               + ($TAG_EXISTING_KW.getLine())
-               + " c."
-               + ($TAG_EXISTING_KW.getCharPositionInLine())
-               + ")."
-            );
-
-            System.exit(-1);
-         }
-
-         $result =
-            $result.forSome
-            (
-               Main.get_variable_manager().get_variable
-               (
-                  tag_var[0]
-               ).oneOf
-               (
-                  type_as_relation
-               )
-            );
-
-         Main.get_variable_manager().tag_variable(tag_var[0], tag_var[2]);
-      }
+      $result = ($formula.result);
    }
 ;
 
-tag_list
-   returns [List<String[]> list]
-
-   @init
-   {
-      final List<String[]> result = new ArrayList<String[]>();
-   }
-
-   :
-   (
-      tag_item
-      {
-         result.add(($tag_item.result));
-      }
-   )+
-
-   {
-      $list = result;
-   }
-;
-
-tag_item
-   returns [String[] result]:
+tag_item:
 
    (WS)* L_PAREN
    (WS)* var=ID
@@ -108,11 +45,47 @@ tag_item
    (WS)*
 
    {
-      $result = new String[3];
+      try
+      {
+         Main.get_variable_manager().add_tag
+         (
+            ($var.text),
+            ($type.text),
+            ($tag.text)
+         );
+      }
+      catch (final Exception e)
+      {
+         System.err.println
+         (
+            "[F] The following exception was raised during the parsing of the"
+            + " property (l."
+            + ($var.getLine())
+            + " c."
+            + ($var.getCharPositionInLine())
+            + "):\n"
+            + e.getMessage()
+         );
 
-      $result[0] = ($var.text);
-      $result[1] = ($type.text);
-      $result[2] = ($tag.text);
+         System.exit(-1);
+      }
+
+      if (!Main.get_model().type_exists(($type.text)))
+      {
+         System.err.println
+         (
+            "[F] The following exception was raised during the parsing of the"
+            + " property (l."
+            + ($var.getLine())
+            + " c."
+            + ($var.getCharPositionInLine())
+            + "):\n[F] No such type \""
+            + ($type.text)
+            + "\"."
+         );
+
+         System.exit(-1);
+      }
    }
 ;
 
@@ -122,13 +95,31 @@ id_or_string_or_fun [Variable current_node]
    :
    ID
    {
-     if (($ID.text).equals("_"))
+      if (($ID.text).equals("_"))
       {
          $value = null;
       }
       else
       {
-         $value = Main.get_variable_manager().get_variable(($ID.text));
+         try
+         {
+            $value = Main.get_variable_manager().get_variable(($ID.text));
+         }
+         catch (final Exception e)
+         {
+            System.err.println
+            (
+               "[F] The following exception was raised during the parsing of"
+               + " the property (l."
+               + ($ID.getLine())
+               + " c."
+               + ($ID.getCharPositionInLine())
+               + "):\n"
+               + e.getMessage()
+            );
+
+            System.exit(-1);
+         }
       }
    }
 
@@ -136,7 +127,6 @@ id_or_string_or_fun [Variable current_node]
    STRING
    {
       $value = Main.get_string_manager().get_string_as_relation(($STRING.text));
-      System.out.println("Using (STR \"" + ($STRING.text) + "\" " + ($value) + ")");
    }
 
    |
@@ -160,7 +150,7 @@ id_list [Variable current_node]
       (WS)+
       id_or_string_or_fun[current_node]
       {
-         if (($id_or_string_or_fun.value) == (Expression) null)
+         if (($id_or_string_or_fun.value) == null)
          {
             used_joker = true;
          }
@@ -286,7 +276,7 @@ function [Variable current_node]
       {
          System.err.println
          (
-            "[F] The property uses an unknown predicate: \""
+            "[F] The property uses an unknown function: \""
             + ($ID.text)
             + "\" (l."
             + ($ID.getLine())
@@ -302,7 +292,7 @@ function [Variable current_node]
       {
          System.err.println
          (
-            "[F] The property uses a joker inside a function: \""
+            "[F] The property uses a joker inside a function call at \""
             + ($ID.text)
             + "\" (l."
             + ($ID.getLine())
@@ -328,10 +318,7 @@ function [Variable current_node]
    }
 ;
 
-/******************************************************************************/
-/** Structural Level **********************************************************/
-/******************************************************************************/
-sl_non_empty_formula_list
+non_empty_formula_list [Variable current_node]
    returns [List<Formula> list]
 
    @init
@@ -341,10 +328,10 @@ sl_non_empty_formula_list
 
    :
    (
-      sl_formula
+      formula[current_node]
 
       {
-         result.add(($sl_formula.result));
+         result.add(($formula.result));
       }
    )+
 
@@ -354,62 +341,62 @@ sl_non_empty_formula_list
 ;
 
 /**** First Order Expressions *************************************************/
-sl_and_operator
+and_operator [Variable current_node]
    returns [Formula result]:
 
    (WS)* AND_OPERATOR_KW
-      sl_formula
-      sl_non_empty_formula_list
+      formula[current_node]
+      non_empty_formula_list[current_node]
    (WS)* R_PAREN
 
    {
       $result =
          (
-            ($sl_formula.result)
+            ($formula.result)
          ).and
          (
-            Formula.and(($sl_non_empty_formula_list.list))
+            Formula.and(($non_empty_formula_list.list))
          );
    }
 ;
 
-sl_or_operator
+or_operator [Variable current_node]
    returns [Formula result]:
 
    (WS)* OR_OPERATOR_KW
-      sl_formula
-      sl_non_empty_formula_list
+      formula[current_node]
+      non_empty_formula_list[current_node]
    (WS)* R_PAREN
 
    {
       $result =
          (
-            ($sl_formula.result)
+            ($formula.result)
          ).or
          (
-            Formula.or(($sl_non_empty_formula_list.list))
+            Formula.or(($non_empty_formula_list.list))
          );
    }
 ;
 
-sl_not_operator
+not_operator [Variable current_node]
    returns [Formula result]:
 
    (WS)* NOT_OPERATOR_KW
-      sl_formula
+      formula[current_node]
    (WS)* R_PAREN
 
    {
-      $result = ($sl_formula.result).not();
+      $result = ($formula.result).not();
    }
 ;
 
-sl_implies_operator
+implies_operator [Variable current_node]
    returns [Formula result]:
 
    (WS)* IMPLIES_OPERATOR_KW
-      a=sl_formula
-      b=sl_formula
+      a=formula[current_node]
+      b=formula[current_node]
    (WS)* R_PAREN
 
    {
@@ -418,31 +405,25 @@ sl_implies_operator
 ;
 
 /** Quantified Expressions ****************************************************/
-sl_exists_operator
-   returns [Formula result]:
+variable_declaration
+   returns [Variable var_as_var, Relation type_as_rel]:
 
-   (WS)* EXISTS_OPERATOR_KW
-         var=ID
-   (WS)+ type=ID
-         f=sl_formula
-   (WS*) R_PAREN
+   var=ID (WS)+ type=ID
 
    {
-      final Relation type_as_relation;
-
-      type_as_relation =
+      $type_as_rel =
          Main.get_model().get_type_as_relation
          (
             ($type.text)
          );
 
-      if (type_as_relation == (Relation) null)
+      if ($type_as_rel == (Relation) null)
       {
          System.err.println
          (
             "[F] The property uses an unknown type: \""
             + ($type.text)
-            + "\" in an \"exists\" at structural level (l."
+            + "\" at (l."
             + ($type.getLine())
             + " c."
             + ($type.getCharPositionInLine())
@@ -452,256 +433,203 @@ sl_exists_operator
          System.exit(-1);
       }
 
-      $result =
-         ($f.result).forSome
+      try
+      {
+         $var_as_var = Main.get_variable_manager().add_variable(($var.text));
+      }
+      catch (final Exception e)
+      {
+         System.err.println
          (
-            Main.get_variable_manager().get_variable
+            "[F] The following exception was raised during the parsing of"
+            + " the property (l."
+            + ($var.getLine())
+            + " c."
+            + ($var.getCharPositionInLine())
+            + "):\n"
+            + e.getMessage()
+         );
+
+         System.exit(-1);
+      }
+   }
+;
+
+exists_operator [Variable current_node]
+   returns [Formula result]:
+
+   (WS)* EXISTS_OPERATOR_KW
+      variable_declaration
+      formula[current_node]
+   (WS*) R_PAREN
+
+   {
+      if (current_node != null)
+      {
+         System.err.println
+         (
+            "[W] Use of the existential operator inside a \"CTL_verifies\""
+            + " operator is not part of Tabellion's semantics and may not be"
+            + " available on other solving platforms. As a result, its use is"
+            + " discouraged (from l."
+            + ($EXISTS_OPERATOR_KW.getLine())
+            + " c."
+            + ($EXISTS_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+      }
+
+      $result =
+         ($formula.result).forSome
+         (
+            ($variable_declaration.var_as_var).oneOf
             (
-               ($var.text)
-            ).oneOf
-            (
-               type_as_relation
+               ($variable_declaration.type_as_rel)
             )
          );
    }
 ;
 
-sl_forall_operator
+forall_operator [Variable current_node]
    returns [Formula result]:
 
    (WS)* FORALL_OPERATOR_KW
-         var=ID
-   (WS)+ type=ID
-         f=sl_formula
+      variable_declaration
+      formula[current_node]
    (WS*) R_PAREN
 
    {
-      final Relation type_as_relation;
-
-      type_as_relation =
-         Main.get_model().get_type_as_relation
-         (
-            ($type.text)
-         );
-
-      if (type_as_relation == (Relation) null)
+      if (current_node != null)
       {
          System.err.println
          (
-            "[F] The property uses an unknown type: \""
-            + ($type.text)
-            + "\" in a \"forall\" at structural level (l."
-            + ($type.getLine())
+            "[W] Use of the universal operator inside a \"CTL_verifies\""
+            + " operator is not part of Tabellion's semantics and may not be"
+            + " available on other solving platforms. As a result, its use is"
+            + " discouraged (from l."
+            + ($FORALL_OPERATOR_KW.getLine())
             + " c."
-            + ($type.getCharPositionInLine())
+            + ($FORALL_OPERATOR_KW.getCharPositionInLine())
             + ")."
          );
-
-         System.exit(-1);
       }
 
       $result =
-         ($f.result).forAll
+         ($formula.result).forAll
          (
-            Main.get_variable_manager().get_variable
+            ($variable_declaration.var_as_var).oneOf
             (
-               ($var.text)
-            ).oneOf
-            (
-               type_as_relation
+               ($variable_declaration.type_as_rel)
             )
          );
    }
 ;
 
 /** Special Expressions *******************************************************/
-sl_ctl_verifies_operator
+ctl_verifies_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable root_node;
 
-      root_node = Main.get_variable_manager().generate_new_variable();
+      root_node = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
    (WS)* CTL_VERIFIES_OPERATOR_KW
          ps=ID
-         f=bl_formula[root_node]
+         f=formula[root_node]
    (WS)* R_PAREN
 
    {
-
-      $result =
-         ($f.result).forSome
-         (
-            root_node.oneOf
-            (
-               Main.get_variable_manager().get_variable(($ps.text)).join
-               (
-                  Main.get_model().get_predicate_as_relation
-                  (
-                     "is_start_node"
-                  ).transpose()
-               )
-            )
-         );
-   }
-;
-
-/**** Formula Definition ******************************************************/
-sl_formula
-   returns [Formula result]:
-
-   predicate[null]
-   {
-      $result = ($predicate.result);
-   }
-
-   | sl_and_operator
-   {
-      $result = ($sl_and_operator.result);
-   }
-
-   | sl_or_operator
-   {
-      $result = ($sl_or_operator.result);
-   }
-
-   | sl_not_operator
-   {
-      $result = ($sl_not_operator.result);
-   }
-
-   | sl_implies_operator
-   {
-      $result = ($sl_implies_operator.result);
-   }
-
-   | sl_exists_operator
-   {
-      $result = ($sl_exists_operator.result);
-   }
-
-   | sl_forall_operator
-   {
-      $result = ($sl_forall_operator.result);
-   }
-
-   | sl_ctl_verifies_operator
-   {
-      $result = ($sl_ctl_verifies_operator.result);
-   }
-;
-
-/******************************************************************************/
-/** Behavioral Level **********************************************************/
-/******************************************************************************/
-bl_formula_list [Variable current_node]
-   returns [List<Formula> list]
-
-   @init
-   {
-      final List<Formula> result = new ArrayList<Formula>();
-   }
-
-   :
-   (
-      bl_formula[current_node]
+      if (current_node != null)
       {
-         result.add(($bl_formula.result));
+         System.err.println
+         (
+            "[F] The property uses a \"CTL_verifies\" inside a \"CTL_verifies\""
+            + " and we have not heard anything about you liking"
+            + " \"CTL_verifies\", so you can't CTL_verify while you CTL_verify"
+            + " (l."
+            + ($CTL_VERIFIES_OPERATOR_KW.getLine())
+            + " c."
+            + ($CTL_VERIFIES_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
       }
-   )+
 
-   {
-      $list = result;
-   }
-;
-
-/**** First Order Expressions *************************************************/
-bl_and_operator [Variable current_node]
-   returns [Formula result]:
-
-   (WS)* AND_OPERATOR_KW
-      bl_formula[current_node]
-      bl_formula_list[current_node]
-   (WS)* R_PAREN
-
-   {
-      $result =
+      try
+      {
+         $result =
+            ($f.result).forSome
+            (
+               root_node.oneOf
+               (
+                  Main.get_variable_manager().get_variable(($ps.text)).join
+                  (
+                     Main.get_model().get_predicate_as_relation
+                     (
+                        "is_start_node"
+                     ).transpose()
+                  )
+               )
+            );
+      }
+      catch (final Exception e)
+      {
+         System.err.println
          (
-            ($bl_formula.result)
-         ).and
-         (
-            Formula.and(($bl_formula_list.list))
+            "[F] The following exception was raised during the parsing of"
+            + " the property (l."
+            + ($ps.getLine())
+            + " c."
+            + ($ps.getCharPositionInLine())
+            + "):\n"
+            + e.getMessage()
          );
+
+         System.exit(-1);
+      }
    }
 ;
 
-bl_or_operator [Variable current_node]
-   returns [Formula result]:
-
-   (WS)* OR_OPERATOR_KW
-      bl_formula[current_node]
-      bl_formula_list[current_node]
-   (WS)* R_PAREN
-
-   {
-      $result =
-         (
-            ($bl_formula.result)
-         ).or
-         (
-            Formula.or(($bl_formula_list.list))
-         );
-   }
-;
-
-bl_not_operator [Variable current_node]
-   returns [Formula result]:
-
-   (WS)* NOT_OPERATOR_KW
-      bl_formula[current_node]
-   (WS)* R_PAREN
-
-   {
-      $result = ($bl_formula.result).not();
-   }
-;
-
-bl_implies_operator [Variable current_node]
-   returns [Formula result]:
-
-   (WS)* IMPLIES_OPERATOR_KW
-      a=bl_formula[current_node]
-      b=bl_formula[current_node]
-   (WS)* R_PAREN
-
-   {
-      $result = ($a.result).implies(($b.result));
-   }
-;
 
 /**** Computation Tree Logic Expressions **************************************/
-bl_ax_operator [Variable current_node]
+ax_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable next_node;
 
-      next_node = Main.get_variable_manager().generate_new_variable();
+      next_node = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
    (WS)* AX_OPERATOR_KW
-      bl_formula[next_node]
+      formula[next_node]
    (WS)* R_PAREN
 
    {
+      if (current_node == null)
+      {
+         System.err.println
+         (
+            "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
+            + " (l."
+            + ($AX_OPERATOR_KW.getLine())
+            + " c."
+            + ($AX_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
       $result =
-         ($bl_formula.result).forAll
+         ($formula.result).forAll
          (
             next_node.oneOf
             (
@@ -714,24 +642,39 @@ bl_ax_operator [Variable current_node]
    }
 ;
 
-bl_ex_operator [Variable current_node]
+ex_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable next_node;
 
-      next_node = Main.get_variable_manager().generate_new_variable();
+      next_node = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
    (WS)* EX_OPERATOR_KW
-      bl_formula[next_node]
+      formula[next_node]
    (WS)* R_PAREN
 
    {
+      if (current_node == null)
+      {
+         System.err.println
+         (
+            "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
+            + " (l."
+            + ($EX_OPERATOR_KW.getLine())
+            + " c."
+            + ($EX_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
       $result =
-         ($bl_formula.result).forSome
+         ($formula.result).forSome
          (
             next_node.oneOf
             (
@@ -744,24 +687,39 @@ bl_ex_operator [Variable current_node]
    }
 ;
 
-bl_ag_operator [Variable current_node]
+ag_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable next_node;
 
-      next_node = Main.get_variable_manager().generate_new_variable();
+      next_node = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
    (WS)* AG_OPERATOR_KW
-      bl_formula[next_node]
+      formula[next_node]
    (WS)* R_PAREN
 
    {
+      if (current_node == null)
+      {
+         System.err.println
+         (
+            "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
+            + " (l."
+            + ($AG_OPERATOR_KW.getLine())
+            + " c."
+            + ($AG_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
       $result =
-         ($bl_formula.result).forAll
+         ($formula.result).forAll
          (
             next_node.oneOf
             (
@@ -780,25 +738,40 @@ bl_ag_operator [Variable current_node]
    }
 ;
 
-bl_eg_operator [Variable current_node]
+eg_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable next_node, chosen_path;
 
-      next_node = Main.get_variable_manager().generate_new_variable();
-      chosen_path = Main.get_variable_manager().generate_new_variable();
+      next_node = Main.get_variable_manager().generate_new_anonymous_variable();
+      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
    (WS)* EG_OPERATOR_KW
-      bl_formula[next_node]
+      formula[next_node]
    (WS)* R_PAREN
 
    {
+      if (current_node == null)
+      {
+         System.err.println
+         (
+            "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
+            + " (l."
+            + ($EG_OPERATOR_KW.getLine())
+            + " c."
+            + ($EG_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
       $result =
-         ($bl_formula.result).forAll
+         ($formula.result).forAll
          (
             next_node.oneOf
             (
@@ -823,25 +796,40 @@ bl_eg_operator [Variable current_node]
    }
 ;
 
-bl_af_operator [Variable current_node]
+af_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable next_node, chosen_path;
 
-      next_node = Main.get_variable_manager().generate_new_variable();
-      chosen_path = Main.get_variable_manager().generate_new_variable();
+      next_node = Main.get_variable_manager().generate_new_anonymous_variable();
+      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
    (WS)* AF_OPERATOR_KW
-      bl_formula[next_node]
+      formula[next_node]
    (WS)* R_PAREN
 
    {
+      if (current_node == null)
+      {
+         System.err.println
+         (
+            "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
+            + " (l."
+            + ($AF_OPERATOR_KW.getLine())
+            + " c."
+            + ($AF_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
       $result =
-         ($bl_formula.result).forSome
+         ($formula.result).forSome
          (
             next_node.oneOf
             (
@@ -866,25 +854,40 @@ bl_af_operator [Variable current_node]
    }
 ;
 
-bl_ef_operator [Variable current_node]
+ef_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable next_node, chosen_path;
 
-      next_node = Main.get_variable_manager().generate_new_variable();
-      chosen_path = Main.get_variable_manager().generate_new_variable();
+      next_node = Main.get_variable_manager().generate_new_anonymous_variable();
+      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
    (WS)* EF_OPERATOR_KW
-      bl_formula[next_node]
+      formula[next_node]
    (WS)* R_PAREN
 
    {
+      if (current_node == null)
+      {
+         System.err.println
+         (
+            "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
+            + " (l."
+            + ($EF_OPERATOR_KW.getLine())
+            + " c."
+            + ($EF_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
       $result =
-         ($bl_formula.result).forSome
+         ($formula.result).forSome
          (
             next_node.oneOf
             (
@@ -909,25 +912,40 @@ bl_ef_operator [Variable current_node]
    }
 ;
 
-bl_au_operator [Variable current_node]
+au_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable f1_node, f2_node, chosen_path;
 
-      f1_node = Main.get_variable_manager().generate_new_variable();
-      f2_node = Main.get_variable_manager().generate_new_variable();
-      chosen_path = Main.get_variable_manager().generate_new_variable();
+      f1_node = Main.get_variable_manager().generate_new_anonymous_variable();
+      f2_node = Main.get_variable_manager().generate_new_anonymous_variable();
+      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
    (WS)* AU_OPERATOR_KW
-      f1=bl_formula[f1_node]
-      f2=bl_formula[f2_node]
+      f1=formula[f1_node]
+      f2=formula[f2_node]
    (WS)* R_PAREN
 
    {
+      if (current_node == null)
+      {
+         System.err.println
+         (
+            "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
+            + " (l."
+            + ($AU_OPERATOR_KW.getLine())
+            + " c."
+            + ($AU_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
       $result =
          ($f1.result).forAll
          (
@@ -969,25 +987,40 @@ bl_au_operator [Variable current_node]
    }
 ;
 
-bl_eu_operator [Variable current_node]
+eu_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable f1_node, f2_node, chosen_path;
 
-      f1_node = Main.get_variable_manager().generate_new_variable();
-      f2_node = Main.get_variable_manager().generate_new_variable();
-      chosen_path = Main.get_variable_manager().generate_new_variable();
+      f1_node = Main.get_variable_manager().generate_new_anonymous_variable();
+      f2_node = Main.get_variable_manager().generate_new_anonymous_variable();
+      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
    (WS)* EU_OPERATOR_KW
-      f1=bl_formula[f1_node]
-      f2=bl_formula[f2_node]
+      f1=formula[f1_node]
+      f2=formula[f2_node]
    (WS)* R_PAREN
 
    {
+      if (current_node == null)
+      {
+         System.err.println
+         (
+            "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
+            + " (l."
+            + ($EU_OPERATOR_KW.getLine())
+            + " c."
+            + ($EU_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
+
       $result =
          ($f1.result).forAll
          (
@@ -1029,21 +1062,21 @@ bl_eu_operator [Variable current_node]
 ;
 
 /**** Depth Operators *********************************************************/
-bl_depth_no_parent_operator [Variable current_node]
+depth_no_parent_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable node_of_path, node_for_f, chosen_path;
 
-      node_of_path = Main.get_variable_manager().generate_new_variable();
-      node_for_f = Main.get_variable_manager().generate_new_variable();
-      chosen_path = Main.get_variable_manager().generate_new_variable();
+      node_of_path = Main.get_variable_manager().generate_new_anonymous_variable();
+      node_for_f = Main.get_variable_manager().generate_new_anonymous_variable();
+      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
    (WS)* DEPTH_NO_PARENT_OPERATOR_KW
-      bl_formula[node_for_f]
+      formula[node_for_f]
    (WS)* R_PAREN
 
    {
@@ -1051,6 +1084,21 @@ bl_depth_no_parent_operator [Variable current_node]
 
       depth_relation = Main.get_model().get_predicate_as_relation("depth");
       lower_than_relation = Main.get_model().get_predicate_as_relation("depth");
+
+      if (current_node == null)
+      {
+         System.err.println
+         (
+            "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
+            + " (l."
+            + ($DEPTH_NO_PARENT_OPERATOR_KW.getLine())
+            + " c."
+            + ($DEPTH_NO_PARENT_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
 
       $result =
          node_of_path.join
@@ -1079,7 +1127,7 @@ bl_depth_no_parent_operator [Variable current_node]
             )
          ).and
          (
-            ($bl_formula.result).and
+            ($formula.result).and
             (
                current_node.join
                (
@@ -1117,27 +1165,42 @@ bl_depth_no_parent_operator [Variable current_node]
    }
 ;
 
-bl_depth_no_change_operator [Variable current_node]
+depth_no_change_operator [Variable current_node]
    returns [Formula result]
 
    @init
    {
       final Variable node_of_path, node_for_f, chosen_path;
 
-      node_of_path = Main.get_variable_manager().generate_new_variable();
-      node_for_f = Main.get_variable_manager().generate_new_variable();
-      chosen_path = Main.get_variable_manager().generate_new_variable();
+      node_of_path = Main.get_variable_manager().generate_new_anonymous_variable();
+      node_for_f = Main.get_variable_manager().generate_new_anonymous_variable();
+      chosen_path = Main.get_variable_manager().generate_new_anonymous_variable();
    }
 
    :
-   (WS)* DEPTH_NO_PARENT_OPERATOR_KW
-      bl_formula[node_for_f]
+   (WS)* DEPTH_NO_CHANGE_OPERATOR_KW
+      formula[node_for_f]
    (WS)* R_PAREN
 
    {
       final Relation depth_relation;
 
       depth_relation = Main.get_model().get_predicate_as_relation("depth");
+
+      if (current_node == null)
+      {
+         System.err.println
+         (
+            "[F] The property uses a CTL operator outside of a \"CTL_verifies\""
+            + " (l."
+            + ($DEPTH_NO_CHANGE_OPERATOR_KW.getLine())
+            + " c."
+            + ($DEPTH_NO_CHANGE_OPERATOR_KW.getCharPositionInLine())
+            + ")."
+         );
+
+         System.exit(-1);
+      }
 
       $result =
          node_of_path.join
@@ -1161,7 +1224,7 @@ bl_depth_no_change_operator [Variable current_node]
             )
          ).and
          (
-            ($bl_formula.result)
+            ($formula.result)
          ).forSome
          (
             node_for_f.oneOf
@@ -1188,67 +1251,96 @@ bl_depth_no_change_operator [Variable current_node]
 ;
 
 /**** Formula Definition ******************************************************/
-bl_formula [Variable current_node]
+formula [Variable current_node]
    returns [Formula result]:
 
    predicate[current_node]
    {
       $result = ($predicate.result);
    }
-   | bl_and_operator[current_node]
+
+   | and_operator[current_node]
    {
-      $result = ($bl_and_operator.result);
+      $result = ($and_operator.result);
    }
-   | bl_or_operator[current_node]
+
+   | or_operator[current_node]
    {
-      $result = ($bl_or_operator.result);
+      $result = ($or_operator.result);
    }
-   | bl_not_operator[current_node]
+
+   | not_operator[current_node]
    {
-      $result = ($bl_not_operator.result);
+      $result = ($not_operator.result);
    }
-   | bl_implies_operator[current_node]
+
+   | implies_operator[current_node]
    {
-      $result = ($bl_implies_operator.result);
+      $result = ($implies_operator.result);
    }
-   | bl_ax_operator[current_node]
+
+   | exists_operator[current_node]
    {
-      $result = ($bl_ax_operator.result);
+      $result = ($exists_operator.result);
    }
-   | bl_ex_operator[current_node]
+
+   | forall_operator[current_node]
    {
-      $result = ($bl_ex_operator.result);
+      $result = ($forall_operator.result);
    }
-   | bl_ag_operator[current_node]
+
+   | ctl_verifies_operator[current_node]
    {
-      $result = ($bl_ag_operator.result);
+      $result = ($ctl_verifies_operator.result);
    }
-   | bl_eg_operator[current_node]
+
+   | ax_operator[current_node]
    {
-      $result = ($bl_eg_operator.result);
+      $result = ($ax_operator.result);
    }
-   | bl_af_operator[current_node]
+
+   | ex_operator[current_node]
    {
-      $result = ($bl_af_operator.result);
+      $result = ($ex_operator.result);
    }
-   | bl_ef_operator[current_node]
+
+   | ag_operator[current_node]
    {
-      $result = ($bl_ef_operator.result);
+      $result = ($ag_operator.result);
    }
-   | bl_au_operator[current_node]
+
+   | eg_operator[current_node]
    {
-      $result = ($bl_au_operator.result);
+      $result = ($eg_operator.result);
    }
-   | bl_eu_operator[current_node]
+
+   | af_operator[current_node]
    {
-      $result = ($bl_eu_operator.result);
+      $result = ($af_operator.result);
    }
-   | bl_depth_no_parent_operator[current_node]
+
+   | ef_operator[current_node]
    {
-      $result = ($bl_depth_no_parent_operator.result);
+      $result = ($ef_operator.result);
    }
-   | bl_depth_no_change_operator[current_node]
+
+   | au_operator[current_node]
    {
-      $result = ($bl_depth_no_change_operator.result);
+      $result = ($au_operator.result);
+   }
+
+   | eu_operator[current_node]
+   {
+      $result = ($eu_operator.result);
+   }
+
+   | depth_no_parent_operator[current_node]
+   {
+      $result = ($depth_no_parent_operator.result);
+   }
+
+   | depth_no_change_operator[current_node]
+   {
+      $result = ($depth_no_change_operator.result);
    }
 ;
