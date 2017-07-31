@@ -7,13 +7,10 @@ MODEL_FILES = \
 	$(wildcard ../cfg-to-paths/*.mod)
 MAP_FILES = $(wildcard ../ast-to-instr/*.map)
 LEVEL_DIR = $(wildcard ../data/level/*.lvl)
-#PROPERTY_FILE = ../data/property/unread_waveforms.pro
-#PROPERTY_FILE = ../data/property/impossible_processes.pro
-#PROPERTY_FILE = ../data/property/incrementer.pro
-PROPERTY_FILE = ../data/property/combinational_processes.pro
-#PROPERTY_FILE = ../data/property/likely_a_clock.pro
-#PROPERTY_FILE = ../data/property/cnes/CNE*.pro
-VAR_PREFIX = "_anon_"
+
+PROPERTIES = \
+	../data/property/combinational_processes.pro \
+	../data/property/likely_a_clock.pro
 
 ## Executables #################################################################
 JAVAC = javac
@@ -28,12 +25,14 @@ JAR_SOURCE = https://noot-noot.org/onera_2017/jar/
 REQUIRED_JARS = kodkod.jar org.sat4j.core.jar antlr-4.7-complete.jar
 
 ## Makefile Magic ##############################################################
-INPUT_FILES = $(MODEL_FILES) $(LEVEL_DIR) $(PROPERTY_FILE) $(MAP_FILES)
+GLOBAL_INPUT_FILES = $(MODEL_FILES) $(LEVEL_DIR) $(MAP_FILES)
 SOURCES = $(wildcard src/*.java parser/*.java)
 GRAMMARS = $(wildcard parser/*.g4)
 CLASSES = $(SOURCES:.java=.class)
+SOLUTIONS = $(PROPERTIES:.pro=.sol)
 
 ## Makefile Rules ##############################################################
+run: $(SOLUTIONS)
 
 all: parser/PropertyParser.java $(CLASSES)
 	$(MAKE) -C parser
@@ -46,12 +45,13 @@ clean:
 	$(MAKE) -C ../ast-to-instr clean
 	$(MAKE) -C ../cfg-to-paths clean
 
-run: parser/PropertyParser.java $(CLASSES) $(REQUIRED_JARS)
+%.sol: %.pro parser/PropertyParser.java $(CLASSES) $(REQUIRED_JARS)
+	echo "Solving \"$<\"..."
 	$(MAKE) -C ../ast-to-instr
 	$(MAKE) -C ../cfg-to-paths
-	$(JAVA) -cp $(CLASSPATH) Main $(VAR_PREFIX) $(INPUT_FILES)
+	$(JAVA) -cp $(CLASSPATH) Main $@ $< $(GLOBAL_INPUT_FILES)
 
-%.class: %.java $(REQUIRED_JARS)
+%.class: %.java $(REQUIRED_JARS) parser/PropertyParser.java
 	$(JAVAC) -cp $(CLASSPATH) $<
 
 %.jar:

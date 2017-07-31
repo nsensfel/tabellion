@@ -44,7 +44,10 @@ public class VHDLType
    {
       if (!is_used)
       {
-         System.out.println("Enabling type: " + name);
+         if (Main.get_parameters().be_verbose())
+         {
+            System.out.println("Enabling type: " + name);
+         }
 
          is_used = true;
       }

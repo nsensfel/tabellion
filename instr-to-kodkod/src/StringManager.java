@@ -41,17 +41,6 @@ public class StringManager
 
          TO_ID.put(str, id);
       }
-      else
-      {
-         System.out.println
-         (
-            "[D] Using string \""
-            + str
-            + "\" (id: "
-            + id
-            + ")"
-         );
-      }
 
       return string_type.get_member_as_relation(id);
    }

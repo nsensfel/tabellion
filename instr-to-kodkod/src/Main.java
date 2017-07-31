@@ -1,4 +1,7 @@
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.Iterator;
@@ -19,6 +22,11 @@ public class Main
    private static VHDLModel MODEL;
    private static VariableManager VARIABLE_MANAGER;
    private static StringManager STRING_MANAGER;
+
+   public static Parameters get_parameters ()
+   {
+      return PARAMETERS;
+   }
 
    public static VHDLModel get_model ()
    {
@@ -41,7 +49,10 @@ public class Main
       {
          try
          {
-            System.out.println("Loading level file \"" + lvl + "\"...");
+            if (PARAMETERS.be_verbose())
+            {
+               System.out.println("Loading level file \"" + lvl + "\"...");
+            }
 
             VHDLLevel.add_to_model(MODEL, lvl);
          }
@@ -71,12 +82,15 @@ public class Main
 
       try
       {
-         System.out.println
-         (
-            "Loading property file \""
-            + PARAMETERS.get_property_file()
-            + "\"..."
-         );
+         if (PARAMETERS.be_verbose())
+         {
+            System.out.println
+            (
+               "Loading property file \""
+               + PARAMETERS.get_property_file()
+               + "\"..."
+            );
+         }
 
          return pro.generate_base_formula();
       }
@@ -100,7 +114,10 @@ public class Main
       {
          try
          {
-            System.out.println("Loading model file \"" + mod + "\"...");
+            if (PARAMETERS.be_verbose())
+            {
+               System.out.println("Loading model file \"" + mod + "\"...");
+            }
 
             MODEL.parse_file(mod);
          }
@@ -219,6 +236,29 @@ public class Main
       return true;
    }
 
+   private static BufferedWriter get_output_file (final String filename)
+   {
+      try
+      {
+         return new BufferedWriter(new FileWriter(new File(filename)));
+      }
+      catch (final Exception e)
+      {
+         System.err.println
+         (
+            "[F] Could not create/open output file \""
+            + filename
+            + "\":"
+         );
+
+         e.printStackTrace();
+
+         System.exit(-1);
+      }
+
+      return null;
+   }
+
    public static void main (final String... args)
    {
       /*
@@ -238,6 +278,7 @@ public class Main
       final Iterator<Solution> solutions;
       final Solver solver;
       final Formula property;
+      final BufferedWriter solution_output;
 
       PARAMETERS = new Parameters(args);
 
@@ -246,7 +287,14 @@ public class Main
          return;
       }
 
-      VARIABLE_MANAGER = new VariableManager(PARAMETERS.get_variables_prefix());
+      solution_output = get_output_file(PARAMETERS.get_output_file());
+
+      if (solution_output == null)
+      {
+         return;
+      }
+
+      VARIABLE_MANAGER = new VariableManager();
 
       MODEL = new VHDLModel();
 
@@ -271,7 +319,7 @@ public class Main
       {
          return;
       }
-      else
+      else if (PARAMETERS.be_verbose())
       {
          System.out.println
          (
@@ -320,8 +368,46 @@ public class Main
 
          if (sol.sat())
          {
-            VARIABLE_MANAGER.print_solution(sol.instance().relationTuples());
+            try
+            {
+               VARIABLE_MANAGER.print_solution
+               (
+                  sol.instance().relationTuples(),
+                  solution_output
+               );
+            }
+            catch (final IOException e)
+            {
+               System.err.println
+               (
+                  "[F] Unable to write solution to file \""
+                  + PARAMETERS.get_output_file()
+                  + "\":"
+               );
+
+               e.printStackTrace();
+
+               System.exit(-1);
+            }
          }
+      }
+
+      try
+      {
+         solution_output.close();
+      }
+      catch (final IOException e)
+      {
+         System.err.println
+         (
+            "[F] Unable to properly close solution file \""
+            + PARAMETERS.get_output_file()
+            + "\":"
+         );
+
+         e.printStackTrace();
+
+         System.exit(-1);
       }
    }
 }

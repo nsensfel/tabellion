@@ -71,7 +71,10 @@ public class VHDLPredicate
 
          is_used = true;
 
-         System.out.println("Enabling predicate: " + name);
+         if (Main.get_parameters().be_verbose())
+         {
+            System.out.println("Enabling predicate: " + name);
+         }
       }
 
       return as_relation;

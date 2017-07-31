@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +19,7 @@ public class VariableManager
    private final Map<String, TaggedVariable> tagged_variables;
    private int next_id;
 
-   public VariableManager (final String var_prefix)
+   public VariableManager ()
    {
       from_string = new HashMap<String, Expression>();
       tagged_variables = new HashMap<String, TaggedVariable>();
@@ -42,8 +45,6 @@ public class VariableManager
    throws Exception
    {
       final TaggedVariable tg;
-
-      System.out.println("[D] Skolemizing: " + var_name);
 
       if (from_string.containsKey(var_name))
       {
@@ -149,25 +150,33 @@ public class VariableManager
       return result;
    }
 
-   public void print_solution (final Map<Relation, TupleSet> solution)
+   public void print_solution
+   (
+      final Map<Relation, TupleSet> solution,
+      final BufferedWriter output
+   )
+   throws IOException
    {
-      System.out.print("(solution");
+      output.write("(solution");
 
       for (final TaggedVariable tg: tagged_variables.values())
       {
-         System.out.print("\n   (");
-         System.out.print(tg.name);
-         System.out.print(" ");
-         System.out.print
+         output.newLine();
+         output.write("   (");
+         output.write(tg.name);
+         output.write(" ");
+         output.write
          (
-            solution.get(tg.as_relation).iterator().next().atom(0)
+            solution.get(tg.as_relation).iterator().next().atom(0).toString()
          );
-         System.out.print(" ");
-         System.out.print(tg.tag);
-         System.out.print(")");
+         output.write(" ");
+         output.write(tg.tag);
+         output.write(")");
       }
 
-      System.out.println("\n)");
+      output.newLine();
+      output.write(")");
+      output.newLine();
    }
 
    private static class TaggedVariable

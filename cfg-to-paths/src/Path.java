@@ -77,6 +77,8 @@ public class Path
       this.nodes.add(last_node);
    }
 
+   @SuppressWarnings("unchecked")
+   /* 'nodes' is an ArrayList<Node>, and so should be its clone. */
    private Path add_step (final Node n)
    {
       return new Path((ArrayList<Node>) nodes.clone(), n);
