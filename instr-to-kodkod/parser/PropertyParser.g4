@@ -7,12 +7,12 @@ options
 
 @header
 {
-   /* FIXME: Finer imports */
-   import kodkod.ast.*;
-
-   import kodkod.engine.*;
-
-   import kodkod.instance.*;
+   import kodkod.ast.Formula;
+   import kodkod.ast.Variable;
+   import kodkod.ast.Relation;
+   import kodkod.ast.Expression;
+   import kodkod.ast.IntExpression;
+   import kodkod.ast.IntConstant;
 }
 
 @members

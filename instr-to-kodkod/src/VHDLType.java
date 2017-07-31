@@ -1,10 +1,14 @@
-/* FIXME: Finer imports */
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import kodkod.ast.*;
-import kodkod.ast.operator.*;
+import kodkod.ast.Relation;
+import kodkod.ast.Formula;
 
-import kodkod.instance.*;
+import kodkod.instance.Bounds;
+import kodkod.instance.TupleFactory;
 
 
 public class VHDLType

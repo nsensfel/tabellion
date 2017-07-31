@@ -1,10 +1,9 @@
-/* FIXME: Finer imports */
-import java.util.*;
-import java.io.*;
+import java.io.IOException;
 
-import kodkod.ast.*;
+import kodkod.ast.Formula;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 
 public class VHDLProperty
 {

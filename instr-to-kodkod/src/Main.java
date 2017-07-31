@@ -1,15 +1,17 @@
-/* FIXME: Finer imports */
-import kodkod.ast.*;
-
-import kodkod.engine.*;
-import kodkod.engine.config.*;
-import kodkod.engine.satlab.*;
-
-import kodkod.instance.*;
-
-import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import java.util.Iterator;
+
+import kodkod.ast.Formula;
+
+import kodkod.engine.Solution;
+import kodkod.engine.Solver;
+import kodkod.engine.satlab.SATFactory;
+
+import kodkod.instance.Bounds;
+import kodkod.instance.TupleFactory;
+import kodkod.instance.Universe;
 
 public class Main
 {

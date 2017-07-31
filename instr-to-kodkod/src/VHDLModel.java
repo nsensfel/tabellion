@@ -1,10 +1,16 @@
-/* FIXME: Finer imports */
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import kodkod.ast.*;
-import kodkod.instance.*;
+import kodkod.ast.Relation;
+
+import kodkod.instance.Bounds;
+import kodkod.instance.TupleFactory;
 
 public class VHDLModel
 {

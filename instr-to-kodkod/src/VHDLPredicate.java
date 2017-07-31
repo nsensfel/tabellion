@@ -1,11 +1,11 @@
-/* FIXME: Finer imports */
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import kodkod.ast.*;
-import kodkod.ast.operator.*;
+import kodkod.ast.Relation;
 
-import kodkod.instance.*;
-
+import kodkod.instance.Bounds;
+import kodkod.instance.TupleFactory;
+import kodkod.instance.TupleSet;
 
 public class VHDLPredicate
 {

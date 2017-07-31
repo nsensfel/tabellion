@@ -1,9 +1,14 @@
-/* FIXME: finer imports. */
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import kodkod.ast.*;
+import kodkod.ast.Expression;
+import kodkod.ast.Formula;
+import kodkod.ast.Relation;
+import kodkod.ast.Variable;
 
-import kodkod.instance.*;
+import kodkod.instance.Bounds;
+import kodkod.instance.TupleFactory;
+import kodkod.instance.TupleSet;
 
 public class VariableManager
 {
@@ -146,7 +151,7 @@ public class VariableManager
 
    public void print_solution (final Map<Relation, TupleSet> solution)
    {
-      System.out.print("(");
+      System.out.print("(solution");
 
       for (final TaggedVariable tg: tagged_variables.values())
       {

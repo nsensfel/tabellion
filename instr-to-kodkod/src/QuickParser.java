@@ -1,7 +1,13 @@
-/* FIXME: Finer imports */
-import java.io.*;
-import java.util.regex.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class QuickParser
 {
@@ -16,6 +22,7 @@ public class QuickParser
             "\\(([a-z_0-9\\->]+ .*)\\)"
          );
    }
+
    public QuickParser (final String filename)
    throws FileNotFoundException
    {
