@@ -140,7 +140,7 @@ public class Parameters
                prop_file = args[i];
             }
          }
-         else if (output_file.equals("-v") || output_file.equals("--verbose"))
+         else if (args[i].equals("-v") || args[i].equals("--verbose"))
          {
             should_be_verbose = true;
          }

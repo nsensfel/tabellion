@@ -9,8 +9,7 @@ MAP_FILES = $(wildcard ../ast-to-instr/*.map)
 LEVEL_DIR = $(wildcard ../data/level/*.lvl)
 
 PROPERTIES = \
-	../data/property/combinational_processes.pro \
-	../data/property/likely_a_clock.pro
+	../data/property/cnes/CNE_01700.pro
 
 ## Executables #################################################################
 JAVAC = javac
@@ -49,7 +48,7 @@ clean:
 	echo "Solving \"$<\"..."
 	$(MAKE) -C ../ast-to-instr
 	$(MAKE) -C ../cfg-to-paths
-	$(JAVA) -cp $(CLASSPATH) Main $@ $< $(GLOBAL_INPUT_FILES)
+	$(JAVA) -cp $(CLASSPATH) Main $@ $< $(GLOBAL_INPUT_FILES) -v
 
 %.class: %.java $(REQUIRED_JARS) parser/PropertyParser.java
 	$(JAVAC) -cp $(CLASSPATH) $<

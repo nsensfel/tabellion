@@ -323,7 +323,7 @@ regex_special_predicate [Variable current_node]
 
    (WS)* REGEX_SPECIAL_PREDICATE_KW
       id_or_string_or_fun[current_node]
-      STRING
+   (WS)+ STRING
    (WS)* R_PAREN
 
    {
@@ -1301,6 +1301,11 @@ formula [Variable current_node]
    predicate[current_node]
    {
       $result = ($predicate.result);
+   }
+
+   | regex_special_predicate[current_node]
+   {
+      $result = ($regex_special_predicate.result);
    }
 
    | and_operator[current_node]

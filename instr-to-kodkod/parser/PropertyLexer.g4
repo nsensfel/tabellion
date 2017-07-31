@@ -4,8 +4,8 @@ fragment SEP: [ \t\r\n]+;
 
 L_PAREN : '(';
 R_PAREN : ')';
-L_BRAKT: ']';
-R_BRAKT: '[';
+L_BRAKT: '[';
+R_BRAKT: ']';
 
 TAG_EXISTING_KW: '(tag_existing' SEP;
 
