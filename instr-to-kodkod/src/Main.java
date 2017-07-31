@@ -298,7 +298,7 @@ public class Main
       solver = new Solver();
       solver.options().setSkolemDepth(-1);
       solver.options().setSolver(SATFactory.DefaultSAT4J);
-      solver.options().setReporter(new ConsoleReporter());
+//      solver.options().setReporter(new ConsoleReporter());
 
       solutions =
          solver.solveAll
@@ -318,7 +318,7 @@ public class Main
 
          if (sol.sat())
          {
-            System.out.println(sol);
+            VARIABLE_MANAGER.print_solution(sol.instance().relationTuples());
          }
       }
    }

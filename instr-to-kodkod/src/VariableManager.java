@@ -144,6 +144,27 @@ public class VariableManager
       return result;
    }
 
+   public void print_solution (final Map<Relation, TupleSet> solution)
+   {
+      System.out.print("(");
+
+      for (final TaggedVariable tg: tagged_variables.values())
+      {
+         System.out.print("\n   (");
+         System.out.print(tg.name);
+         System.out.print(" ");
+         System.out.print
+         (
+            solution.get(tg.as_relation).iterator().next().atom(0)
+         );
+         System.out.print(" ");
+         System.out.print(tg.tag);
+         System.out.print(")");
+      }
+
+      System.out.println("\n)");
+   }
+
    private static class TaggedVariable
    {
       private final String name;
