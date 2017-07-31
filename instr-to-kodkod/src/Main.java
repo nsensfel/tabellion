@@ -222,10 +222,13 @@ public class Main
       /*
        * Order of operations:
        * 1/ Load Levels (Types + predicates)
-       * 2/ Load Properties (will change 'is_used()' on predicates)
-       * 3/ Generate complementary model according to used predicates.
-       * 4/ Load Model, but only for used predicates and types.
-       * 5/ Add all used types and predicates to the Universe.
+       * 2/ Load Mappings (string handling, some already have IDs).
+       * 3/ Load Property (will change 'is_used()' on predicates).
+       * 4/ Generate model according to the used predicates.
+       * 5/ Load Model, but only for used predicates and types.
+       * 6/ Add all used types and predicates to the Universe.
+       * 7/ Solve regular expressions.
+       * 8/ Add constraints linked to tagged variables.
        */
       final Universe univ;
       final TupleFactory tf;
@@ -259,8 +262,7 @@ public class Main
          return;
       }
 
-      /* 2/ Load Properties (will change 'is_used()' on predicates) */
-      /* FIXME? Currently only one property, due to the 'is_used' */
+      /* 3/ Load Properties (will change 'is_used()' on predicates) */
       property = load_property();
 
       if (property == null)
@@ -276,27 +278,37 @@ public class Main
          );
       }
 
-      /* 3/ Generate complementary model according to used predicates. */
-      /* TODO */
+      /* 4/ Generate model according to used predicates. */
+      /* Done implicitly by step 5.
 
-      /* 4/ Load Model, but only for used predicates and types. */
+      /* 5/ Load Model, but only for used predicates and types. */
       if (!load_models())
       {
          return;
       }
 
-      /* 5/ Add all types and used predicates to the Universe. */
+      /* 6/ Add all types and used predicates to the Universe. */
       univ = new Universe(MODEL.get_atoms());
       tf = univ.factory();
       bounds = new Bounds(univ);
 
       MODEL.add_to_bounds(bounds, tf);
+      VARIABLE_MANAGER.add_tagged_variables_to_bounds(bounds, tf);
 
       solver = new Solver();
+      solver.options().setSkolemDepth(-1);
       solver.options().setSolver(SATFactory.DefaultSAT4J);
       solver.options().setReporter(new ConsoleReporter());
 
-      solutions = solver.solveAll(property, bounds);
+      solutions =
+         solver.solveAll
+         (
+            property.and
+            (
+               VARIABLE_MANAGER.generate_tagged_variable_constraints()
+            ),
+            bounds
+         );
 
       while (solutions.hasNext())
       {

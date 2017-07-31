@@ -10,9 +10,9 @@ LEVEL_DIR = $(wildcard ../data/level/*.lvl)
 #PROPERTY_FILE = ../data/property/unread_waveforms.pro
 #PROPERTY_FILE = ../data/property/impossible_processes.pro
 #PROPERTY_FILE = ../data/property/incrementer.pro
-#PROPERTY_FILE = ../data/property/combinational_processes.pro
+PROPERTY_FILE = ../data/property/combinational_processes.pro
 #PROPERTY_FILE = ../data/property/likely_a_clock.pro
-PROPERTY_FILE = ../data/property/cnes/CNE*.pro
+#PROPERTY_FILE = ../data/property/cnes/CNE*.pro
 VAR_PREFIX = "_anon_"
 
 ## Executables #################################################################

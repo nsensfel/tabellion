@@ -329,6 +329,11 @@ public class VHDLModel
       }
    }
 
+   public VHDLType get_type (final String name)
+   {
+      return types.get(name);
+   }
+
    public Relation get_type_as_relation (final String name)
    {
       final VHDLType t;
