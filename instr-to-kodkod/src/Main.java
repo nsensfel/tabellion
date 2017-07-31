@@ -10,6 +10,7 @@ import kodkod.ast.Formula;
 
 import kodkod.engine.Solution;
 import kodkod.engine.Solver;
+import kodkod.engine.config.ConsoleReporter;
 import kodkod.engine.satlab.SATFactory;
 
 import kodkod.instance.Bounds;
@@ -337,7 +338,14 @@ public class Main
          return;
       }
 
-      /* 6/ Add all types and used predicates to the Universe. */
+      /* 6/ Handle regexps */
+      STRING_MANAGER.populate_regex_predicate
+      (
+         MODEL.get_predicate("string_matches")
+      );
+
+
+      /* 7/ Add all types and used predicates to the Universe. */
       univ = new Universe(MODEL.get_atoms());
       tf = univ.factory();
       bounds = new Bounds(univ);
@@ -348,7 +356,11 @@ public class Main
       solver = new Solver();
       solver.options().setSkolemDepth(-1);
       solver.options().setSolver(SATFactory.DefaultSAT4J);
-//      solver.options().setReporter(new ConsoleReporter());
+
+      if (PARAMETERS.be_verbose())
+      {
+         solver.options().setReporter(new ConsoleReporter());
+      }
 
       solutions =
          solver.solveAll

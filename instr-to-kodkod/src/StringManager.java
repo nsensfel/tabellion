@@ -1,11 +1,17 @@
-import kodkod.ast.Relation;
-
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+
+import java.util.regex.Pattern;
+
+import kodkod.ast.Relation;
 
 public class StringManager
 {
    private final Map<String, String> TO_ID;
+   private final Collection<Pattern> regexes;
    private final VHDLType string_type;
    private final String anon_string_prefix;
    private int anon_string_count;
@@ -18,6 +24,8 @@ public class StringManager
    public StringManager ()
    {
       TO_ID = new HashMap<String, String>();
+      regexes = new ArrayList<Pattern>();
+
       string_type = Main.get_model().get_string_type();
       anon_string_prefix = "_string_"; /* TODO: use a program param. */
       anon_string_count = 0;
@@ -43,6 +51,41 @@ public class StringManager
       }
 
       return string_type.get_member_as_relation(id);
+   }
+
+   public Relation get_regex_as_relation
+   (
+      final String str
+   )
+   {
+      regexes.add(Pattern.compile(str));
+
+      return get_string_as_relation(str);
+   }
+
+   public void populate_regex_predicate (final VHDLPredicate rp)
+   {
+      final Set<Map.Entry<String, String>> candidates;
+
+      candidates = TO_ID.entrySet();
+
+      for (final Pattern p: regexes)
+      {
+         for (final Map.Entry<String, String> c: candidates)
+         {
+            if (p.matcher(c.getKey()).matches())
+            {
+               rp.add_member
+               (
+                  new String[]
+                  {
+                     c.getValue(),
+                     TO_ID.get(p.pattern())
+                  }
+               );
+            }
+         }
+      }
    }
 
    private void add_mapping (String str, final String id)

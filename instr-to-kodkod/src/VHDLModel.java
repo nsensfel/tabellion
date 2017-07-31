@@ -319,6 +319,11 @@ public class VHDLModel
       }
    }
 
+   public VHDLPredicate get_predicate (final String name)
+   {
+      return predicates.get(name);
+   }
+
    public Relation get_predicate_as_relation (final String name)
    {
       final VHDLPredicate p;

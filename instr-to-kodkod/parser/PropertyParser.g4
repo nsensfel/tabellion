@@ -318,6 +318,50 @@ function [Variable current_node]
    }
 ;
 
+regex_special_predicate [Variable current_node]
+   returns [Formula result]:
+
+   (WS)* REGEX_SPECIAL_PREDICATE_KW
+      id_or_string_or_fun[current_node]
+      STRING
+   (WS)* R_PAREN
+
+   {
+      try
+      {
+         $result =
+            ($id_or_string_or_fun.value).product
+            (
+               Main.get_string_manager().get_regex_as_relation
+               (
+                  ($STRING.text)
+               )
+            ).in
+            (
+               Main.get_model().get_predicate_as_relation
+               (
+                  "is_start_node"
+               ).transpose()
+            );
+      }
+      catch (final Exception e)
+      {
+         System.err.println
+         (
+            "[F] A problem occured while handling a regex related predicate in"
+            + " the property (l."
+            + ($REGEX_SPECIAL_PREDICATE_KW.getLine())
+            + " c."
+            + ($REGEX_SPECIAL_PREDICATE_KW.getCharPositionInLine())
+            + "):"
+            + e.getMessage()
+         );
+
+         System.exit(-1);
+      }
+   }
+;
+
 non_empty_formula_list [Variable current_node]
    returns [List<Formula> list]
 
