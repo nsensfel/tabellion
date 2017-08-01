@@ -96,7 +96,7 @@
                                              (is_read_element _ rst1)
                                              (EX
                                                 (and
-                                                   (not (has_option "COND_WAS_TRUE"))
+                                                   (not (has_option "cond_was_true"))
                                                    (kind "if")
                                                    (is_read_structure "(??)")
                                                    (or
@@ -106,7 +106,7 @@
                                                    (is_read_element "1" clk1)
                                                    (EX
                                                       (and
-                                                         (has_option "COND_WAS_TRUE")
+                                                         (has_option "cond_was_true")
                                                          (does_not_reach_parent_before
                                                             (and
                                                                (expr_writes x_r1)

@@ -3,7 +3,7 @@
       (wfm waveform CNE_00100_HAS_BAD_NAME)
    )
    (and
-      (not (string_matches [identifier wfm] ".*_n"))
+      (not (string_matches [identifier [is_waveform_of wfm]] ".*_n"))
       (exists p1 process
          (CTL_verifies p1
             (EF
@@ -14,7 +14,7 @@
                   (or
                      (and
                         (is_read_element "1" "'0'")
-                        (is_read_element "2" wfm)
+                        (IS_READ_Element "2" wfm)
                      )
                      (and
                         (is_read_element "1" wfm)
