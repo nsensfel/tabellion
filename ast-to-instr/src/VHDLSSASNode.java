@@ -170,6 +170,7 @@ public class VHDLSSASNode extends VHDLNode
    )
    throws XPathExpressionException
    {
+      final IDs target_id;
       Node target;
 
       target =
@@ -221,11 +222,7 @@ public class VHDLSSASNode extends VHDLNode
             );
       }
 
-      Predicates.add_entry
-      (
-         output,
-         "expr_writes",
-         local_id,
+      target_id =
          Waveforms.get_associated_waveform_id
          (
             IDs.get_id_from_xml_id
@@ -233,7 +230,21 @@ public class VHDLSSASNode extends VHDLNode
                XMLManager.get_attribute(target, "id"),
                (String) null
             )
-         )
+         );
+
+      Predicates.add_entry
+      (
+         output,
+         "expr_writes",
+         local_id,
+         target_id
+      );
+
+      Predicates.add_entry
+      (
+         "is_accessed_by",
+         target_id,
+         parent_id
       );
    }
 

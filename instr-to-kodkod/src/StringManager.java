@@ -75,6 +75,15 @@ public class StringManager
          {
             if (p.matcher(c.getKey()).matches())
             {
+               System.out.println
+               (
+                  "[D] \""
+                  + c.getValue()
+                  + "\" matches pattern \""
+                  + p.pattern()
+                  + "\"."
+               );
+
                rp.add_member
                (
                   new String[]

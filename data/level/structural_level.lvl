@@ -131,6 +131,9 @@
 
 ;;;; String ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate string_matches string string)
+;; is_accessed_by's signature must match is_read_element and
+;; is_written_element's
+(add_predicate is_accessed_by string process)
 
 ;;;; Type ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate is_approved_type type)

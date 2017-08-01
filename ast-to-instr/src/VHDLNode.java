@@ -69,6 +69,13 @@ public abstract class VHDLNode extends ParsableXML
             Strings.get_id_from_string(Integer.toString(i)),
             elements.get(i)
          );
+
+         Predicates.add_entry
+         (
+            "is_accessed_by",
+            elements.get(i),
+            parent_id
+         );
       }
    }
 
@@ -110,6 +117,13 @@ public abstract class VHDLNode extends ParsableXML
             local_id,
             Strings.get_id_from_string(Integer.toString(i)),
             elements.get(i)
+         );
+
+         Predicates.add_entry
+         (
+            "is_accessed_by",
+            elements.get(i),
+            parent_id
          );
       }
    }

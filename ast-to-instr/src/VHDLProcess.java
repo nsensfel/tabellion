@@ -10,7 +10,6 @@ import java.util.Stack;
 public class VHDLProcess extends ParsableXML
 {
    private static final XPathExpression XPE_FIND_SL_ELEMENTS;
-   private static final XPathExpression XPE_FIND_NE_IN_PROCESS;
    private static final XPathExpression XPE_FIND_START_NODE;
 
    static
@@ -19,12 +18,6 @@ public class VHDLProcess extends ParsableXML
          XMLManager.compile_or_die
          (
             "(./sensitivity_list/el/named_entity | ./sensitivity_list/el[@ref])"
-         );
-
-      XPE_FIND_NE_IN_PROCESS =
-         XMLManager.compile_or_die
-         (
-            ".//*[@kind=\"simple_name\"]/named_entity"
          );
 
       XPE_FIND_START_NODE =
@@ -80,7 +73,6 @@ public class VHDLProcess extends ParsableXML
 
       handle_predicate_is_explicit_process(local_id);
       handle_predicate_is_in_sensitivity_list(local_id);
-      handle_predicate_is_accessed_by(local_id);
 
       /** Children ************************************************************/
       handle_child_node(local_id, waiting_list);
@@ -404,54 +396,6 @@ public class VHDLProcess extends ParsableXML
             ),
             local_id
          );
-      }
-   }
-
-   private void handle_predicate_is_accessed_by
-   (
-      final IDs local_id
-   )
-   throws XPathExpressionException
-   {
-      final NodeList items;
-      final int items_count;
-
-      items =
-         (NodeList) XPE_FIND_SL_ELEMENTS.evaluate
-         (
-            xml_node,
-            XPathConstants.NODESET
-         );
-
-      items_count = items.getLength();
-
-      for (int i = 0; i < items_count; ++i)
-      {
-         final String xml_id;
-
-         xml_id =
-            XMLManager.get_attribute
-            (
-               items.item(i),
-               "ref"
-            );
-
-         if (!Main.node_is_function_or_literal(xml_id))
-         {
-            Predicates.add_entry
-            (
-               "is_accessed_by",
-               Waveforms.get_associated_waveform_id
-               (
-                  IDs.get_id_from_xml_id
-                  (
-                     xml_id,
-                     null
-                  )
-               ),
-               local_id
-            );
-         }
       }
    }
 

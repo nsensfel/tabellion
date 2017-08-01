@@ -3,10 +3,46 @@
       (x_re waveform CNE_01700_HAS_BAD_NAME)
    )
    (and
-      (not (string_matches [identifier x_re] ".*_re"))
+      (not (string_matches [identifier [is_waveform_of x_re]] ".*_re"))
       (exists x waveform
          (exists x_r1 waveform
             (and
+               (exists ps2 process
+                  (and
+                     (is_in_sensitivity_list x_r1 ps2)
+                     (is_in_sensitivity_list x ps2)
+                     (is_accessed_by x_re ps2)
+                     (CTL_verifies ps2
+                        (AF
+                           (and
+                              (expr_writes x_re)
+                              (is_read_element "0" "and")
+                              (or
+                                 (and
+                                    (is_read_structure "(?(??)?)")
+                                    (is_read_element "1" "not")
+                                    (is_read_element "2" x_r1)
+                                    (is_read_element "3" x)
+                                 )
+                                 (and
+                                    (is_read_structure "(??(??))")
+                                    (is_read_element "1" x)
+                                    (is_read_element "2" "not")
+                                    (is_read_element "3" x_r1)
+                                 )
+                              )
+                              (AX
+                                 (not
+                                    (EF
+                                       (expr_writes x_r1)
+                                    )
+                                 )
+                              )
+                           )
+                        )
+                     )
+                  )
+               )
                (exists ps1 process
                   (and
                      (is_accessed_by x_r1 ps1)
@@ -28,7 +64,7 @@
                                        (is_read_element "1" clk1)
                                        (EX
                                           (and
-                                             (has_option "COND_WAS_TRUE")
+                                             (has_option "cond_was_true")
                                              (does_not_reach_parent_before
                                                 (and
                                                    (expr_writes x_r1)
@@ -91,42 +127,6 @@
                                              )
                                           )
                                        )
-                                    )
-                                 )
-                              )
-                           )
-                        )
-                     )
-                  )
-               )
-               (exists ps2 process
-                  (and
-                     (is_in_sensitivity_list x_r1 ps2)
-                     (is_in_sensitivity_list x ps2)
-                     (is_accessed_by x_re ps2)
-                     (CTL_verifies ps2
-                        (AF
-                           (and
-                              (expr_writes x_re)
-                              (is_read_element "0" "and")
-                              (or
-                                 (and
-                                    (is_read_structure "(?(??)?)")
-                                    (is_read_element "1" "not")
-                                    (is_read_element "2" x_r1)
-                                    (is_read_element "3" x)
-                                 )
-                                 (and
-                                    (is_read_structure "(??(??))")
-                                    (is_read_element "1" x)
-                                    (is_read_element "2" "not")
-                                    (is_read_element "3" x_r1)
-                                 )
-                              )
-                              (AX
-                                 (not
-                                    (EF
-                                       (expr_writes x_r1)
                                     )
                                  )
                               )
