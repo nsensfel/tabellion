@@ -8,8 +8,7 @@ MODEL_FILES = \
 MAP_FILES = $(wildcard ../ast-to-instr/*.map)
 LEVEL_DIR = $(wildcard ../data/level/*.lvl)
 
-PROPERTIES = \
-	../data/property/cnes/CNE_01700.pro
+PROPERTIES = $(wildcard ../data/property/cnes/*.pro)
 
 ## Executables #################################################################
 JAVAC = javac
