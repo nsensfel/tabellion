@@ -8180,8 +8180,8 @@
        col="1"
        design_file_directory="/my/stage_onera/other/best-chronometer-ever/"
        design_file_filename="src/user_handler.vhd"
-       analysis_time_stamp="20170801081744.530"
-       file_checksum="7fb66e7a8573c5104a5355a7ef6b448d52e93d71"
+       analysis_time_stamp="20170801093138.184"
+       file_checksum="bd01b18c2bd49ba827d243fca9bab5ca6bbccb06"
        elab_flag="false">
         <library ref="799"/>
         <first_design_unit>
@@ -9115,34 +9115,34 @@
                       <waveform_chain>
                         <el id="2268" kind="waveform_element"
                          file="src/user_handler.vhd" line="67" col="23">
-                          <we_value id="2270" kind="and_operator"
-                           file="src/user_handler.vhd" line="67" col="39"
+                          <we_value id="2271" kind="and_operator"
+                           file="src/user_handler.vhd" line="67" col="46"
                            expr_staticness="none">
                             <type ref="2411"/>
-                            <left id="2269" kind="simple_name"
-                             file="src/user_handler.vhd" line="67" col="23"
-                             identifier="tip_r1_bad_name"
-                             is_forward_ref="false" expr_staticness="none"
-                             name_staticness="local">
-                              <type ref="2762"/>
-                              <named_entity ref="2183"/>
-                              <base_name ref="2183"/>
-                            </left>
-                            <implementation ref="2432"/>
-                            <right id="2271" kind="not_operator"
-                             file="src/user_handler.vhd" line="67" col="43"
+                            <left id="2269" kind="not_operator"
+                             file="src/user_handler.vhd" line="67" col="25"
                              expr_staticness="none">
                               <type ref="2411"/>
-                              <operand id="2272" kind="simple_name"
-                               file="src/user_handler.vhd" line="67" col="47"
-                               identifier="time_is_passing"
+                              <operand id="2270" kind="simple_name"
+                               file="src/user_handler.vhd" line="67" col="29"
+                               identifier="tip_r1_bad_name"
                                is_forward_ref="false" expr_staticness="none"
                                name_staticness="local">
                                 <type ref="2762"/>
-                                <named_entity ref="2181"/>
-                                <base_name ref="2181"/>
+                                <named_entity ref="2183"/>
+                                <base_name ref="2183"/>
                               </operand>
                               <implementation ref="2474"/>
+                            </left>
+                            <implementation ref="2432"/>
+                            <right id="2272" kind="simple_name"
+                             file="src/user_handler.vhd" line="67" col="50"
+                             identifier="time_is_passing"
+                             is_forward_ref="false" expr_staticness="none"
+                             name_staticness="local">
+                              <type ref="2762"/>
+                              <named_entity ref="2181"/>
+                              <base_name ref="2181"/>
                             </right>
                           </we_value>
                         </el>
@@ -9176,7 +9176,7 @@
        col="1"
        design_file_directory="/my/stage_onera/other/best-chronometer-ever/"
        design_file_filename="src/time_wizard.vhd"
-       analysis_time_stamp="20170801081744.529"
+       analysis_time_stamp="20170801093138.184"
        file_checksum="3bd89ce515d2d5d3e0bf9cd539371e15e7885a43"
        elab_flag="false">
         <library ref="799"/>
@@ -11548,7 +11548,7 @@
        line="1" col="1"
        design_file_directory="/my/stage_onera/other/best-chronometer-ever/"
        design_file_filename="src/numeral_to_display.vhd"
-       analysis_time_stamp="20170801081744.529"
+       analysis_time_stamp="20170801093138.183"
        file_checksum="9ef623508983102e5a5693a9923ae388162394e0"
        elab_flag="false">
         <library ref="799"/>
@@ -12906,7 +12906,7 @@
        col="1"
        design_file_directory="/my/stage_onera/other/best-chronometer-ever/"
        design_file_filename="src/display_manager.vhd"
-       analysis_time_stamp="20170801081744.528"
+       analysis_time_stamp="20170801093138.183"
        file_checksum="35db3ccfd651ebb80531db92038fddc5401f817d"
        elab_flag="false">
         <library ref="799"/>
@@ -14747,7 +14747,7 @@
        col="1"
        design_file_directory="/my/stage_onera/other/best-chronometer-ever/"
        design_file_filename="src/crossdomain_sync.vhd"
-       analysis_time_stamp="20170801081744.528"
+       analysis_time_stamp="20170801093138.182"
        file_checksum="f46174ce6528422e246e436423c20e41d633fa9d"
        elab_flag="false">
         <library ref="799"/>
@@ -15340,7 +15340,7 @@
        line="1" col="1"
        design_file_directory="/my/stage_onera/other/best-chronometer-ever/"
        design_file_filename="src/centisecond_timer.vhd"
-       analysis_time_stamp="20170801081744.527"
+       analysis_time_stamp="20170801093138.182"
        file_checksum="7ecfbbf22187b3fdec362d9820ba495a8e3a1727"
        elab_flag="false">
         <library ref="799"/>
@@ -16128,7 +16128,7 @@
        line="4" col="1"
        design_file_directory="/my/stage_onera/other/best-chronometer-ever/"
        design_file_filename="src/best_chronometer_ever.vhd"
-       analysis_time_stamp="20170801081744.527"
+       analysis_time_stamp="20170801093138.182"
        file_checksum="c57e7a4df06e158c94c808b79fe791a0dab5ce55"
        elab_flag="false">
         <library ref="799"/>
