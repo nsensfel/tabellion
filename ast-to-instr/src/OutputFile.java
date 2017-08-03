@@ -26,7 +26,13 @@ public class OutputFile
    {
       final OutputFile result;
 
-      result = new OutputFile(filename);
+      result =
+         new OutputFile
+         (
+            Main.get_parameters().get_output_directory()
+            + "/"
+            + filename
+         );
 
       ALL_OUTPUT_FILES.add(result);
 

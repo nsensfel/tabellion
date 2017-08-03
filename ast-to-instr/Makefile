@@ -1,16 +1,44 @@
-INPUT_FILE = ../data/ast/best_chronometer_ever.xml
+## Parameters ##################################################################
+#### GHDL's xml AST output.
+ifndef AST_FILE
+AST_FILE =
+endif
 
-## Executables #################################################################
-JAVAC = javac
+#### Where to output the models.
+ifndef MODEL_DIR
+MODEL_DIR =
+endif
+
+#### Binaries
+###### JRE binary
+ifndef JAVA
 JAVA = java
-DOWNLOADER = wget
+endif
+
+###### JDK binary
+ifndef JAVAC
+JAVAC = javac
+endif
+
+## Parameters Sanity Check #####################################################
+ifeq ($(strip $(AST_FILE)),)
+$(error No AST_FILE defined as parameter.)
+endif
+
+ifeq ($(strip $(MODEL_DIR)),)
+$(error No output directory defined for the models.)
+endif
+
+ifeq ($(strip $(JAVA)),)
+$(error No Java executable defined as parameter.)
+endif
+
+ifeq ($(strip $(JAVAC)),)
+$(error No Java compiler defined as parameter.)
+endif
 
 ## Java Config #################################################################
 CLASSPATH = "./src/"
-
-## Dependencies ################################################################
-JAR_SOURCE = https://noot-noot.org/onera_2017/jar/
-REQUIRED_JARS =
 
 ## Makefile Magic ##############################################################
 SOURCES = $(wildcard src/*.java)
@@ -18,18 +46,15 @@ CLASSES = $(SOURCES:.java=.class)
 
 ## Makefile Rules ##############################################################
 
-all: structural.mod
+$(MODEL_DIR)/structural.mod: $(CLASSES) $(AST_FILE)
+	$(JAVA) -cp $(CLASSPATH) Main $(AST_FILE) $(MODEL_DIR)
 
 clean:
 	rm -f $(CLASSES)
-	rm -f *.mod
+	rm -f $(MODEL_DIR)/*.mod
 
-structural.mod: $(CLASSES) $(REQUIRED_JARS) $(INPUT_FILE)
-	$(JAVA) -cp $(CLASSPATH) Main $(INPUT_FILE)
-
-%.class: %.java $(REQUIRED_JARS)
+%.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $<
 
-%.jar:
-	echo "Attempting to download missing jar '$@'"
-	$(DOWNLOADER) "$(JAR_SOURCE)/$@"
+$(MODEL_DIR):
+	mkdir -p $@

@@ -55,11 +55,7 @@ public class Main
          return;
       }
 
-      MAIN_OUTPUT =
-         OutputFile.new_output_file
-         (
-            PARAMETERS.get_main_output_filename()
-         );
+      MAIN_OUTPUT = OutputFile.new_output_file("structural.mod");
 
       try
       {
@@ -175,5 +171,10 @@ public class Main
    public static OutputFile get_main_output ()
    {
       return MAIN_OUTPUT;
+   }
+
+   public static Parameters get_parameters ()
+   {
+      return PARAMETERS;
    }
 }
