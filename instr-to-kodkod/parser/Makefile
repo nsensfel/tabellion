@@ -1,17 +1,17 @@
 ## Parameters ##################################################################
 #### ANTLR's Jar
 ifndef ANTLR_JAR
-ANTLR_JAR = ../antlr-4.7-complete.jar
+ANTLR_JAR = ${CURDIR}/../antlr-4.7-complete.jar
 endif
 
 #### KODKOD's Jar
 ifndef KODKOD_JAR
-KODKOD_JAR = ../kodkod.jar
+KODKOD_JAR = ${CURDIR}/../kodkod.jar
 endif
 
 #### Main program's sources
 ifndef MAIN_PROGRAM_SRC
-MAIN_PROGRAM_SRC = ../src/
+MAIN_PROGRAM_SRC = ${CURDIR}/../src/
 endif
 
 #### JRE binary

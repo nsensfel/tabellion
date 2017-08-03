@@ -14,9 +14,9 @@ ifndef MODEL_DIR
 MODEL_DIR =
 endif
 
-#### Where to store the CFG models
-ifndef CFG_MODEL_DIR
-CFG_MODEL_DIR = $(MODEL_DIR)/cfg/
+#### Where to store & find the PATH models
+ifndef PATH_MODEL_DIR
+PATH_MODEL_DIR = $(MODEL_DIR)/path/
 endif
 
 #### Where to output the solutions.
@@ -58,8 +58,8 @@ ifeq ($(strip $(MODEL_DIR)),)
 $(error No MODEL_DIR defined as parameter.)
 endif
 
-ifeq ($(strip $(CFG_MODEL_DIR)),)
-$(error No CFG_MODEL_DIR defined as parameter.)
+ifeq ($(strip $(PATH_MODEL_DIR)),)
+$(error No PATH_MODEL_DIR defined as parameter.)
 endif
 
 ifeq ($(strip $(SOL_DIR)),)
@@ -85,6 +85,7 @@ endif
 ################################################################################
 CLASSPATH = "kodkod.jar:./src/:./parser/:org.sat4j.core.jar:antlr-4.7-complete.jar"
 REQUIRED_JARS = kodkod.jar org.sat4j.core.jar antlr-4.7-complete.jar
+ANTLR_JAR = ${CURDIR}/antlr-4.7-complete.jar
 
 ## Makefile Magic ##############################################################
 SOURCES = $(wildcard src/*.java)
@@ -92,31 +93,35 @@ CLASSES = $(SOURCES:.java=.class)
 SOLUTION_FILES = $(addprefix $(SOL_DIR)/,$(notdir $(PROPERTY_FILES:.pro=.sol)))
 MODEL_FILES = \
 	$(MODEL_DIR)/structural.mod \
-	$(filter-out %structural.mod,$(wildcard $(MODEL_DIR)/*.mod))
+	$(MODEL_DIR)/depth.mod \
+	$(filter-out %structural.mod,$(wildcard $(MODEL_DIR)/cfg_*.mod))
+PARSER_SOURCES = $(wildcard parser/*.g4)
+PARSER_CLASSES = $(PARSER_SOURCES:.g4=.class)
 
 export
 ## Makefile Rules ##############################################################
-run: cfg-generator parser $(SOLUTION_FILES)
+run: cfg-generator $(PARSER_CLASSES) $(SOLUTION_FILES) $(CLASSES)
 
 cfg-generator:
 	$(MAKE) -C cfg-to-paths
 
-parser: antlr-4.7-complete.jar kodkod.jar
+$(PARSER_CLASSES): antlr-4.7-complete.jar kodkod.jar $(PARSER_SOURCES)
 	$(MAKE) -C parser
 
 clean:
 	$(MAKE) -C parser clean
 	$(MAKE) -C cfg-to-paths clean
 	rm -f $(CLASSES)
+	rm -f $(SOL_DIR)/*.sol
 
-%.sol: cfg-generator parser $(CLASSES) $(PROPERTY_FILES) $(MODEL_FILES) $(LEVEL_FILES)
+%.sol: cfg-generator $(PARSER_CLASSES) $(CLASSES) $(PROPERTY_FILES) $(MODEL_FILES) $(LEVEL_FILES)
 	$(JAVA) -cp $(CLASSPATH) Main $@ \
 		$(filter %$(basename $(notdir $@)).pro,$(PROPERTY_FILES)) \
 		$(LEVEL_FILES) \
-		$(MODEL_FILES)
-		-v
+		$(MODEL_FILES) \
+		$(wildcard $(PATH_MODEL_DIR)/*.mod)
 
-%.class: %.java $(REQUIRED_JARS) parser
+src/%.class: src/%.java $(PARSER_CLASSES) $(REQUIRED_JARS)
 	$(JAVAC) -cp $(CLASSPATH) $<
 
 %.jar:

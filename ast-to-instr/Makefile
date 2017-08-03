@@ -52,6 +52,7 @@ $(MODEL_DIR)/structural.mod: $(CLASSES) $(AST_FILE)
 clean:
 	rm -f $(CLASSES)
 	rm -f $(MODEL_DIR)/*.mod
+	rm -f $(MODEL_DIR)/*.map
 
 %.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $<
