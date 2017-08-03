@@ -101,7 +101,7 @@ run: cfg-generator parser $(SOLUTION_FILES)
 cfg-generator:
 	$(MAKE) -C cfg-to-paths
 
-parser: antlr-4.7-complete.jar
+parser: antlr-4.7-complete.jar kodkod.jar
 	$(MAKE) -C parser
 
 clean:
