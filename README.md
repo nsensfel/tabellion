@@ -31,9 +31,6 @@ format (none available yet).
 
 ### How to Use
 1. Clone the repository.
-2. Head to the ``instr-to-kodkod`` folder.
 3. Use ``make run`` to automatically fetch missing jars, compile everything and
 launch the current configuration (which is found in the ``Makefile``). The use
 of parallel processing is recommended (e.g. ``make run -j14``).
-4. Go into the ``data/predicate/`` folder (from the project's root directory).
-``.pro`` files are property files, ``.sol`` (solution) files are the results.
