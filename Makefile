@@ -1,6 +1,8 @@
 ## Makefile Parameters #########################################################
 LEVEL_FILES = $(wildcard ${CURDIR}/data/level/*.lvl)
-PROPERTY_FILES = $(wildcard ${CURDIR}/data/property/*.pro)
+PROPERTY_FILES = \
+	$(wildcard ${CURDIR}/data/property/*.pro) \
+	$(wildcard ${CURDIR}/data/property/cnes/*.pro)
 AST_FILE = ${CURDIR}/data/ast/best_chronometer_ever.xml
 
 TMP_DIR = /tmp/tabellion

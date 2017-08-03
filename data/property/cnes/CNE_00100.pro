@@ -14,7 +14,7 @@
                   (or
                      (and
                         (is_read_element "1" "'0'")
-                        (IS_READ_Element "2" wfm)
+                        (is_read_element "2" wfm)
                      )
                      (and
                         (is_read_element "1" wfm)

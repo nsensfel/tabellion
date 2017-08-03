@@ -28,7 +28,7 @@
                                     (is_read_structure "(??(??))")
                                     (is_read_element "1" x_r1)
                                     (is_read_element "2" "not")
-                                    (is_read_element "3" x_)
+                                    (is_read_element "3" x)
                                  )
                               )
                               (AX

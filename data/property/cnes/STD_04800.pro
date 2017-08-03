@@ -13,14 +13,14 @@
                )
             )
          )
-         (exists ps_fe process
-            (CTL_verifies ps_fe
-               (EF
-                  (and
-                     (is_read_structure "(??)")
-                     (is_read_element "0" "falling_edge")
-                     (is_read_element "1" wfm)
-                  )
+      )
+      (exists ps_fe process
+         (CTL_verifies ps_fe
+            (EF
+               (and
+                  (is_read_structure "(??)")
+                  (is_read_element "0" "falling_edge")
+                  (is_read_element "1" wfm)
                )
             )
          )

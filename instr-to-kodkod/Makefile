@@ -93,7 +93,7 @@ CLASSES = $(SOURCES:.java=.class)
 SOLUTION_FILES = $(addprefix $(SOL_DIR)/,$(notdir $(PROPERTY_FILES:.pro=.sol)))
 MODEL_FILES = \
 	$(MODEL_DIR)/structural.mod \
-	$(MODEL_DIR)/depth.mod \
+	$(MODEL_DIR)/depths.mod \
 	$(filter-out %structural.mod,$(wildcard $(MODEL_DIR)/cfg_*.mod))
 PARSER_SOURCES = $(wildcard parser/*.g4)
 PARSER_CLASSES = $(PARSER_SOURCES:.g4=.class)
