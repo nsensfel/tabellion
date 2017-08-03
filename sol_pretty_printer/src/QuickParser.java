@@ -10,7 +10,7 @@ public class QuickParser
 
    static
    {
-      instr_pattern = Pattern.compile("\\((?<list>[a-z_0-9 \"]+)\\)");
+      instr_pattern = Pattern.compile("\\((?<list>[^)]+)\\)");
    }
    public QuickParser (final String filename)
    throws FileNotFoundException

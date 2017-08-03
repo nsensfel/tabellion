@@ -1,5 +1,6 @@
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 
 public class SolutionItem
 {
@@ -10,6 +11,25 @@ public class SolutionItem
       FROM_ID = new HashMap<String, SolutionItem>();
    }
 
+   public static void handle_is_waveform_of
+   (
+      final String wfm_id,
+      final String origin_id
+   )
+   {
+      SolutionItem si;
+
+      si = FROM_ID.get(origin_id);
+
+      if (si == null)
+      {
+         si = new SolutionItem(origin_id);
+
+         FROM_ID.put(origin_id, si);
+      }
+
+      FROM_ID.put(wfm_id, si);
+   }
 
    public static void handle_unary_set_function
    (
@@ -22,7 +42,7 @@ public class SolutionItem
 
       si = FROM_ID.get(id);
 
-      if (id == null)
+      if (si == null)
       {
          si = new SolutionItem(id);
 
@@ -46,7 +66,13 @@ public class SolutionItem
    )
    {
       function_values = new HashMap<String, String>();
-      function_values.put("id", id);
+
+      function_values.put("ID", id);
+   }
+
+   public Set<Map.Entry<String, String>> get_functions_data ()
+   {
+      return function_values.entrySet();
    }
 
    public String get_function_value (final String fun)
