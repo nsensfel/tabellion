@@ -84,7 +84,8 @@ public class Solutions
                      + me.getKey().toUpperCase()
                      + "$"
                   ),
-                  Strings.get_string_from_id(me.getValue())
+                  /* FIXME */
+                  (Strings.get_string_from_id(me.getValue()) == null) ? "null" : Strings.get_string_from_id(me.getValue())
                );
          }
       }

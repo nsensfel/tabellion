@@ -100,7 +100,7 @@ PARSER_CLASSES = $(PARSER_SOURCES:.g4=.class)
 
 export
 ## Makefile Rules ##############################################################
-run: cfg-generator $(PARSER_CLASSES) $(SOLUTION_FILES) $(CLASSES)
+run: cfg-generator $(PARSER_CLASSES) $(CLASSES) $(SOLUTION_FILES)
 
 cfg-generator:
 	$(MAKE) -C cfg-to-paths
@@ -114,7 +114,8 @@ clean:
 	rm -f $(CLASSES)
 	rm -f $(SOL_DIR)/*.sol
 
-%.sol: cfg-generator $(PARSER_CLASSES) $(CLASSES) $(PROPERTY_FILES) $(MODEL_FILES) $(LEVEL_FILES)
+$(SOL_DIR)/%.sol: $(PROPERTY_FILES) $(MODEL_FILES) $(LEVEL_FILES)
+	touch $@
 	$(JAVA) -cp $(CLASSPATH) Main $@ \
 		$(filter %$(basename $(notdir $@)).pro,$(PROPERTY_FILES)) \
 		$(LEVEL_FILES) \

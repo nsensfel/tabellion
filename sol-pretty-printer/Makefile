@@ -56,10 +56,10 @@ CLASSES = $(SOURCES:.java=.class)
 SOLUTION_FILES = $(wildcard $(SOL_DIR)/*.sol)
 PROPERTY_PP_FILES = $(PROPERTY_FILES:.pro=.pp)
 SOLUTION_PP_PAIRS = \
-	$(foreach sf,$(SOLUTION_FILES),"$(sf) $(filter %$(basename $(notdir $(sf))).pp,$(PROPERTY_PP_FILES))")
+	$(foreach sf,$(SOLUTION_FILES),$(sf) $(filter %$(basename $(notdir $(sf))).pp,$(PROPERTY_PP_FILES)))
 
 run: $(SOLUTION_PP_PAIRS) $(MODEL_DIR)/structural.mod $(MODEL_DIR)/string_to_instr.map $(CLASSES)
-	$(JAVA) $(MODEL_DIR)/structural.mod $(MODEL_DIR)/string_to_instr.map $(SOLUTION_PP_PAIRS)
+	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_DIR)/structural.mod $(MODEL_DIR)/string_to_instr.map $(SOLUTION_PP_PAIRS)
 
 %.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $<
