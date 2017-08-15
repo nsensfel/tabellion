@@ -94,6 +94,7 @@ SOLUTION_FILES = $(addprefix $(SOL_DIR)/,$(notdir $(PROPERTY_FILES:.pro=.sol)))
 MODEL_FILES = \
 	$(MODEL_DIR)/structural.mod \
 	$(MODEL_DIR)/depths.mod \
+	$(MODEL_DIR)/string_to_instr.map \
 	$(filter-out %structural.mod,$(wildcard $(MODEL_DIR)/cfg_*.mod))
 PARSER_SOURCES = $(wildcard parser/*.g4)
 PARSER_CLASSES = $(PARSER_SOURCES:.g4=.class)
@@ -101,6 +102,9 @@ PARSER_CLASSES = $(PARSER_SOURCES:.g4=.class)
 export
 ## Makefile Rules ##############################################################
 run: cfg-generator $(PARSER_CLASSES) $(CLASSES) $(SOLUTION_FILES)
+
+build: $(PARSER_CLASSES) $(CLASSES)
+	$(MAKE) -C cfg-to-paths build
 
 cfg-generator:
 	$(MAKE) -C cfg-to-paths

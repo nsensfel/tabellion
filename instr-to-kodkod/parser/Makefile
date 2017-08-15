@@ -51,7 +51,7 @@ JAVA_SOURCES = $(ANTLR_SOURCES:.g4=.java)
 CLASSES = $(JAVA_SOURCES:.java=.class)
 CLASSPATH = ".:$(MAIN_PROGRAM_SRC):$(KODKOD_JAR):$(ANTLR_JAR)"
 
-compile: $(CLASSES)
+build: $(CLASSES)
 
 PropertyParser.java: PropertyLexer.g4  PropertyParser.g4
 

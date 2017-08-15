@@ -372,22 +372,57 @@ public class Expressions
          /*
           grep "Kind.*Literal" ./src/vhdl/nodes_meta.adb | sort | uniq -u
           points to:
-         "character_literal";
-         "enumeration_literal";
-         "floating_point_literal";
-         "integer_literal";
-         "null_literal";
-         "overflow_literal";
-         "physical_fp_literal";
-         "physical_int_literal";
-         "physical_literal"; (unsure if it can happen)
-         "string_literal8";
+            "character_literal";
+            "enumeration_literal";
+            "floating_point_literal";
+            "integer_literal";
+            "null_literal";
+            "overflow_literal";
+            "physical_fp_literal";
+            "physical_int_literal";
+            "physical_literal"; (unsure if it can happen)
+            "string_literal8";
 
-         They don't all use the same structure, so we're going to handle them
-         latter.
+          They don't all use the same structure, so we're going to handle them
+          later.
+            TODO
          */
 
-         structure.append("l");
+         structure.append("?");
+         elements.add
+         (
+            Strings.get_id_from_string
+            (
+               "l"
+            )
+         );
+
+      }
+      else if (kind.contains("attribute"))
+      {
+         structure.append("(?");
+
+         elements.add
+         (
+            Strings.get_id_from_string
+            (
+               /* FIXME: Kind of a hacky */
+               kind.replace("_attribute", "")
+            )
+         );
+
+         process
+         (
+            elements,
+            structure,
+            (Node) XPE_GET_PREFIX.evaluate
+            (
+               current_node,
+               XPathConstants.NODE
+            )
+         );
+
+         structure.append(")");
       }
    }
 }

@@ -49,6 +49,8 @@ CLASSES = $(SOURCES:.java=.class)
 $(MODEL_DIR)/structural.mod: $(CLASSES) $(AST_FILE)
 	$(JAVA) -cp $(CLASSPATH) Main $(AST_FILE) $(MODEL_DIR)
 
+build: $(CLASSES)
+
 clean:
 	rm -f $(CLASSES)
 	rm -f $(MODEL_DIR)/*.mod

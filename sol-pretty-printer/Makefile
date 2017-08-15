@@ -61,6 +61,8 @@ SOLUTION_PP_PAIRS = \
 run: $(SOLUTION_PP_PAIRS) $(MODEL_DIR)/structural.mod $(MODEL_DIR)/string_to_instr.map $(CLASSES)
 	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_DIR)/structural.mod $(MODEL_DIR)/string_to_instr.map $(SOLUTION_PP_PAIRS)
 
+build: $(CLASSES)
+
 %.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $<
 

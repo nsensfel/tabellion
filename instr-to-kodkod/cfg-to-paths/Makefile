@@ -51,6 +51,8 @@ PATH_MODEL_FILES = $(addprefix $(PATH_MODEL_DIR)/,$(notdir $(CFG_MODEL_FILES)))
 ## Makefile Rules ##############################################################
 all: $(PATH_MODEL_DIR) $(PATH_MODEL_FILES) $(CLASSES)
 
+build: $(CLASSES)
+
 %.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $<
 

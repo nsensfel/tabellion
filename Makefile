@@ -26,6 +26,11 @@ clean:
 	$(MAKE) -C $(SOLVER) clean
 	$(MAKE) -C $(PRETTY_PRINTER) clean
 
+build:
+	$(MAKE) -C $(AST_TO_INSTR) build
+	$(MAKE) -C $(SOLVER) build
+	$(MAKE) -C $(PRETTY_PRINTER) build
+
 $(TMP_DIR):
 	mkdir -p $@
 

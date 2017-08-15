@@ -60,12 +60,38 @@
                                     (AF
                                        (and
                                           (kind "if")
-                                          (is_read_structure "(??)")
                                           (or
-                                             (is_read_element "0" "falling_edge")
-                                             (is_read_element "0" "rising_edge")
+                                             (and
+                                                (is_read_structure "(??)")
+                                                (or
+                                                   (is_read_element "0" "falling_edge")
+                                                   (is_read_element "0" "rising_edge")
+                                                )
+                                                (is_read_element "1" clk1)
+                                             )
+                                             (and
+                                                (is_read_structure "(?(??)(???))")
+                                                (is_read_element "0" "and")
+                                                (is_read_element "1" "event")
+                                                (is_read_element "2" clk1)
+                                                (is_read_element "3" "=")
+                                                (or
+                                                   (is_read_element "4" clk1)
+                                                   (is_read_element "5" clk1)
+                                                )
+                                             )
+                                             (and
+                                                (is_read_structure "(?(???)(??))")
+                                                (is_read_element "0" "and")
+                                                (is_read_element "1" "=")
+                                                (or
+                                                   (is_read_element "2" clk1)
+                                                   (is_read_element "3" clk1)
+                                                )
+                                                (is_read_element "4" "event")
+                                                (is_read_element "5" clk1)
+                                             )
                                           )
-                                          (is_read_element "1" clk1)
                                           (EX
                                              (and
                                                 (has_option "cond_was_true")
@@ -106,12 +132,38 @@
                                                    (and
                                                       (not (has_option "cond_was_true"))
                                                       (kind "if")
-                                                      (is_read_structure "(??)")
                                                       (or
-                                                         (is_read_element "0" "falling_edge")
-                                                         (is_read_element "0" "rising_edge")
+                                                         (and
+                                                            (is_read_structure "(??)")
+                                                            (or
+                                                               (is_read_element "0" "falling_edge")
+                                                               (is_read_element "0" "rising_edge")
+                                                            )
+                                                            (is_read_element "1" clk1)
+                                                         )
+                                                         (and
+                                                            (is_read_structure "(?(??)(???))")
+                                                            (is_read_element "0" "and")
+                                                            (is_read_element "1" "event")
+                                                            (is_read_element "2" clk1)
+                                                            (is_read_element "3" "=")
+                                                            (or
+                                                               (is_read_element "4" clk1)
+                                                               (is_read_element "5" clk1)
+                                                            )
+                                                         )
+                                                         (and
+                                                            (is_read_structure "(?(???)(??))")
+                                                            (is_read_element "0" "and")
+                                                            (is_read_element "1" "=")
+                                                            (or
+                                                               (is_read_element "2" clk1)
+                                                               (is_read_element "3" clk1)
+                                                            )
+                                                            (is_read_element "4" "event")
+                                                            (is_read_element "5" clk1)
+                                                         )
                                                       )
-                                                      (is_read_element "1" clk1)
                                                       (EX
                                                          (and
                                                             (has_option "cond_was_true")

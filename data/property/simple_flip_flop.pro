@@ -11,12 +11,38 @@
          (AF
             (and
                (kind "if")
-               (is_read_structure "(??)")
                (or
-                  (is_read_element "0" "falling_edge")
-                  (is_read_element "0" "rising_edge")
+                  (and
+                     (is_read_structure "(??)")
+                     (or
+                        (is_read_element "0" "falling_edge")
+                        (is_read_element "0" "rising_edge")
+                     )
+                     (is_read_element "1" clk)
+                  )
+                  (and
+                     (is_read_structure "(?(??)(???))")
+                     (is_read_element "0" "and")
+                     (is_read_element "1" "event")
+                     (is_read_element "2" clk)
+                     (is_read_element "3" "=")
+                     (or
+                        (is_read_element "4" clk)
+                        (is_read_element "5" clk)
+                     )
+                  )
+                  (and
+                     (is_read_structure "(?(???)(??))")
+                     (is_read_element "0" "and")
+                     (is_read_element "1" "=")
+                     (or
+                        (is_read_element "2" clk)
+                        (is_read_element "3" clk)
+                     )
+                     (is_read_element "4" "event")
+                     (is_read_element "5" clk)
+                  )
                )
-               (is_read_element "1" clk)
                (EX
                   (and
                      (has_option "COND_WAS_TRUE")
