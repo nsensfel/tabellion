@@ -2,8 +2,8 @@ lexer grammar PropertyLexer;
 
 fragment SEP: [ \t\r\n]+;
 
-L_PAREN : '(';
-R_PAREN : ')';
+L_PAREN: '(';
+R_PAREN: ')';
 L_BRAKT: '[';
 R_BRAKT: ']';
 
@@ -39,3 +39,5 @@ WS: SEP;
 
 ID: [a-zA-Z0-9_]+;
 STRING: '"' ~('\r' | '\n' | '"')* '"';
+
+COMMENT: ';;' .*? '\n' -> channel(HIDDEN);
