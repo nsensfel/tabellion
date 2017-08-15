@@ -318,6 +318,19 @@ function [Variable current_node]
    }
 ;
 
+eq_special_predicate [Variable current_node]
+   returns [Formula result]:
+
+   (WS)* EQ_SPECIAL_PREDICATE_KW
+      a=id_or_string_or_fun[current_node]
+      (WS)+ b=id_or_string_or_fun[current_node]
+   (WS)* R_PAREN
+
+   {
+      $result = ($a.value).eq(($b.value));
+   }
+;
+
 regex_special_predicate [Variable current_node]
    returns [Formula result]:
 
@@ -445,6 +458,19 @@ implies_operator [Variable current_node]
 
    {
       $result = ($a.result).implies(($b.result));
+   }
+;
+
+iff_operator [Variable current_node]
+   returns [Formula result]:
+
+   (WS)* IFF_OPERATOR_KW
+      a=formula[current_node]
+      b=formula[current_node]
+   (WS)* R_PAREN
+
+   {
+      $result = ($a.result).iff(($b.result));
    }
 ;
 
@@ -1303,6 +1329,11 @@ formula [Variable current_node]
       $result = ($predicate.result);
    }
 
+   | eq_special_predicate[current_node]
+   {
+      $result = ($eq_special_predicate.result);
+   }
+
    | regex_special_predicate[current_node]
    {
       $result = ($regex_special_predicate.result);
@@ -1321,6 +1352,11 @@ formula [Variable current_node]
    | not_operator[current_node]
    {
       $result = ($not_operator.result);
+   }
+
+   | iff_operator[current_node]
+   {
+      $result = ($iff_operator.result);
    }
 
    | implies_operator[current_node]

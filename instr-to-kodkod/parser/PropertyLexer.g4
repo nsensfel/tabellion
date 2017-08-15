@@ -9,11 +9,13 @@ R_BRAKT: ']';
 
 TAG_EXISTING_KW: '(tag_existing' SEP;
 
+IFF_OPERATOR_KW: '(iff' SEP;
 AND_OPERATOR_KW: '(and' SEP;
 OR_OPERATOR_KW: '(or' SEP;
 NOT_OPERATOR_KW: '(not' SEP ;
 IMPLIES_OPERATOR_KW: '(implies' SEP;
 
+EQ_SPECIAL_PREDICATE_KW: '(eq' SEP;
 REGEX_SPECIAL_PREDICATE_KW: '(string_matches' SEP;
 
 EXISTS_OPERATOR_KW: '(exists' SEP;
