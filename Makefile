@@ -16,20 +16,40 @@ PRETTY_PRINTER = sol-pretty-printer
 
 export
 
-run: $(TMP_DIR) $(MODEL_DIR) $(SOL_DIR)
-	$(MAKE) -C $(AST_TO_INSTR)
-	$(MAKE) -C $(SOLVER)
-	$(MAKE) -C $(PRETTY_PRINTER)
+all: $(TMP_DIR) $(MODEL_DIR) $(SOL_DIR)
+	$(MAKE) compile
+	$(MAKE) model
+	$(MAKE) solutions
+
+compile:
+	$(MAKE) -C $(AST_TO_INSTR) compile
+	$(MAKE) -C $(SOLVER) compile
+	$(MAKE) -C $(PRETTY_PRINTER) compile
+
+model:
+	$(MAKE) -C $(AST_TO_INSTR) model
+	$(MAKE) -C $(SOLVER) model
+	$(MAKE) -C $(PRETTY_PRINTER) model
+
+solutions: $(TMP_DIR) $(MODEL_DIR) $(SOL_DIR)
+	$(MAKE) -C $(AST_TO_INSTR) solutions
+	$(MAKE) -C $(SOLVER) solutions
+	$(MAKE) -C $(PRETTY_PRINTER) solutions
 
 clean:
 	$(MAKE) -C $(AST_TO_INSTR) clean
 	$(MAKE) -C $(SOLVER) clean
 	$(MAKE) -C $(PRETTY_PRINTER) clean
 
-build:
-	$(MAKE) -C $(AST_TO_INSTR) build
-	$(MAKE) -C $(SOLVER) build
-	$(MAKE) -C $(PRETTY_PRINTER) build
+clean_model:
+	$(MAKE) -C $(AST_TO_INSTR) clean_model
+	$(MAKE) -C $(SOLVER) clean_model
+	$(MAKE) -C $(PRETTY_PRINTER) clean_model
+
+clean_solutions:
+	$(MAKE) -C $(AST_TO_INSTR) clean_solutions
+	$(MAKE) -C $(SOLVER) clean_solutions
+	$(MAKE) -C $(PRETTY_PRINTER) clean_solutions
 
 $(TMP_DIR):
 	mkdir -p $@

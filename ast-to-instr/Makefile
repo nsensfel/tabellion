@@ -46,15 +46,25 @@ CLASSES = $(SOURCES:.java=.class)
 
 ## Makefile Rules ##############################################################
 
-$(MODEL_DIR)/structural.mod: $(CLASSES) $(AST_FILE)
-	$(JAVA) -cp $(CLASSPATH) Main $(AST_FILE) $(MODEL_DIR)
+compile: $(CLASSES)
 
-build: $(CLASSES)
+model: $(MODEL_DIR)/structural.mod
+
+solutions: $(MODEL_DIR)/structural.mod
 
 clean:
 	rm -f $(CLASSES)
 	rm -f $(MODEL_DIR)/*.mod
 	rm -f $(MODEL_DIR)/*.map
+
+clean_model:
+	rm -f $(MODEL_DIR)/*.mod
+	rm -f $(MODEL_DIR)/*.map
+
+clean_solutions:
+
+$(MODEL_DIR)/structural.mod: $(CLASSES) $(AST_FILE)
+	$(JAVA) -cp $(CLASSPATH) Main $(AST_FILE) $(MODEL_DIR)
 
 %.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $<

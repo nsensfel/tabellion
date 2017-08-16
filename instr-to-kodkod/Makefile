@@ -101,22 +101,31 @@ PARSER_CLASSES = $(PARSER_SOURCES:.g4=.class)
 
 export
 ## Makefile Rules ##############################################################
-run: cfg-generator $(PARSER_CLASSES) $(CLASSES) $(SOLUTION_FILES)
+compile: $(PARSER_CLASSES) $(CLASSES)
+	$(MAKE) -C cfg-to-paths compile
 
-build: $(PARSER_CLASSES) $(CLASSES)
-	$(MAKE) -C cfg-to-paths build
+model: cfg-generator
 
-cfg-generator:
-	$(MAKE) -C cfg-to-paths
-
-$(PARSER_CLASSES): antlr-4.7-complete.jar kodkod.jar $(PARSER_SOURCES)
-	$(MAKE) -C parser
+solutions: cfg-generator $(PARSER_CLASSES) $(CLASSES) $(SOLUTION_FILES)
 
 clean:
 	$(MAKE) -C parser clean
 	$(MAKE) -C cfg-to-paths clean
 	rm -f $(CLASSES)
 	rm -f $(SOL_DIR)/*.sol
+
+clean_model:
+	$(MAKE) -C cfg-to-paths clean_model
+
+clean_solutions:
+	rm -f $(SOL_DIR)/*.sol
+
+########
+cfg-generator:
+	$(MAKE) -C cfg-to-paths model
+
+$(PARSER_CLASSES): antlr-4.7-complete.jar kodkod.jar $(PARSER_SOURCES)
+	$(MAKE) -C parser
 
 $(SOL_DIR)/%.sol: $(PROPERTY_FILES) $(MODEL_FILES) $(LEVEL_FILES)
 	touch $@

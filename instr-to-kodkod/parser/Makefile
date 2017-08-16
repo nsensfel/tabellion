@@ -45,18 +45,20 @@ ifeq ($(strip $(JAVAC)),)
 $(error No Java compiler defined as parameter.)
 endif
 
-################################################################################
+## Makefile Magic ##############################################################
 ANTLR_SOURCES = $(wildcard *.g4)
 JAVA_SOURCES = $(ANTLR_SOURCES:.g4=.java)
 CLASSES = $(JAVA_SOURCES:.java=.class)
 CLASSPATH = ".:$(MAIN_PROGRAM_SRC):$(KODKOD_JAR):$(ANTLR_JAR)"
 
-build: $(CLASSES)
-
-PropertyParser.java: PropertyLexer.g4  PropertyParser.g4
+## Makefile Rules ##############################################################
+compile: $(CLASSES)
 
 clean:
 	rm -f *.java *.class *.tokens
+
+########
+PropertyParser.java: PropertyLexer.g4  PropertyParser.g4
 
 # Pattern rules can be used to generate multiple target in a single action.
 PropertyLexer%java PropertyParser%java: $(ANTLR_SOURCES)
