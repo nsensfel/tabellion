@@ -3,8 +3,8 @@ LEVEL_FILES = $(wildcard ${CURDIR}/data/level/*.lvl)
 PROPERTY_FILES = \
 	$(wildcard ${CURDIR}/data/property/*.pro) \
 	$(wildcard ${CURDIR}/data/property/cnes/*.pro)
-#AST_FILE = ${CURDIR}/data/ast/best_chronometer_ever.xml
-AST_FILE = ${CURDIR}/data/ast/pong.xml
+AST_FILE = ${CURDIR}/data/ast/best_chronometer_ever.xml
+#AST_FILE = ${CURDIR}/data/ast/pong.xml
 
 TMP_DIR = /tmp/tabellion
 MODEL_DIR = $(TMP_DIR)/mod
