@@ -52,6 +52,9 @@
 (add_function column port string)
 (add_function identifier port string)
 
+(add_predicate is_a_clock port)
+(add_predicate is_a_reset port)
+
 ;;;; Generic ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add_predicate is_generic_of generic entity)
 (add_predicate has_class generic)

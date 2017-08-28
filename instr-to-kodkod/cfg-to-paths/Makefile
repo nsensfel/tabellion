@@ -26,7 +26,7 @@ $(error No MODEL_DIR defined as parameter.)
 endif
 
 ifeq ($(strip $(PATH_MODEL_DIR)),)
-$(error No CFG_MODEL_DIR defined as parameter.)
+$(error No PATH_MODEL_DIR defined as parameter.)
 endif
 
 ifeq ($(strip $(JAVA)),)

@@ -200,7 +200,7 @@ public class Expressions
             )
          );
 
-         structure.append(")"); /* TODO */
+         structure.append(")");
       }
       else
       {
