@@ -9,6 +9,33 @@ public class VHDLArchitecture
       FROM_ID = new HashMap<String, VHDLArchitecture>();
    }
 
+   public static void add_element (final String id)
+   {
+      if (!FROM_ID.containsKey(id))
+      {
+         FROM_ID.put(id, new VHDLArchitecture(id));
+      }
+   }
+
+   public static boolean handle_belongs_to_architecture
+   (
+      final String unknown_id,
+      final String arch_id
+   )
+   {
+      return false;
+   }
+
+   public static boolean handle_is_architecture_of
+   (
+      final String arch_id,
+      final String e_id
+   )
+   {
+      return false;
+   }
+
+/******************************************************************************/
    private final List<String> processes;
    private final List<String> components;
    private final String id;
@@ -17,6 +44,7 @@ public class VHDLArchitecture
    {
       this.id = id;
 
-      ports = new ArrayList<String>();
+      processes = new ArrayList<String>();
+      components = new ArrayList<String>();
    }
 }
