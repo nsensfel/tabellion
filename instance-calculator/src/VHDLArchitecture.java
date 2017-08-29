@@ -23,6 +23,7 @@ public class VHDLArchitecture
       final String arch_id
    )
    {
+      /* TODO */
       return false;
    }
 
@@ -32,6 +33,7 @@ public class VHDLArchitecture
       final String e_id
    )
    {
+      /* TODO */
       return false;
    }
 
@@ -40,11 +42,18 @@ public class VHDLArchitecture
    private final List<String> components;
    private final String id;
 
+   private VHDLEntity entity;
+
    private VHDLArchitecture (final String id)
    {
       this.id = id;
 
       processes = new ArrayList<String>();
       components = new ArrayList<String>();
+   }
+
+   public VHDLEntity get_entity ()
+   {
+      return entity;
    }
 }

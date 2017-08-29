@@ -54,25 +54,18 @@ public class Main
        *    {
        *       a = Candidates.pop();
        *
-       *       for (c: a.component)
+       *       if (a.has_components_not_in(ProcessedCandidates))
        *       {
-       *          if (!contains(c.target, ProcessedCandidates))
-       *          {
-       *             FuturCandidates.push(a);
-       *             continue;
-       *          }
+       *          FuturCandidates.push(a);
        *       }
-       *
-       *       is_stuck = False;
-       *
-       *       a.instantiate_all_processes();
-       *
-       *       for (c: a.component)
+       *       else
        *       {
-       *          a.integrate_instanciated_processes_from(c);
-       *       }
+       *          is_stuck = False;
        *
-       *       ProcessedCandidates.add(a);
+       *          a.create_instance();
+       *
+       *          ProcessedCandidates.add(a);
+       *       }
        *    }
        *
        *    if (is_stuck)
@@ -81,5 +74,10 @@ public class Main
        *    }
        * }
        */
+   }
+
+   public static Parameters get_parameters ()
+   {
+      return PARAMETERS;
    }
 }

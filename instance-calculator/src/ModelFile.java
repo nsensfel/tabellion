@@ -178,9 +178,7 @@ public class ModelFile
          return false;
       }
 
-      VHDLEntity.handle_is_port_of(input[1], input[2]);
-
-      return true;
+      return VHDLEntity.handle_is_port_of(input[1], input[2]);
    }
 
    private static boolean handle_is_architecture_of
@@ -193,9 +191,7 @@ public class ModelFile
          return false;
       }
 
-      VHDLArchitecture.handle_is_architecture_of(input[1], input[2]);
-
-      return true;
+      return VHDLArchitecture.handle_is_architecture_of(input[1], input[2]);
    }
 
    private static boolean handle_belongs_to_architecture
@@ -208,24 +204,8 @@ public class ModelFile
          return false;
       }
 
-      VHDLArchitecture.handle_belongs_to_architecture(input[1], input[2]);
-
-      return true;
-   }
-
-   private static boolean handle_belongs_to_architecture
-   (
-      final String[] input
-   )
-   {
-      if (input.length != 3)
-      {
-         return false;
-      }
-
-      VHDLArchitecture.handle_belongs_to_architecture(input[1], input[2]);
-
-      return true;
+      return
+         VHDLArchitecture.handle_belongs_to_architecture(input[1], input[2]);
    }
 
    private static boolean handle_is_component_of
@@ -238,9 +218,7 @@ public class ModelFile
          return false;
       }
 
-      VHDLComponent.handle_is_component_of(input[1], input[2]);
-
-      return true;
+      return VHDLComponent.handle_is_component_of(input[1], input[2]);
    }
 
    private static boolean handle_port_maps
@@ -253,9 +231,7 @@ public class ModelFile
          return false;
       }
 
-      VHDLComponent.handle_port_maps(input[1], input[2], input[3]);
-
-      return true;
+      return VHDLComponent.handle_port_maps(input[1], input[2], input[3]);
    }
 
    private ModelFile () {} /* Utility Class */
