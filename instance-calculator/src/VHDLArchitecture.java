@@ -99,4 +99,45 @@ public class VHDLArchitecture
          waveforms.add(wfm);
       }
    }
+
+   public void add_instance_to
+   (
+      final Collection<VHDLProcess.Instance> process_instances,
+      final Collection<VHDLWaveform.Instance> waveform_instances,
+      final Map<VHDLWaveform, VHDLWaveform.Instance> local_conversion
+   )
+   {
+      for (final VHDLWaveform wfm: waveforms)
+      {
+         final VHDLWaveform.Instance i_wfm;
+
+         i_wfm = wfm.add_instance(entity);
+
+         waveform_instances.add(i_wfm);
+
+         local_conversion.put(wfm, i_wfm);
+      }
+
+      for (final VHDLProcess ps: processes)
+      {
+         process_instances.add
+         (
+            ps.generate_base_instance
+            (
+               entity,
+               waveform_instances
+            )
+         );
+      }
+
+      for (final VHDLComponent cmp: components)
+      {
+         cmp.add_instance_content_to
+         (
+            process_instances,
+            waveform_instances,
+            local_conversion
+         );
+      }
+   }
 }

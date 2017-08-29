@@ -74,6 +74,39 @@ public class VHDLProcess
       architecture = arch;
    }
 
+   public VHDLProcess.Instance generate_base_instance
+   (
+      final VHDLEntity visibility,
+      final Collection<VHDLWaveform.Instance> waveform_instances
+   )
+   {
+      final VHDLProcess.Instance result;
+      final Map<VHDLWaveform.Instance, VHDLWaveform> iwfm_map;
+
+      iwfm_map = new HashMap<VHDLWaveform.Instance, VHDLWaveform>();
+
+      for (final VHDLWaveform.Instance i_wfm: waveform_instances)
+      {
+         if (accessed_wfm.contains(i_wfm.get_parent()))
+         {
+            iwfm_map.put(i_wfm, i_wfm.get_parent());
+         }
+      }
+
+      result =
+         new VHDLProcess.Instance
+         (
+            Instances.get_id_for(instances_count),
+            this,
+            visibility,
+            iwfm_map
+         );
+
+      instances_count += 1;
+
+      return result;
+   }
+
    public static class Instance
    {
       private final String id;

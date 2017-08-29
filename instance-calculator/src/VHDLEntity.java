@@ -104,5 +104,28 @@ public class VHDLEntity
 
    public void generate_instance ()
    {
+      final Map<VHDLWaveform, VHDLWaveform.Instance> local_conversion;
+
+      local_conversion = new HashMap<VHDLWaveform, VHDLWaveform.Instance>();
+
+      for (final String pt: ports)
+      {
+         final VHDLWaveform wfm;
+         final VHDLWaveform.Instance i_wfm;
+
+         wfm = VHDLWaveform.get_from_id(Waveforms.get_waveform_id_from_id(pt));
+         i_wfm = wfm.add_instance(this);
+
+         waveform_instances.add(i_wfm);
+
+         local_conversion.put(wfm, i_wfm);
+      }
+
+      architecture.add_instance_to
+      (
+         process_instances,
+         waveform_instances,
+         local_conversion
+      );
    }
 }

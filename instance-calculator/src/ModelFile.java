@@ -128,6 +128,10 @@ public class ModelFile
       {
          VHDLArchitecture.add_element(input[2]);
       }
+      else if (input[1].equals("waveform"))
+      {
+         VHDLWaveform.add_element(input[2]);
+      }
       else if (input[1].equals("process"))
       {
          VHDLProcess.add_element(input[2]);

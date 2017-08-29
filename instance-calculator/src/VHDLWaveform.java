@@ -33,6 +33,8 @@ public class VHDLWaveform
             + " that use."
          );
 
+         new Exception().printStackTrace();
+
          System.exit(-1);
       }
 

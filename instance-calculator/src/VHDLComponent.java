@@ -74,7 +74,8 @@ public class VHDLComponent
    public void add_instance_content_to
    (
       final Collection<VHDLProcess.Instance> process_instances,
-      final Collection<VHDLWaveform.Instance> waveform_instances
+      final Collection<VHDLWaveform.Instance> waveform_instances,
+      final Map<VHDLWaveform, VHDLWaveform.Instance> local_conversion
    )
    {
       final Collection<VHDLProcess.Instance> dest_process_instances;
@@ -107,9 +108,9 @@ public class VHDLComponent
          else
          {
             replacement =
-               VHDLWaveform.get_from_id(dest).add_instance
+               local_conversion.get
                (
-                  parent.get_entity()
+                  Waveforms.get_waveform_id_from_id(dest)
                );
          }
 
