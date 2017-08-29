@@ -17,29 +17,37 @@ public class VHDLArchitecture
       }
    }
 
-   public static boolean handle_belongs_to_architecture
-   (
-      final String unknown_id,
-      final String arch_id
-   )
+   public static VHDLArchitecture get_from_id (final String id)
    {
-      /* TODO */
-      return false;
+      final VHDLArchitecture result;
+
+      result = FROM_ID.get(id);
+
+      if (result == null)
+      {
+         System.err.println
+         (
+            "[E] Element "
+            + id
+            + " is used like an architecture, but is not declared as such"
+            + " before that use."
+         );
+
+         System.exit(-1);
+      }
+
+      return result;
    }
 
-   public static boolean handle_is_architecture_of
-   (
-      final String arch_id,
-      final String e_id
-   )
+   public static VHDLArchitecture find (final String id)
    {
-      /* TODO */
-      return false;
+      return FROM_ID.get(id);
    }
 
 /******************************************************************************/
-   private final List<String> processes;
-   private final List<String> components;
+   private final Collection<VHDLProcess> processes;
+   private final Collection<VHDLComponent> components;
+   private final Collection<VHDLWaveform> waveforms;
    private final String id;
 
    private VHDLEntity entity;
@@ -48,12 +56,42 @@ public class VHDLArchitecture
    {
       this.id = id;
 
-      processes = new ArrayList<String>();
-      components = new ArrayList<String>();
+      processes = new ArrayList<VHDLProcess>();
+      components = new ArrayList<VHDLComponent>();
+      waveforms = new ArrayList<VHDLWaveform>();
    }
 
    public VHDLEntity get_entity ()
    {
       return entity;
+   }
+
+   public void set_entity (final VHDLEntity e)
+   {
+      entity = e;
+   }
+
+   public void add_process (final VHDLProcess ps)
+   {
+      if (!processes.contains(ps))
+      {
+         processes.add(ps);
+      }
+   }
+
+   public void add_component (final VHDLComponent cmp)
+   {
+      if (!components.contains(cmp))
+      {
+         components.add(cmp);
+      }
+   }
+
+   public void add_waveform (final VHDLWaveform wfm)
+   {
+      if (!waveforms.contains(wfm))
+      {
+         waveforms.add(wfm);
+      }
    }
 }

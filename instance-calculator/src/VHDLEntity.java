@@ -17,42 +17,64 @@ public class VHDLEntity
       }
    }
 
-   public static boolean handle_is_port_of
-   (
-      final String pt_id,
-      final String e_id
-   )
+   public static VHDLEntity get_from_id (final String id)
    {
-      /* TODO */
-      return false;
+      final VHDLEntity result;
+
+      result = FROM_ID.get(id);
+
+      if (result == null)
+      {
+         System.err.println
+         (
+            "[E] Element "
+            + id
+            + " is used like an entity, but is not declared as such before that"
+            + " use."
+         );
+
+         System.exit(-1);
+      }
+
+      return result;
    }
 
-   public static boolean handle_is_architecture_of
-   (
-      final String pt_id,
-      final String e_id
-   )
+   public static VHDLEntity find (final String id)
    {
-      /* TODO */
-      return false;
+      return FROM_ID.get(id);
    }
 
 /******************************************************************************/
    private final Collection<VHDLProcess.Instance> process_instances;
    private final Collection<VHDLWaveform.Instance> waveform_instances;
 
-   private final List<String> ports;
+   private final Collection<String> ports;
    private final String id;
 
-   private String architecture;
+   private VHDLArchitecture architecture;
 
    private VHDLEntity (final String id)
    {
       this.id = id;
       ports = new ArrayList<String>();
 
+      architecture = null;
+
       this.process_instances = new ArrayList<VHDLProcess.Instance>();
       this.waveform_instances = new ArrayList<VHDLWaveform.Instance>();
+   }
+
+   public void add_port (final String pt)
+   {
+      if (!ports.contains(pt))
+      {
+         ports.add(pt);
+      }
+   }
+
+   public void set_architecture (final VHDLArchitecture arch)
+   {
+      architecture = arch;
    }
 
    public Collection<VHDLProcess.Instance> get_process_instances ()

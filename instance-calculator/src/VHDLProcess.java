@@ -17,14 +17,31 @@ public class VHDLProcess
       }
    }
 
-   public static boolean handle_is_accessed_by
-   (
-      final String wfm_id,
-      final String ps_id
-   )
+   public static VHDLProcess get_from_id (final String id)
    {
-      /* TODO */
-      return false;
+      final VHDLProcess result;
+
+      result = FROM_ID.get(id);
+
+      if (result == null)
+      {
+         System.err.println
+         (
+            "[E] Element "
+            + id
+            + " is used like a process, but is not declared as such before that"
+            + " use."
+         );
+
+         System.exit(-1);
+      }
+
+      return result;
+   }
+
+   public static VHDLProcess find (final String id)
+   {
+      return FROM_ID.get(id);
    }
 
 /******************************************************************************/
@@ -33,12 +50,28 @@ public class VHDLProcess
    private final String id;
    private int instances_count;
 
+   private VHDLArchitecture architecture;
+
    private VHDLProcess (final String id)
    {
       this.id = id;
       accessed_wfm = new ArrayList<VHDLWaveform>();
       instances = new ArrayList<VHDLProcess.Instance>();
       instances_count = 0;
+      architecture = null;
+   }
+
+   public void add_accessed_wfm (final VHDLWaveform wfm)
+   {
+      if (!accessed_wfm.contains(wfm))
+      {
+         accessed_wfm.add(wfm);
+      }
+   }
+
+   public void set_architecture (final VHDLArchitecture arch)
+   {
+      architecture = arch;
    }
 
    public static class Instance

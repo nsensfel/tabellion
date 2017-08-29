@@ -19,17 +19,29 @@ public class VHDLWaveform
 
    public static VHDLWaveform get_from_id (final String id)
    {
-      return FROM_ID.get(id);
+      final VHDLWaveform result;
+
+      result = FROM_ID.get(id);
+
+      if (result == null)
+      {
+         System.err.println
+         (
+            "[E] Element "
+            + id
+            + " is used like a waveform, but is not declared as such before"
+            + " that use."
+         );
+
+         System.exit(-1);
+      }
+
+      return result;
    }
 
-   public static boolean handle_is_accessed_by
-   (
-      final String wfm_id,
-      final String ps_id
-   )
+   public static VHDLWaveform find (final String id)
    {
-      /* TODO */
-      return false;
+      return FROM_ID.get(id);
    }
 
 /******************************************************************************/
@@ -38,12 +50,15 @@ public class VHDLWaveform
    private final String id;
    private int instances_count;
 
+   private VHDLArchitecture architecture;
+
    private VHDLWaveform (final String id)
    {
       this.id = id;
       accessed_wfm = new ArrayList<String>();
       instances = new ArrayList<VHDLWaveform.Instance>();
       instances_count = 0;
+      architecture = null;
    }
 
    public VHDLWaveform.Instance add_instance
@@ -71,6 +86,11 @@ public class VHDLWaveform
    public String get_id ()
    {
       return id;
+   }
+
+   public void set_architecture (final VHDLArchitecture arch)
+   {
+      architecture = arch;
    }
 
    public static class Instance

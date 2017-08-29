@@ -145,12 +145,28 @@ public class ModelFile
       final String[] input
    )
    {
+      final VHDLProcess ps;
+      final VHDLWaveform wfm;
+
       if (input.length != 3)
       {
          return false;
       }
 
-      return VHDLProcess.handle_is_accessed_by(input[1], input[2]);
+      ps = VHDLProcess.get_from_id(input[2]);
+      wfm = VHDLWaveform.find(input[1]);
+
+      if (wfm != null)
+      {
+         /*
+          * Assumes that otherwise it's a string, but that could also be due to
+          * an inconsistent model.
+          */
+
+         ps.add_accessed_wfm(wfm);
+      }
+
+      return true;
    }
 
    private static boolean handle_is_waveform_of
@@ -178,7 +194,9 @@ public class ModelFile
          return false;
       }
 
-      return VHDLEntity.handle_is_port_of(input[1], input[2]);
+      VHDLEntity.get_from_id(input[2]).add_port(input[1]);
+
+      return true;
    }
 
    private static boolean handle_is_architecture_of
@@ -186,12 +204,21 @@ public class ModelFile
       final String[] input
    )
    {
+      final VHDLEntity e;
+      final VHDLArchitecture arch;
+
       if (input.length != 3)
       {
          return false;
       }
 
-      return VHDLArchitecture.handle_is_architecture_of(input[1], input[2]);
+      e = VHDLEntity.get_from_id(input[2]);
+      arch = VHDLArchitecture.get_from_id(input[1]);
+
+      e.set_architecture(arch);
+      arch.set_entity(e);
+
+      return true;
    }
 
    private static boolean handle_belongs_to_architecture
@@ -199,13 +226,52 @@ public class ModelFile
       final String[] input
    )
    {
+      final VHDLArchitecture arch;
+      final VHDLProcess ps;
+      final VHDLComponent cmp;
+      final String wfm_id;
+      final VHDLWaveform wfm;
+
       if (input.length != 3)
       {
          return false;
       }
 
-      return
-         VHDLArchitecture.handle_belongs_to_architecture(input[1], input[2]);
+      arch = VHDLArchitecture.get_from_id(input[2]);
+
+      ps = VHDLProcess.find(input[1]);
+
+      if (ps != null)
+      {
+         arch.add_process(ps);
+         ps.set_architecture(arch);
+
+         return true;
+      }
+
+      cmp = VHDLComponent.find(input[1]);
+
+      if (cmp != null)
+      {
+         arch.add_component(cmp);
+         cmp.set_architecture(arch);
+
+         return true;
+      }
+
+      wfm_id = Waveforms.find_waveform_id_from_id(input[1]);
+
+      if (wfm_id != null)
+      {
+         wfm = VHDLWaveform.get_from_id(wfm_id);
+
+         arch.add_waveform(wfm);
+         wfm.set_architecture(arch);
+
+         return true;
+      }
+
+      return true;
    }
 
    private static boolean handle_is_component_of
@@ -218,7 +284,12 @@ public class ModelFile
          return false;
       }
 
-      return VHDLComponent.handle_is_component_of(input[1], input[2]);
+      VHDLComponent.get_from_id(input[1]).set_destination
+      (
+         VHDLEntity.get_from_id(input[2])
+      );
+
+      return true;
    }
 
    private static boolean handle_port_maps
@@ -231,7 +302,13 @@ public class ModelFile
          return false;
       }
 
-      return VHDLComponent.handle_port_maps(input[1], input[2], input[3]);
+      VHDLComponent.get_from_id(input[1]).add_port_map
+      (
+         input[2],
+         input[3]
+      );
+
+      return true;
    }
 
    private ModelFile () {} /* Utility Class */

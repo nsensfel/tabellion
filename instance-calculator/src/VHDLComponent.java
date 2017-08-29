@@ -17,25 +17,31 @@ public class VHDLComponent
       }
    }
 
-   public static boolean handle_is_component_of
-   (
-      final String cmp_id,
-      final String e_id
-   )
+   public static VHDLComponent get_from_id (final String id)
    {
-      /* TODO */
-      return false;
+      final VHDLComponent result;
+
+      result = FROM_ID.get(id);
+
+      if (result == null)
+      {
+         System.err.println
+         (
+            "[E] Element "
+            + id
+            + " is used like a component instantiation, but is not declared as"
+            + " such before that use."
+         );
+
+         System.exit(-1);
+      }
+
+      return result;
    }
 
-   public static boolean handle_port_maps
-   (
-      final String cmp_id,
-      final String pt_id,
-      final String wfm_id
-   )
+   public static VHDLComponent find (final String id)
    {
-      /* TODO */
-      return false;
+      return FROM_ID.get(id);
    }
 
 /******************************************************************************/
@@ -44,6 +50,21 @@ public class VHDLComponent
 
    private VHDLEntity destination;
    private VHDLArchitecture parent;
+
+   public void set_destination (final VHDLEntity dest)
+   {
+      destination = dest;
+   }
+
+   public void set_architecture (final VHDLArchitecture arch)
+   {
+      parent = arch;
+   }
+
+   public void add_port_map (final String src, final String dest)
+   {
+      port_map.put(src, dest);
+   }
 
    public void add_instance_content_to
    (

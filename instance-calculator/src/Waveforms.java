@@ -61,4 +61,14 @@ public class Waveforms
 
       return result;
    }
+
+   public static String find_id_from_waveform_id (final String wfm_id)
+   {
+      return FROM_WAVEFORM.get(wfm_id);
+   }
+
+   public static String find_waveform_id_from_id (final String src_id)
+   {
+      return TO_WAVEFORM.get(src_id);
+   }
 }
