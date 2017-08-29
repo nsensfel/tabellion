@@ -22,7 +22,7 @@ public class Parameters
 
    public Parameters (final String... args)
    {
-      if (args.length != 4)
+      if (args.length != 3)
       {
          print_usage();
 
@@ -35,8 +35,8 @@ public class Parameters
       else
       {
          model_file = args[0];
-         id_prefix = args[2];
-         output_file = args[3];
+         id_prefix = args[1];
+         output_file = args[2];
          are_valid = true;
       }
    }

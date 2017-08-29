@@ -35,45 +35,79 @@ public class Main
 
          return;
       }
+
+      create_instances();
    }
 
    private static void create_instances ()
    {
-      /*
-       * FuturCandidates <- All Architecture.
-       * Candidates <- emptyset
-       * Set ProcessedCandidates <- emptyset.
-       *
-       * while (!isEmpty(FuturCandidates))
-       * {
-       *    is_stuck = True;
-       *    Candidates.addAll(FuturCandidates);
-       *    FuturCandidates.setLength(0);
-       *
-       *    while (!isEmpty(candidates))
-       *    {
-       *       a = Candidates.pop();
-       *
-       *       if (a.has_components_not_in(ProcessedCandidates))
-       *       {
-       *          FuturCandidates.push(a);
-       *       }
-       *       else
-       *       {
-       *          is_stuck = False;
-       *
-       *          a.create_instance();
-       *
-       *          ProcessedCandidates.add(a);
-       *       }
-       *    }
-       *
-       *    if (is_stuck)
-       *    {
-       *       Error.
-       *    }
-       * }
-       */
+      final Collection<VHDLEntity> futur_candidates;
+      final Deque<VHDLEntity> candidates;
+      final Collection<VHDLEntity> processed_candidates;
+      boolean is_stuck;
+
+      futur_candidates = new ArrayList<VHDLEntity>();
+      candidates = new ArrayDeque<VHDLEntity>();
+      processed_candidates = new ArrayList<VHDLEntity>();
+
+      futur_candidates.addAll(VHDLEntity.get_all());
+
+      while (!futur_candidates.isEmpty())
+      {
+         is_stuck = true;
+
+         candidates.addAll(futur_candidates);
+         futur_candidates.clear();
+
+         while (!candidates.isEmpty())
+         {
+            final VHDLEntity e;
+            boolean is_ready;
+
+            e = candidates.pop();
+
+            is_ready = true;
+
+            for (final VHDLComponent cmp: e.get_architecture().get_components())
+            {
+               if (!processed_candidates.contains(cmp.get_destination()))
+               {
+                  is_ready = false;
+
+                  break;
+               }
+            }
+
+            if (is_ready)
+            {
+               is_stuck = false;
+
+               e.generate_instance();
+
+               processed_candidates.add(e);
+            }
+            else
+            {
+               futur_candidates.add(e);
+            }
+         }
+
+         if (is_stuck)
+         {
+            System.err.println("[F] Unable to create all the instances...");
+            System.err.println
+            (
+               "[E] The following entites might form a circular dependency:"
+            );
+
+            for (final VHDLEntity e: futur_candidates)
+            {
+               System.err.println("[E] Entity " + e.get_id());
+            }
+
+            System.exit(-1);
+         }
+      }
    }
 
    public static Parameters get_parameters ()

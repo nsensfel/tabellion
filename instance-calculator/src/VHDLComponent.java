@@ -56,6 +56,11 @@ public class VHDLComponent
       destination = dest;
    }
 
+   public VHDLEntity get_destination ()
+   {
+      return destination;
+   }
+
    public void set_architecture (final VHDLArchitecture arch)
    {
       parent = arch;

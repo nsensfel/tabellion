@@ -120,19 +120,19 @@ public class ModelFile
          return false;
       }
 
-      if (input.equals("entity"))
+      if (input[1].equals("entity"))
       {
          VHDLEntity.add_element(input[2]);
       }
-      else if (input.equals("architecture"))
+      else if (input[1].equals("architecture"))
       {
          VHDLArchitecture.add_element(input[2]);
       }
-      else if (input.equals("process"))
+      else if (input[1].equals("process"))
       {
          VHDLProcess.add_element(input[2]);
       }
-      else if (input.equals("component"))
+      else if (input[1].equals("component"))
       {
          VHDLComponent.add_element(input[2]);
       }

@@ -87,6 +87,11 @@ public class VHDLArchitecture
       }
    }
 
+   public Collection<VHDLComponent> get_components ()
+   {
+      return components;
+   }
+
    public void add_waveform (final VHDLWaveform wfm)
    {
       if (!waveforms.contains(wfm))

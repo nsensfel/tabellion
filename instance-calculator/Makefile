@@ -6,7 +6,7 @@ endif
 
 #### Where to store the Instance model
 ifndef INSTANCE_MODEL_DIR
-INSTANCE_MODEL_DIR =
+INSTANCE_MODEL_DIR = $(MODEL_DIR)/instance/
 endif
 
 #### Binaries
@@ -43,7 +43,7 @@ CLASSPATH = "./src/"
 ## Makefile Magic ##############################################################
 SOURCES = $(wildcard src/*.java)
 CLASSES = $(SOURCES:.java=.class)
-MODEL_FILES = $(MODEL_DIR)/structural.mod
+MODEL_FILE = $(MODEL_DIR)/structural.mod
 OUTPUT_FILE = $(INSTANCE_MODEL_DIR)/instances.mod
 
 ## Makefile Rules ##############################################################
@@ -51,18 +51,23 @@ compile: $(CLASSES)
 
 model: $(CLASSES) $(INSTANCE_MODEL_DIR) $(OUTPUT_FILE)
 
+solutions:
+
 clean:
 	rm -f $(CLASSES)
 	rm -f $(PATH_MODEL_DIR)/*.mod
 
 clean_model:
 	rm -f $(PATH_MODEL_DIR)/*.mod
+
+clean_solutions:
+
 ########
 %.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) $<
 
 $(OUTPUT_FILE): $(MODEL_FILE) $(CLASSES)
-	$(JAVA) -cp $(CLASSPATH) Main $< $@
+	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_FILE) "inst_" $@
 
 $(INSTANCE_MODEL_DIR):
 	mkdir -p $(INSTANCE_MODEL_DIR)

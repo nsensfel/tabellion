@@ -9,6 +9,11 @@ public class VHDLEntity
       FROM_ID = new HashMap<String, VHDLEntity>();
    }
 
+   public static Collection<VHDLEntity> get_all ()
+   {
+      return FROM_ID.values();
+   }
+
    public static void add_element (final String id)
    {
       if (!FROM_ID.containsKey(id))
@@ -64,6 +69,11 @@ public class VHDLEntity
       this.waveform_instances = new ArrayList<VHDLWaveform.Instance>();
    }
 
+   public String get_id ()
+   {
+      return id;
+   }
+
    public void add_port (final String pt)
    {
       if (!ports.contains(pt))
@@ -77,6 +87,11 @@ public class VHDLEntity
       architecture = arch;
    }
 
+   public VHDLArchitecture get_architecture ()
+   {
+      return architecture;
+   }
+
    public Collection<VHDLProcess.Instance> get_process_instances ()
    {
       return process_instances;
@@ -85,5 +100,9 @@ public class VHDLEntity
    public Collection<VHDLWaveform.Instance> get_waveform_instances ()
    {
       return waveform_instances;
+   }
+
+   public void generate_instance ()
+   {
    }
 }
