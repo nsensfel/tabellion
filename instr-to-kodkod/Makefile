@@ -96,8 +96,7 @@ MODEL_FILES = \
 	$(MODEL_DIR)/depths.mod \
 	$(MODEL_DIR)/string_to_instr.map \
 	$(wildcard $(MODEL_DIR)/cfg_*.mod) \
-	$(MODEL_INSTANCES_DIR)/instances.mod \
-	$(wildcard $(MODEL_INSTANCESDIR)/instances_in_*.mod)
+	$(wildcard $(MODEL_INSTANCES_DIR)/*.mod)
 PARSER_SOURCES = $(wildcard parser/*.g4)
 PARSER_CLASSES = $(PARSER_SOURCES:.g4=.class)
 

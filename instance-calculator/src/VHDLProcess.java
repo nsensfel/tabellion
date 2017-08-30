@@ -102,7 +102,6 @@ public class VHDLProcess
       result =
          new VHDLProcess.Instance
          (
-            Instances.get_id_for(instances_count),
             this,
             visibility,
             iwfm_map
@@ -115,6 +114,13 @@ public class VHDLProcess
 
    public static class Instance
    {
+      private static int instances_count;
+
+      static
+      {
+         instances_count = 0;
+      }
+
       private final String id;
       private final VHDLProcess parent;
       private final Map<VHDLWaveform.Instance, VHDLWaveform> iwfm_map;
@@ -122,13 +128,18 @@ public class VHDLProcess
 
       private Instance
       (
-         final String id,
          final VHDLProcess parent,
          final VHDLEntity visibility,
          final Map<VHDLWaveform.Instance, VHDLWaveform> iwfm_map
       )
       {
-         this.id = id;
+         this.id =
+            (
+               Main.get_parameters().get_id_prefix()
+               + "ps_"
+               + instances_count
+            );
+
          this.parent = parent;
          this.visibility = visibility;
          this.iwfm_map = iwfm_map;
@@ -168,7 +179,6 @@ public class VHDLProcess
          result =
             new VHDLProcess.Instance
             (
-               Instances.get_id_for(parent.instances_count),
                parent,
                visibility,
                new_iwfm_map
@@ -187,7 +197,12 @@ public class VHDLProcess
 
          try
          {
-            of.write("(is_process_instance ");
+            of.write("(add_element ps_instance ");
+            of.write(id);
+            of.write(")");
+            of.insert_newline();
+
+            of.write("(is_ps_instance_of ");
             of.write(id);
             of.write(" ");
             of.write(parent.get_id());
@@ -196,8 +211,6 @@ public class VHDLProcess
 
             of.write("(is_visible_in ");
             of.write(id);
-            of.write(" ");
-            of.write(parent.get_id());
             of.write(" ");
             of.write(visibility.get_id());
             of.write(")");
@@ -212,11 +225,7 @@ public class VHDLProcess
                of.write("(process_instance_maps ");
                of.write(id);
                of.write(" ");
-               of.write(parent.get_id());
-               of.write(" ");
                of.write(iwfm.getKey().get_id());
-               of.write(" ");
-               of.write(iwfm.getKey().get_parent().get_id());
                of.write(" ");
                of.write(iwfm.getValue().get_id());
                of.write(")");

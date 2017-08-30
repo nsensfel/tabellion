@@ -37,7 +37,6 @@ public class Main
       }
 
       create_instances();
-      Instances.write_predicates();
       OutputFile.close_all();
    }
 

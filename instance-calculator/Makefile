@@ -44,7 +44,7 @@ CLASSPATH = "./src/"
 SOURCES = $(wildcard src/*.java)
 CLASSES = $(SOURCES:.java=.class)
 MODEL_FILE = $(MODEL_DIR)/structural.mod
-OUTPUT_FILE = $(MODEL_INSTANCES_DIR)/instances.mod
+OUTPUT_FILE = $(MODEL_INSTANCES_DIR)/witness
 
 ## Makefile Rules ##############################################################
 compile: $(CLASSES)
@@ -55,10 +55,10 @@ solutions:
 
 clean:
 	rm -f $(CLASSES)
-	rm -f $(PATH_MODEL_DIR)/*.mod
+	rm -f $(MODEL_INSTANCES_DIR)/*
 
 clean_model:
-	rm -f $(PATH_MODEL_DIR)/*.mod
+	rm -f $(MODEL_INSTANCES_DIR)/*
 
 clean_solutions:
 
@@ -68,6 +68,7 @@ clean_solutions:
 
 $(OUTPUT_FILE): $(MODEL_FILE) $(CLASSES)
 	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_FILE) "inst_" $(MODEL_INSTANCES_DIR)
+	touch $(OUTPUT_FILE)
 
 $(MODEL_INSTANCES_DIR):
 	mkdir -p $(MODEL_INSTANCES_DIR)

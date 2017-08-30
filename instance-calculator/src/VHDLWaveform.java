@@ -74,7 +74,6 @@ public class VHDLWaveform
       result =
          new VHDLWaveform.Instance
          (
-            Instances.get_id_for(instances_count),
             this,
             visibility
          );
@@ -104,18 +103,32 @@ public class VHDLWaveform
 
    public static class Instance
    {
+      private static int instances_count;
+
+      static
+      {
+         instances_count = 0;
+      }
+
       private final String id;
       private final VHDLWaveform parent;
       private final VHDLEntity visibility;
 
       private Instance
       (
-         final String id,
          final VHDLWaveform parent,
          final VHDLEntity visibility
       )
       {
-         this.id = id;
+         this.id =
+            (
+               Main.get_parameters().get_id_prefix()
+               + "wfm_"
+               + instances_count
+            );
+
+         instances_count += 1;
+
          this.parent = parent;
          this.visibility = visibility;
       }
@@ -134,7 +147,12 @@ public class VHDLWaveform
       {
          try
          {
-            of.write("(is_waveform_instance ");
+            of.write("(add_element wfm_instance ");
+            of.write(id);
+            of.write(")");
+            of.insert_newline();
+
+            of.write("(is_wfm_instance_of ");
             of.write(id);
             of.write(" ");
             of.write(parent.get_id());
@@ -143,8 +161,6 @@ public class VHDLWaveform
 
             of.write("(is_visible_in ");
             of.write(id);
-            of.write(" ");
-            of.write(parent.get_id());
             of.write(" ");
             of.write(visibility.get_id());
             of.write(")");
@@ -166,7 +182,7 @@ public class VHDLWaveform
       @Override
       public String toString ()
       {
-         return "<" + parent.get_id() + ", " + id + ">";
+         return id;
       }
    }
 }

@@ -8,7 +8,7 @@ AST_FILE = ${CURDIR}/data/ast/best_chronometer_ever.xml
 
 TMP_DIR = /tmp/tabellion
 MODEL_DIR = $(TMP_DIR)/mod
-MODEL_INSTANCES_DIR = $(TMP_DIR)/instance
+MODEL_INSTANCES_DIR = $(MODEL_DIR)/instance
 SOL_DIR = $(TMP_DIR)/sol
 
 ## Sub-programs ################################################################

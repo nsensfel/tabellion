@@ -3,7 +3,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TYPES DECLARATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add_type instance)
+(add_type wfm_instance)
+(add_type ps_instance)
 
 ;; Redundancies
 (add_type entity)
@@ -13,10 +14,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; PREDICATES DECLARATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add_predicate is_waveform_instance instance waveform)
-(add_predicate is_visible_in instance waveform entity)
+(add_predicate is_wfm_instance_of wfm_instance waveform)
+(add_predicate is_visible_in wfm_instance entity)
 
-(add_predicate is_process_instance instance process)
-(add_predicate is_visible_in instance process entity)
+(add_predicate is_ps_instance_of ps_instance process)
+(add_predicate is_visible_in ps_instance entity)
 
-(add_predicate process_instance_maps instance process instance waveform waveform)
+(add_predicate process_instance_maps ps_instance wfm_instance waveform)
