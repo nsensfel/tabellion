@@ -140,6 +140,8 @@ public class VHDLProcess
                + instances_count
             );
 
+         instances_count += 1;
+
          this.parent = parent;
          this.visibility = visibility;
          this.iwfm_map = iwfm_map;
