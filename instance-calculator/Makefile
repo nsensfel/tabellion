@@ -5,8 +5,8 @@ MODEL_DIR =
 endif
 
 #### Where to store the Instance model
-ifndef INSTANCE_MODEL_DIR
-INSTANCE_MODEL_DIR = $(MODEL_DIR)/instance/
+ifndef MODEL_INSTANCES_DIR
+MODEL_INSTANCES_DIR =
 endif
 
 #### Binaries
@@ -25,8 +25,8 @@ ifeq ($(strip $(MODEL_DIR)),)
 $(error No MODEL_DIR defined as parameter.)
 endif
 
-ifeq ($(strip $(INSTANCE_MODEL_DIR)),)
-$(error No INSTANCE_MODEL_DIR defined as parameter.)
+ifeq ($(strip $(MODEL_INSTANCES_DIR)),)
+$(error No MODEL_INSTANCES_DIR defined as parameter.)
 endif
 
 ifeq ($(strip $(JAVA)),)
@@ -44,12 +44,12 @@ CLASSPATH = "./src/"
 SOURCES = $(wildcard src/*.java)
 CLASSES = $(SOURCES:.java=.class)
 MODEL_FILE = $(MODEL_DIR)/structural.mod
-OUTPUT_FILE = $(INSTANCE_MODEL_DIR)/instances.mod
+OUTPUT_FILE = $(MODEL_INSTANCES_DIR)/instances.mod
 
 ## Makefile Rules ##############################################################
 compile: $(CLASSES)
 
-model: $(CLASSES) $(INSTANCE_MODEL_DIR) $(OUTPUT_FILE)
+model: $(CLASSES) $(MODEL_INSTANCES_DIR) $(OUTPUT_FILE)
 
 solutions:
 
@@ -67,8 +67,8 @@ clean_solutions:
 	$(JAVAC) -cp $(CLASSPATH) $<
 
 $(OUTPUT_FILE): $(MODEL_FILE) $(CLASSES)
-	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_FILE) "inst_" $(INSTANCE_MODEL_DIR)
+	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_FILE) "inst_" $(MODEL_INSTANCES_DIR)
 
-$(INSTANCE_MODEL_DIR):
-	mkdir -p $(INSTANCE_MODEL_DIR)
+$(MODEL_INSTANCES_DIR):
+	mkdir -p $(MODEL_INSTANCES_DIR)
 
