@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.BufferedWriter;
 
 public class VHDLEntity
 {
@@ -53,6 +54,7 @@ public class VHDLEntity
    private final Collection<VHDLProcess.Instance> process_instances;
    private final Collection<VHDLWaveform.Instance> waveform_instances;
 
+   private final OutputFile output_file;
    private final Collection<String> ports;
    private final String id;
 
@@ -67,6 +69,8 @@ public class VHDLEntity
 
       this.process_instances = new ArrayList<VHDLProcess.Instance>();
       this.waveform_instances = new ArrayList<VHDLWaveform.Instance>();
+
+      output_file = OutputFile.new_output_file("instances_in_" + id + ".mod");
    }
 
    public String get_id ()
@@ -127,5 +131,18 @@ public class VHDLEntity
          waveform_instances,
          local_conversion
       );
+   }
+
+   public void write_predicates ()
+   {
+      for (final VHDLWaveform.Instance iwfm: waveform_instances)
+      {
+         iwfm.write_predicates_to(output_file);
+      }
+
+      for (final VHDLProcess.Instance ips: process_instances)
+      {
+         ips.write_predicates_to(output_file);
+      }
    }
 }

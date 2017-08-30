@@ -37,6 +37,8 @@ public class Main
       }
 
       create_instances();
+      Instances.write_predicates();
+      OutputFile.close_all();
    }
 
    private static void create_instances ()
@@ -84,6 +86,7 @@ public class Main
 
                e.generate_instance();
 
+               e.write_predicates();
                processed_candidates.add(e);
             }
             else

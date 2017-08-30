@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.BufferedWriter;
 
 public class VHDLWaveform
 {
@@ -95,6 +96,12 @@ public class VHDLWaveform
       architecture = arch;
    }
 
+   @Override
+   public String toString ()
+   {
+      return id;
+   }
+
    public static class Instance
    {
       private final String id;
@@ -113,9 +120,53 @@ public class VHDLWaveform
          this.visibility = visibility;
       }
 
+      public String get_id ()
+      {
+         return id;
+      }
+
       public VHDLWaveform get_parent ()
       {
          return parent;
+      }
+
+      public void write_predicates_to (final OutputFile of)
+      {
+         try
+         {
+            of.write("(is_waveform_instance ");
+            of.write(id);
+            of.write(" ");
+            of.write(parent.get_id());
+            of.write(")");
+            of.insert_newline();
+
+            of.write("(is_visible_in ");
+            of.write(id);
+            of.write(" ");
+            of.write(parent.get_id());
+            of.write(" ");
+            of.write(visibility.get_id());
+            of.write(")");
+            of.insert_newline();
+         }
+         catch (final Exception e)
+         {
+            System.err.println
+            (
+               "[F] Could not write to output file:"
+            );
+
+            e.printStackTrace();
+
+            System.exit(-1);
+         }
+      }
+
+      @Override
+      public String toString ()
+      {
+         return "<" + parent.get_id() + ", " + id + ">";
       }
    }
 }

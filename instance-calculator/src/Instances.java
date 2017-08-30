@@ -2,11 +2,13 @@ import java.util.*;
 
 public class Instances
 {
-   private static final Map<Integer, String> instances;
+   private static final Map<Integer, String> INSTANCES;
+   private static final OutputFile OUTPUT_FILE;
 
    static
    {
-      instances = new HashMap<Integer, String>();
+      INSTANCES = new HashMap<Integer, String>();
+      OUTPUT_FILE = OutputFile.new_output_file("instances.mod");
    }
 
    public static String get_id_for (final int i)
@@ -16,15 +18,27 @@ public class Instances
 
       j = new Integer(i);
 
-      result = instances.get(j);
+      result = INSTANCES.get(j);
 
       if (result == null)
       {
          result = (Main.get_parameters().get_id_prefix() + i);
 
-         instances.put(j, result);
+         INSTANCES.put(j, result);
       }
 
       return result;
+   }
+
+   public static void write_predicates ()
+   {
+      for (final String id: INSTANCES.values())
+      {
+         OUTPUT_FILE.write("(add_element instance ");
+         OUTPUT_FILE.write(id);
+         OUTPUT_FILE.write(")");
+
+         OUTPUT_FILE.insert_newline();
+      }
    }
 }

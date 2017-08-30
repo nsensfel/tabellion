@@ -107,6 +107,8 @@ public class ModelFile
          }
       }
 
+      VHDLArchitecture.resolve_all_waveforms();
+
       return true;
    }
 
@@ -233,8 +235,6 @@ public class ModelFile
       final VHDLArchitecture arch;
       final VHDLProcess ps;
       final VHDLComponent cmp;
-      final String wfm_id;
-      final VHDLWaveform wfm;
 
       if (input.length != 3)
       {
@@ -263,17 +263,7 @@ public class ModelFile
          return true;
       }
 
-      wfm_id = Waveforms.find_waveform_id_from_id(input[1]);
-
-      if (wfm_id != null)
-      {
-         wfm = VHDLWaveform.get_from_id(wfm_id);
-
-         arch.add_waveform(wfm);
-         wfm.set_architecture(arch);
-
-         return true;
-      }
+      arch.add_futur_waveform(input[1]);
 
       return true;
    }

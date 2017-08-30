@@ -2,7 +2,7 @@ public class Parameters
 {
    private final String model_file;
    private final String id_prefix;
-   private final String output_file;
+   private final String output_dir;
    private final boolean are_valid;
 
    public static void print_usage ()
@@ -11,12 +11,12 @@ public class Parameters
       (
          "Instance-Calculator\n"
          + "USAGE:\n"
-         + "\tjava Main <INSTRUCTIONS> <ID_PREFIX> <OUTPUT_FILE>\n"
+         + "\tjava Main <INSTRUCTIONS> <ID_PREFIX> <OUTPUT_DIR>\n"
          + "PARAMETERS:\n"
          + "\t<INSTRUCTIONS>\tInstruction file describing the model.\n"
          + "\t<ID_PREFIX>\tPrefix for the IDs of generated paths.\n"
-         + "\t<OUTPUT_FILE>\tFile in which to output the generated"
-         + " instructions."
+         + "\t<OUTPUT_DIR>\tDirectory in which to output the generated"
+         + " instruction files."
       );
    }
 
@@ -28,7 +28,7 @@ public class Parameters
 
          model_file = new String();
          id_prefix = new String();
-         output_file = new String();
+         output_dir = new String();
 
          are_valid = false;
       }
@@ -36,7 +36,8 @@ public class Parameters
       {
          model_file = args[0];
          id_prefix = args[1];
-         output_file = args[2];
+         output_dir = args[2];
+
          are_valid = true;
       }
    }
@@ -51,9 +52,9 @@ public class Parameters
       return id_prefix;
    }
 
-   public String get_output_file ()
+   public String get_output_directory ()
    {
-      return output_file;
+      return output_dir;
    }
 
    public boolean are_valid ()

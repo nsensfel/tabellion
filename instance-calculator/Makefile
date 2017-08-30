@@ -67,7 +67,7 @@ clean_solutions:
 	$(JAVAC) -cp $(CLASSPATH) $<
 
 $(OUTPUT_FILE): $(MODEL_FILE) $(CLASSES)
-	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_FILE) "inst_" $@
+	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_FILE) "inst_" $(INSTANCE_MODEL_DIR)
 
 $(INSTANCE_MODEL_DIR):
 	mkdir -p $(INSTANCE_MODEL_DIR)

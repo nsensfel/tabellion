@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.BufferedWriter;
 
 public class VHDLProcess
 {
@@ -59,6 +60,11 @@ public class VHDLProcess
       instances = new ArrayList<VHDLProcess.Instance>();
       instances_count = 0;
       architecture = null;
+   }
+
+   public String get_id ()
+   {
+      return id;
    }
 
    public void add_accessed_wfm (final VHDLWaveform wfm)
@@ -171,6 +177,63 @@ public class VHDLProcess
          parent.instances_count += 1;
 
          return result;
+      }
+
+      public void write_predicates_to (final OutputFile of)
+      {
+         final Set<Map.Entry<VHDLWaveform.Instance, VHDLWaveform>> iwfm_set;
+
+         iwfm_set = iwfm_map.entrySet();
+
+         try
+         {
+            of.write("(is_process_instance ");
+            of.write(id);
+            of.write(" ");
+            of.write(parent.get_id());
+            of.write(")");
+            of.insert_newline();
+
+            of.write("(is_visible_in ");
+            of.write(id);
+            of.write(" ");
+            of.write(parent.get_id());
+            of.write(" ");
+            of.write(visibility.get_id());
+            of.write(")");
+            of.insert_newline();
+
+            for
+            (
+               final Map.Entry<VHDLWaveform.Instance, VHDLWaveform> iwfm:
+               iwfm_set
+            )
+            {
+               of.write("(process_instance_maps ");
+               of.write(id);
+               of.write(" ");
+               of.write(parent.get_id());
+               of.write(" ");
+               of.write(iwfm.getKey().get_id());
+               of.write(" ");
+               of.write(iwfm.getKey().get_parent().get_id());
+               of.write(" ");
+               of.write(iwfm.getValue().get_id());
+               of.write(")");
+               of.insert_newline();
+            }
+         }
+         catch (final Exception e)
+         {
+            System.err.println
+            (
+               "[F] Could not write to output file:"
+            );
+
+            e.printStackTrace();
+
+            System.exit(-1);
+         }
       }
    }
 }

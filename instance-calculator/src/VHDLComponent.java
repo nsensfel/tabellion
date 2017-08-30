@@ -45,7 +45,7 @@ public class VHDLComponent
    }
 
 /******************************************************************************/
-   private final Map<String, String> port_map;
+   private final Map<String, String> reverse_port_map;
    private final String id;
 
    private VHDLEntity destination;
@@ -68,7 +68,7 @@ public class VHDLComponent
 
    public void add_port_map (final String src, final String dest)
    {
-      port_map.put(src, dest);
+      reverse_port_map.put(dest, src);
    }
 
    public void add_instance_content_to
@@ -89,28 +89,35 @@ public class VHDLComponent
 
       for (final VHDLWaveform.Instance i_wfm: dest_waveform_instances)
       {
-         final String dest;
+         final String src_wfm, dest_port;
          final VHDLWaveform.Instance replacement;
 
-         dest =
-            port_map.get
+         dest_port =
+            Waveforms.get_id_from_waveform_id
             (
-               Waveforms.get_id_from_waveform_id
-               (
-                  i_wfm.get_parent().get_id()
-               )
+               i_wfm.get_parent().get_id()
             );
 
-         if (dest == null)
+         src_wfm = reverse_port_map.get(dest_port);
+
+         if (src_wfm == null)
          {
+            /* i_wfm is not linked to a port, so it needs a new instance. */
             replacement = i_wfm.get_parent().add_instance(parent.get_entity());
          }
          else
          {
+            /*
+             * i_wfm is linked to a port. Replace it by what's connected to the
+             * port.
+             */
             replacement =
                local_conversion.get
                (
-                  Waveforms.get_waveform_id_from_id(dest)
+                  VHDLWaveform.get_from_id
+                  (
+                     src_wfm
+                  )
                );
          }
 
@@ -131,6 +138,6 @@ public class VHDLComponent
    {
       this.id = id;
 
-      port_map = new HashMap<String, String>();
+      reverse_port_map = new HashMap<String, String>();
    }
 }

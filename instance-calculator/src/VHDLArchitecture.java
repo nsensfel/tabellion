@@ -9,6 +9,14 @@ public class VHDLArchitecture
       FROM_ID = new HashMap<String, VHDLArchitecture>();
    }
 
+   public static void resolve_all_waveforms ()
+   {
+      for (final VHDLArchitecture arch: FROM_ID.values())
+      {
+         arch.resolve_waveforms();
+      }
+   }
+
    public static void add_element (final String id)
    {
       if (!FROM_ID.containsKey(id))
@@ -48,6 +56,7 @@ public class VHDLArchitecture
    private final Collection<VHDLProcess> processes;
    private final Collection<VHDLComponent> components;
    private final Collection<VHDLWaveform> waveforms;
+   private final Deque<String> futur_waveforms;
    private final String id;
 
    private VHDLEntity entity;
@@ -59,6 +68,7 @@ public class VHDLArchitecture
       processes = new ArrayList<VHDLProcess>();
       components = new ArrayList<VHDLComponent>();
       waveforms = new ArrayList<VHDLWaveform>();
+      futur_waveforms = new ArrayDeque<String>();
    }
 
    public VHDLEntity get_entity ()
@@ -97,6 +107,27 @@ public class VHDLArchitecture
       if (!waveforms.contains(wfm))
       {
          waveforms.add(wfm);
+      }
+   }
+
+   public void add_futur_waveform (final String fwfm)
+   {
+      if (!futur_waveforms.contains(fwfm))
+      {
+         futur_waveforms.add(fwfm);
+      }
+   }
+
+   public void resolve_waveforms ()
+   {
+      while (!futur_waveforms.isEmpty())
+      {
+         final String src_id, wfm_id;
+
+         src_id = futur_waveforms.pop();
+
+         wfm_id = Waveforms.get_waveform_id_from_id(src_id);
+         add_waveform(VHDLWaveform.get_from_id(wfm_id));
       }
    }
 
