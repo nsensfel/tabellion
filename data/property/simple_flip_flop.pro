@@ -5,6 +5,7 @@
       (ps process STRUCT_SIMPLE_FLIP_FLOP_PROCESS)
    )
    (and
+      (not (eq clk reg))
       (is_explicit_process ps)
       (is_in_sensitivity_list clk ps)
       (CTL_verifies ps
