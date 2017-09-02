@@ -1,7 +1,9 @@
-/* FIXME: Finer imports */
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
 
-import java.io.*;
+import java.io.FileWriter;
 
 public class Main
 {

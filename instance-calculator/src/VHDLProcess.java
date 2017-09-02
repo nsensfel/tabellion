@@ -1,5 +1,8 @@
-import java.util.*;
-import java.io.BufferedWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
 
 public class VHDLProcess
 {

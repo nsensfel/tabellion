@@ -1,4 +1,9 @@
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.Map;
+import java.util.HashMap;
 
 public class VHDLArchitecture
 {
