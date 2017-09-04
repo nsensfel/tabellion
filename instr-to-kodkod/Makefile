@@ -107,7 +107,8 @@ compile: $(PARSER_CLASSES) $(CLASSES)
 
 model: cfg-generator
 
-solutions: cfg-generator $(PARSER_CLASSES) $(CLASSES) $(SOLUTION_FILES)
+solutions: cfg-generator $(REQUIRED_JARS) $(PARSER_CLASSES) $(CLASSES) \
+	$(SOLUTION_FILES)
 
 clean:
 	$(MAKE) -C parser clean
