@@ -135,7 +135,7 @@ $(SOL_DIR)/%.sol: $(PROPERTY_FILES) $(MODEL_FILES) $(LEVEL_FILES)
 		$(filter %$(basename $(notdir $@)).pro,$(PROPERTY_FILES)) \
 		$(LEVEL_FILES) \
 		$(MODEL_FILES) \
-		$(wildcard $(PATH_MODEL_DIR)/*.mod)
+		$(wildcard $(PATH_MODEL_DIR)/*.mod) -v
 
 src/%.class: src/%.java $(PARSER_CLASSES) $(REQUIRED_JARS)
 	$(JAVAC) -cp $(CLASSPATH) $<
