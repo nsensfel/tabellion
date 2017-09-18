@@ -5,28 +5,22 @@
    (forall sl1 waveform
       (and
          (implies
+            ;; If a signal is read,
             (exists target waveform
                (CTL_verifies ps
                   (EF
-                     (and
-                        (is_read_element _ sl1)
-                        (expr_writes target)
-                        (not
-                           (AX
-                              (AF
-                                 (expr_writes target)
-                              )
-                           )
-                        )
-                     )
+                     (is_read_element _ sl1)
                   )
                )
             )
+            ;; Then it must be in the sensitivity list.
             (is_in_sensitivity_list sl1 ps)
          )
          (CTL_verifies ps
             (implies
+               ;; If a signal is somehow assigned by this process,
                (EF (expr_writes sl1))
+               ;; Then it is assigned at every execution of the process.
                (AF (expr_writes sl1))
             )
          )
