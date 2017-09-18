@@ -1,15 +1,16 @@
 ## Makefile Parameters #########################################################
-LEVEL_FILES = $(wildcard ${CURDIR}/data/level/*.lvl)
-PROPERTY_FILES = \
+LEVEL_FILES ?= $(wildcard ${CURDIR}/data/level/*.lvl)
+PROPERTY_FILES ?= \
 	$(wildcard ${CURDIR}/data/property/*.pro) \
 	$(wildcard ${CURDIR}/data/property/cnes/*.pro)
-AST_FILE = ${CURDIR}/data/ast/best_chronometer_ever.xml
+AST_FILE ?= ${CURDIR}/data/ast/best_chronometer_ever.xml
+TEMPLATE_DIR ?= ${CURDIR}/data/template/
 #AST_FILE = ${CURDIR}/data/ast/pong.xml
 
-TMP_DIR = /tmp/tabellion
-MODEL_DIR = $(TMP_DIR)/mod
-MODEL_INSTANCES_DIR = $(MODEL_DIR)/instance
-SOL_DIR = $(TMP_DIR)/sol
+TMP_DIR ?= /tmp/tabellion
+MODEL_DIR ?= $(TMP_DIR)/mod
+MODEL_INSTANCES_DIR ?= $(MODEL_DIR)/instance
+SOL_DIR ?= $(TMP_DIR)/sol
 
 ## Sub-programs ################################################################
 AST_TO_INSTR = ast-to-instr
