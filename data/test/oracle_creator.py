@@ -12,7 +12,10 @@ for line in sys.stdin.readlines():
     if (len(solutions) <= solution_number):
         solutions.insert(solution_number, list())
 
-    solutions[solution_number].insert(int(solution_item_number), line_number)
+    solutions[solution_number].insert(
+        int(solution_item_number),
+        ("\"" + line_number + "\"")
+    )
 
 for sol in solutions:
     print("(" + (' '.join(sol)) + ")")

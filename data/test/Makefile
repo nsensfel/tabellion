@@ -7,15 +7,16 @@ SOLUTION_DIR ?= /tmp/tabellion/sol/
 ORACLE_CREATOR_SCRIPT = ${CURDIR}/oracle_creator.py
 ################################################################################
 TEST_FILES = $(addsuffix /valid,$(TEST_DIRS))
+SOLUTION_FILES = $(addsuffix .sol,$(addprefix $(SOLUTION_DIR)/,$(TEST_DIRS)))
 
 #VHD_FILES = $(addsuffix .vhd, $(TEST_FILES))
 AST_FILES = $(addsuffix .xml, $(TEST_FILES))
 OCL_FILES = $(addsuffix .ocl, $(TEST_FILES))
+RSL_FILES = $(addsuffix .rsl, $(TEST_DIRS))
 
-all: $(AST_FILES) $(OCL_FILES)
-	for TD in $(TEST_DIRS) ; do \
-		$(MAKE) -C $$TD PROPERTY_FILES=$$TD.pro
-		
+export
+
+all: $(AST_FILES) $(OCL_FILES) $(RSL_FILES)
 
 clean:
 	rm -f $(AST_FILES)
@@ -27,4 +28,8 @@ $(AST_FILES): %.xml : %.vhd
 $(OCL_FILES): %.ocl : %.vhd
 	grep -no "\$$SOL:[0-9]\+:[0-9]\+\\$$" $< | $(ORACLE_CREATOR_SCRIPT) > $@
 
-
+$(RSL_FILES): %.rsl : %/valid.ocl %/valid.xml
+	$(MAKE) -C $(TABELLION_MAIN) \
+		AST_FILE=${PWD}/$(patsubst %.rsl,%,$@)/valid.xml \
+		PROPERTY_FILES=$(PROPERTY_DIR)/$(patsubst %.rsl,%.pro,$@) \
+		TEMPLATE_DIR=${PWD}/$(patsubst %.rsl,%,$@)/

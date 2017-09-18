@@ -16,13 +16,10 @@ architecture RTL of valid is
    signal st0: enum_t;
    signal n0, n1, n2, n3: natural range 0 to 3;
 begin
-   -- $SOL:0:0$
-   s0 <= s1;
-   -- $SOL:1:0$
-   s0 <= (s1 and s2);
+   s0 <= s1; -- $SOL:0:0$
+   s0 <= (s1 and s2); -- $SOL:1:0$
 
-   -- $SOL:2:0$
-   process (s0, s1)
+   process (s0, s1) -- $SOL:2:0$
    begin
       case s1 is
          when '0' =>
@@ -32,8 +29,7 @@ begin
       end case;
    end process;
 
-   -- $SOL:3:0$
-   process (s0, s1)
+   process (s0, s1) -- $SOL:3:0$
    begin
       case s1 is
          when '0' =>
@@ -45,8 +41,7 @@ begin
       end case;
    end process;
 
-   -- $SOL:4:0$
-   process (s0, s1)
+   process (s0, s1) -- $SOL:4:0$
    begin
       op2 <= '0';
       case s1 is
@@ -60,8 +55,7 @@ begin
       end case;
    end process;
 
-   -- $SOL:5:0$
-   process (s0, s1, s2)
+   process (s0, s1, s2) -- $SOL:5:0$
    begin
       op2 <= '0';
       case s1 is
@@ -80,30 +74,26 @@ begin
       end case;
    end process;
 
-   -- $SOL:6:0$
-   with ip0 select
+   with ip0 select -- $SOL:6:0$
       s1 <=
          ip1 when '0',
          ip2 when '1',
          ip3 when others;
 
-   -- $SOL:7:0$
-   with st0 select
+   with st0 select -- $SOL:7:0$
       s2 <=
          ip1 when V0,
          ip2 when V1,
          ip3 when V2,
          s1 when V3;
 
-   -- $SOL:8:0$
-   with st0 select
+   with st0 select -- $SOL:8:0$
       s2 <=
          ip1 when V0,
          ip2 when V1,
          ip3 when others;
 
-   -- $SOL:9:0$
-   process (s0, s1, s2, s3)
+   process (s0, s1, s2, s3) -- $SOL:9:0$
    begin
       case st0 is
          when V3 =>
@@ -117,8 +107,7 @@ begin
       end case;
    end process;
 
-   -- $SOL:10:0$
-   process (s0, s1, s2, s3)
+   process (s0, s1, s2, s3) -- $SOL:10:0$
    begin
       case st0 is
          when V3 =>
@@ -130,8 +119,7 @@ begin
       end case;
    end process;
 
-   -- $SOL:11:0$
-   process (n0, n2)
+   process (n0, n2) -- $SOL:11:0$
    begin
       case n0 is
          when 0 =>
@@ -143,8 +131,7 @@ begin
       end case;
    end process;
 
-   -- $SOL:12:0$
-   process (n0, n2)
+   process (n0, n2) -- $SOL:12:0$
    begin
       case n0 is
          when 0 =>
@@ -158,8 +145,7 @@ begin
       end case;
    end process;
 
-   -- $SOL:13:0$
-   process (n0, n2)
+   process (n0, n2) -- $SOL:13:0$
    begin
       case n0 is
          when 0 =>
