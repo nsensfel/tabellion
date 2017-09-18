@@ -95,7 +95,8 @@ MODEL_FILES = \
 	$(MODEL_DIR)/structural.mod \
 	$(MODEL_DIR)/depths.mod \
 	$(MODEL_DIR)/string_to_instr.map \
-	$(filter-out %structural.mod,$(wildcard $(MODEL_DIR)/cfg_*.mod))
+	$(wildcard $(MODEL_DIR)/cfg_*.mod) \
+	$(wildcard $(MODEL_INSTANCES_DIR)/*.mod)
 PARSER_SOURCES = $(wildcard parser/*.g4)
 PARSER_CLASSES = $(PARSER_SOURCES:.g4=.class)
 
@@ -106,7 +107,8 @@ compile: $(PARSER_CLASSES) $(CLASSES)
 
 model: cfg-generator
 
-solutions: cfg-generator $(PARSER_CLASSES) $(CLASSES) $(SOLUTION_FILES)
+solutions: cfg-generator $(REQUIRED_JARS) $(PARSER_CLASSES) $(CLASSES) \
+	$(SOLUTION_FILES)
 
 clean:
 	$(MAKE) -C parser clean
