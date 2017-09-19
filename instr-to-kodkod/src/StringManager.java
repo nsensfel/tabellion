@@ -57,9 +57,10 @@ public class StringManager
 
    public Relation get_regex_as_relation
    (
-      final String str
+      String str
    )
    {
+      str = str.toLowerCase();
       regexes.add(Pattern.compile(str.substring(1, (str.length() - 1))));
 
       return get_string_as_relation(str);
@@ -101,8 +102,7 @@ public class StringManager
                   }
                );
             }
-            /*
-            else
+            else if (Main.get_parameters().be_verbose())
             {
                System.out.println
                (
@@ -113,7 +113,6 @@ public class StringManager
                   + "\"."
                );
             }
-            */
          }
       }
    }
