@@ -2,8 +2,13 @@
    (
       (ps process CNE_01200_BAD_NAME)
    )
-   (implies
+   (and
       (is_explicit_process ps)
-      (string_matches [label ps] "P_.*")
+      (not
+         (and
+            (has_label ps)
+            (string_matches [label ps] "^P_.*")
+         )
+      )
    )
 )
