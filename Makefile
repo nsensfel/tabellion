@@ -1,8 +1,6 @@
 ## Makefile Parameters #########################################################
 LEVEL_FILES ?= $(wildcard ${CURDIR}/data/level/*.lvl)
-PROPERTY_FILES ?= \
-	$(wildcard ${CURDIR}/data/property/*.pro) \
-	$(wildcard ${CURDIR}/data/property/cnes/*.pro)
+PROPERTY_FILES ?= $(wildcard ${CURDIR}/data/property/*.pro)
 AST_FILE ?= ${CURDIR}/data/ast/best_chronometer_ever.xml
 TEMPLATE_DIR ?= ${CURDIR}/data/template/
 #AST_FILE = ${CURDIR}/data/ast/pong.xml

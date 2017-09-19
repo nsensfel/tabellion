@@ -196,6 +196,22 @@ public class VHDLCSNode extends VHDLNode
 
       for (int i = 0; i < when_branches_length; ++i)
       {
+         final Node child;
+         final String child_xml_id;
+         final IDs child_local_id;
+
+         child = when_branches.item(i);
+         child_xml_id = XMLManager.get_attribute(child, "id");
+         child_local_id = IDs.get_id_from_xml_id(output, child_xml_id, "node");
+
+         Predicates.add_entry
+         (
+            output,
+            "node_connect",
+            local_id,
+            child_local_id
+         );
+
          waiting_list.add
          (
             new VHDLWNode
@@ -251,6 +267,20 @@ public class VHDLCSNode extends VHDLNode
       }
       else
       {
+         final String child_xml_id;
+         final IDs child_local_id;
+
+         child_xml_id = XMLManager.get_attribute(others_branch, "id");
+         child_local_id = IDs.get_id_from_xml_id(output, child_xml_id, "node");
+
+         Predicates.add_entry
+         (
+            output,
+            "node_connect",
+            local_id,
+            child_local_id
+         );
+
          waiting_list.push
          (
             new VHDLWNode

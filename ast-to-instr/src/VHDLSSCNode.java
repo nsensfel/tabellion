@@ -40,7 +40,7 @@ public class VHDLSSCNode extends VHDLNode
          attributes
       );
 
-      this.prev_node = prev_node;
+      this.prev_node = prev_node; /* null when first node of the process */
    }
 
    @Override
@@ -54,6 +54,7 @@ public class VHDLSSCNode extends VHDLNode
       final int intermediary_nodes_count;
       int i;
 
+      /* Find all the nodes, in order, in this instruction chain */
       sub_nodes =
          (NodeList) XPE_FIND_SUB_NODES.evaluate
          (
@@ -61,13 +62,19 @@ public class VHDLSSCNode extends VHDLNode
             XPathConstants.NODESET
          );
 
+      /* Don't handle the last node in the 'for' loop, see below. */
       intermediary_nodes_count = (sub_nodes.getLength() - 1);
 
       for (i = 0; i < intermediary_nodes_count; ++i)
       {
-         final IDs next_node;
+         /* Prepare the parsing of all those nodes throufh the waiting list.
+          * To do so, each node needs to be informed of the ID of the node that
+          * follows it.
+          */
+         final IDs next_seq_node;
 
-         next_node =
+         /* Get the ID for the next node in the sequence */
+         next_seq_node =
             IDs.get_id_from_xml_id
             (
                output,
@@ -79,11 +86,21 @@ public class VHDLSSCNode extends VHDLNode
                "node"
             );
 
-         waiting_list.push(get_vhdl_node(sub_nodes.item(i), next_node, i));
+         /*
+          * Add to the waiting list, 'i' indicates if the attributes inherited
+          * by the instruction sequence node should be passed along (it's only
+          * the case if i == 0).
+          */
+         waiting_list.push(get_vhdl_node(sub_nodes.item(i), next_seq_node, i));
       }
 
+      /*
+       * The last node of the sequence takes the node following the sequence
+       * as 'next_node', so it's handled separatly.
+       */
       waiting_list.push(get_vhdl_node(sub_nodes.item(i), next_node, i));
 
+      /* Handle the connection of the first node to the previous node. */
       handle_backward_connection(sub_nodes.item(0));
    }
 
@@ -193,7 +210,10 @@ public class VHDLSSCNode extends VHDLNode
       }
       else
       {
-         /* First node of the process */
+         /*
+          * Not the first node, so have the previous node connect to this one
+          * (which is the first of this instruction set).
+          */
          Predicates.add_entry
          (
             output,

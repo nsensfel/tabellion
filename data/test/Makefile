@@ -22,6 +22,9 @@ all: $(AST_FILES) $(OCL_FILES) $(VLD_FILES) $(IVLD_FILES)
 clean:
 	rm -f $(AST_FILES)
 	rm -f $(OCL_FILES)
+	rm -f $(VLD_FILES)
+	rm -f $(IVLD_FILES)
+	rm -rf /tmp/tabellion_{,in}valid
 
 $(AST_FILES): %.xml : %.vhd
 	$(AST_CREATOR) $< > $@
@@ -41,9 +44,9 @@ $(VLD_FILES): %/valid.result: %/valid.ocl %/valid.xml
 		AST_FILE=${PWD}/$(dir $@)/valid.xml \
 		PROPERTY_FILES=$(PROPERTY_DIR)/$(patsubst %/,%,$(dir $@)).pro \
 		TEMPLATE_DIR=${PWD}/$(dir $@)/ \
-		NICE_MESSAGE=/tmp/tabellion/valid_test_result
-	cat /tmp/tabellion/valid_test_result | sed '/^\s*$$/d' | sort > $@
-	diff $@ $(dir $@)/valid.ocl || true > $@
+		NICE_MESSAGE=/tmp/tabellion_valid/result
+	cat /tmp/tabellion_valid/result | sed '/^\s*$$/d' | sort > /tmp/tabellion_valid/result_clean
+	-diff /tmp/tabellion_valid/result_clean $(dir $@)/valid.ocl > $@
 
 $(IVLD_FILES): %/invalid.result: %/invalid.ocl %/invalid.xml
 	$(MAKE) -C $(TABELLION_MAIN) \
@@ -57,5 +60,5 @@ $(IVLD_FILES): %/invalid.result: %/invalid.ocl %/invalid.xml
 		AST_FILE=${PWD}/$(dir $@)/invalid.xml \
 		PROPERTY_FILES=$(PROPERTY_DIR)/$(patsubst %/,%,$(dir $@)).pro \
 		TEMPLATE_DIR=${PWD}/$(dir $@)/ \
-		NICE_MESSAGE=${PWD}/$@
-	cat $@ | sed '/^\s*$$/d' | sort > $@
+		NICE_MESSAGE=/tmp/tabellion_invalid/result
+	cat /tmp/tabellion_invalid/result | sed '/^\s*$$/d' | sort > $@
