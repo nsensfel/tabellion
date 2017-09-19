@@ -58,7 +58,7 @@ public class StringManager
       final String str
    )
    {
-      regexes.add(Pattern.compile(str));
+      regexes.add(Pattern.compile(str.substring(1, (str.length() - 1))));
 
       return get_string_as_relation(str);
    }
@@ -73,13 +73,19 @@ public class StringManager
       {
          for (final Map.Entry<String, String> c: candidates)
          {
-            if (p.matcher(c.getKey()).matches())
+            String word;
+
+            word = c.getKey();
+            /* Remove the surounding "" */
+            word = word.substring(1, (word.length() - 1));
+
+            if (p.matcher(word).matches())
             {
                System.out.println
                (
                   "[D] \""
-                  + c.getValue()
-                  + "\" matches pattern \""
+                  + word
+                  + "\" MATCHES pattern \""
                   + p.pattern()
                   + "\"."
                );
@@ -89,10 +95,23 @@ public class StringManager
                   new String[]
                   {
                      c.getValue(),
-                     TO_ID.get(p.pattern())
+                     TO_ID.get("\"" + p.pattern() + "\"")
                   }
                );
             }
+            /*
+            else
+            {
+               System.out.println
+               (
+                  "[D] \""
+                  + word
+                  + "\" DOES NOT match pattern \""
+                  + p.pattern()
+                  + "\"."
+               );
+            }
+            */
          }
       }
    }
