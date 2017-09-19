@@ -145,7 +145,7 @@ begin
       end case;
    end process;
 
-   process (n0, n2) -- $SOL:13:0$
+   process (n0, n3) -- $SOL:13:0$
    begin
       case n0 is
          when 0 =>

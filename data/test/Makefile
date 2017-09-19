@@ -18,6 +18,23 @@ IVLD_FILES = $(addsuffix /invalid.result, $(TEST_DIRS))
 export
 
 all: $(AST_FILES) $(OCL_FILES) $(VLD_FILES) $(IVLD_FILES)
+	@echo "################################################################"
+	@echo "## FALSE POSITIVES (should not have detected) ##################"
+	@echo "################################################################"
+
+	@for dir in $(TEST_DIRS) ; do \
+		echo "#### $$dir ####"; \
+		cat $$dir/invalid.result; \
+	done
+
+	@echo "################################################################"
+	@echo "## FALSE NEGATIVES (should have detected) ######################"
+	@echo "################################################################"
+
+	@for dir in $(TEST_DIRS) ; do \
+		echo "#### $$dir ####"; \
+		cat $$dir/valid.result; \
+	done
 
 clean:
 	rm -f $(AST_FILES)
