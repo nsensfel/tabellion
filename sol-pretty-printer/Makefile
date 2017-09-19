@@ -8,6 +8,8 @@ MODEL_DIR ?=
 #### Where to find the properties' pretty-print files
 TEMPLATE_DIR ?=
 
+NICE_MESSAGE_FILE ?=
+
 #### Binaries
 ###### JRE binary
 JAVA ?= java
@@ -53,8 +55,13 @@ compile: $(CLASSES)
 
 model:
 
+ifeq ($(strip $(NICE_MESSAGE)),)
 solutions: $(SOLUTION_PP_PAIRS) $(MODEL_DIR)/structural.mod $(MODEL_DIR)/string_to_instr.map $(CLASSES)
 	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_DIR)/structural.mod $(MODEL_DIR)/string_to_instr.map $(SOLUTION_PP_PAIRS)
+else
+solutions: $(SOLUTION_PP_PAIRS) $(MODEL_DIR)/structural.mod $(MODEL_DIR)/string_to_instr.map $(CLASSES)
+	$(JAVA) -cp $(CLASSPATH) Main $(MODEL_DIR)/structural.mod $(MODEL_DIR)/string_to_instr.map $(SOLUTION_PP_PAIRS) > $(NICE_MESSAGE)
+endif
 
 clean:
 	rm -f $(CLASSES)
