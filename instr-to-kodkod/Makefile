@@ -131,7 +131,7 @@ $(PARSER_CLASSES): antlr-4.7-complete.jar kodkod.jar $(PARSER_SOURCES)
 
 $(SOL_DIR)/%.sol: $(PROPERTY_FILES) $(MODEL_FILES) $(LEVEL_FILES)
 	touch $@
-	$(JAVA) -cp $(CLASSPATH) Main $@ \
+	$(JAVA) -cp $(CLASSPATH) Main $@ -v \
 		$(filter %$(basename $(notdir $@)).pro,$(PROPERTY_FILES)) \
 		$(LEVEL_FILES) \
 		$(MODEL_FILES) \

@@ -45,6 +45,8 @@ public class StringManager
       {
          id = (anon_string_prefix + anon_string_count);
 
+         anon_string_count += 1;
+
          string_type.add_member(id);
 
          TO_ID.put(str, id);

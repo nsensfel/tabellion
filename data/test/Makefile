@@ -12,6 +12,7 @@ SOLUTION_FILES = $(addsuffix .sol,$(addprefix $(SOLUTION_DIR)/,$(TEST_DIRS)))
 #VHD_FILES = $(addsuffix .vhd, $(TEST_FILES))
 AST_FILES = $(addsuffix .xml, $(TEST_FILES))
 OCL_FILES = $(addsuffix .ocl, $(TEST_FILES))
+SOL_FILES = $(addsuffix .sol, $(TEST_FILES))
 VLD_FILES = $(addsuffix /valid.result, $(TEST_DIRS))
 IVLD_FILES = $(addsuffix /invalid.result, $(TEST_DIRS))
 
@@ -41,6 +42,7 @@ clean:
 	rm -f $(OCL_FILES)
 	rm -f $(VLD_FILES)
 	rm -f $(IVLD_FILES)
+	rm -f $(SOL_FILES)
 	rm -rf /tmp/tabellion_{,in}valid
 
 $(AST_FILES): %.xml : %.vhd
