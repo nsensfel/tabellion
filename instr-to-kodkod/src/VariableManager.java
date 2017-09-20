@@ -144,7 +144,7 @@ public class VariableManager
 
       for (final TaggedVariable tg: tagged_variables.values())
       {
-         result = result.and(tg.as_relation.one());
+           result = result.and(tg.as_relation.one());
       }
 
       return result;

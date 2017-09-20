@@ -355,10 +355,21 @@ public class Main
 
       solver = new Solver();
       solver.options().setSkolemDepth(-1);
+      solver.options().setSymmetryBreaking(0);
       solver.options().setSolver(SATFactory.DefaultSAT4J);
 
       if (PARAMETERS.be_verbose())
       {
+         System.out.println(bounds);
+         System.out.println
+         (
+            "Final formula:"
+            +
+            property.and
+            (
+               VARIABLE_MANAGER.generate_tagged_variable_constraints()
+            ).toString()
+         );
          solver.options().setReporter(new ConsoleReporter());
       }
 

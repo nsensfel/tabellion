@@ -1,25 +1,38 @@
 ## Makefile Parameters #########################################################
 LEVEL_FILES ?= $(wildcard ${CURDIR}/data/level/*.lvl)
-PROPERTY_FILES ?= $(wildcard ${CURDIR}/data/property/*.pro)
+ALL_PROPERTY_FILES ?= $(wildcard ${CURDIR}/data/property/*.pro)
+#PROPERTY_FILES ?= $(wildcard ${CURDIR}/data/property/*.pro)
+PROPERTY_FILES ?= $(wildcard ${CURDIR}/data/property/test.pro)
 AST_FILE ?= ${CURDIR}/data/ast/best_chronometer_ever.xml
 TEMPLATE_DIR ?= ${CURDIR}/data/template/
 #AST_FILE = ${CURDIR}/data/ast/pong.xml
 NICE_MESSAGE ?=
 
 TMP_DIR ?= /tmp/tabellion
+DEPENDENCIES_DIR ?= $(TMP_DIR)/deps
 MODEL_DIR ?= $(TMP_DIR)/mod
 MODEL_INSTANCES_DIR ?= $(MODEL_DIR)/instance
+MODEL_INFERRED_DIR ?= $(MODEL_DIR)/inferred
 SOL_DIR ?= $(TMP_DIR)/sol
 
 ## Sub-programs ################################################################
-AST_TO_INSTR = ast-to-instr
-INST_CALC = instance-calculator
-SOLVER = instr-to-kodkod
-PRETTY_PRINTER = sol-pretty-printer
+AST_TO_INSTR ?= ast-to-instr
+INST_CALC ?= instance-calculator
+SOLVER ?= instr-to-kodkod
+PRETTY_PRINTER ?= sol-pretty-printer
 
 export
 
-all: $(TMP_DIR) $(MODEL_DIR) $(SOL_DIR)
+################################################################################
+ALL_DIRS = \
+	$(TMP_DIR) \
+	$(DEPENDENCIES_DIR) \
+	$(MODEL_DIR) \
+	$(MODEL_INSTANCES_DIR) \
+	$(MODEL_INFERED_DIR) \
+	$(SOL_DIR)
+
+all: $(ALL_DIRS)
 	$(MAKE) compile
 	$(MAKE) model
 	$(MAKE) solutions
@@ -60,11 +73,5 @@ clean_solutions:
 	$(MAKE) -C $(SOLVER) clean_solutions
 	$(MAKE) -C $(PRETTY_PRINTER) clean_solutions
 
-$(TMP_DIR):
-	mkdir -p $@
-
-$(MODEL_DIR):
-	mkdir -p $@
-
-$(SOL_DIR):
+$(ALL_DIRS):
 	mkdir -p $@

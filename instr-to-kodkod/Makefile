@@ -91,6 +91,8 @@ ANTLR_JAR = ${CURDIR}/antlr-4.7-complete.jar
 SOURCES = $(wildcard src/*.java)
 CLASSES = $(SOURCES:.java=.class)
 SOLUTION_FILES = $(addprefix $(SOL_DIR)/,$(notdir $(PROPERTY_FILES:.pro=.sol)))
+DEPENDENCY_FILES = \
+	$(addprefix $(DEPENDENCIES_DIR)/,$(notdir $(PROPERTY_FILES:.pro=.deps)))
 MODEL_FILES = \
 	$(MODEL_DIR)/structural.mod \
 	$(MODEL_DIR)/depths.mod \
@@ -115,12 +117,14 @@ clean:
 	$(MAKE) -C cfg-to-paths clean
 	rm -f $(CLASSES)
 	rm -f $(SOL_DIR)/*.sol
+	rm -f $(DEPENDENCY_FILES)
 
 clean_model:
 	$(MAKE) -C cfg-to-paths clean_model
 
 clean_solutions:
 	rm -f $(SOL_DIR)/*.sol
+	rm -f $(DEPENDENCY_FILES)
 
 ########
 cfg-generator:
@@ -129,13 +133,18 @@ cfg-generator:
 $(PARSER_CLASSES): antlr-4.7-complete.jar kodkod.jar $(PARSER_SOURCES)
 	$(MAKE) -C parser
 
-$(SOL_DIR)/%.sol: $(PROPERTY_FILES) $(MODEL_FILES) $(LEVEL_FILES)
+$(SOL_DIR)/%.sol: \
+	$(DEPENDENCIES_DIR)/%.deps $(PROPERTY_FILES) $(MODEL_FILES) $(LEVEL_FILES)
 	touch $@
 	$(JAVA) -cp $(CLASSPATH) Main $@ -v \
 		$(filter %$(basename $(notdir $@)).pro,$(PROPERTY_FILES)) \
 		$(LEVEL_FILES) \
 		$(MODEL_FILES) \
 		$(wildcard $(PATH_MODEL_DIR)/*.mod)
+
+$(DEPENDENCY_FILES): $(PROPERTY_FILES)
+	sed -n 's/^#require \"\(.*\)\"$$/\1/p' \
+		$(filter %$(basename $(notdir $@)).pro,$(PROPERTY_FILES)) > $@
 
 src/%.class: src/%.java $(PARSER_CLASSES) $(REQUIRED_JARS)
 	$(JAVAC) -cp $(CLASSPATH) $<

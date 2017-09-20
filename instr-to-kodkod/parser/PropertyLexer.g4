@@ -37,7 +37,7 @@ DEPTH_NO_CHANGE_OPERATOR_KW: ('(NDCB' | '(does_not_change_depth_before') SEP;
 
 WS: SEP;
 
-ID: [a-zA-Z0-9_]+;
+ID: [a-zA-Z0-9_~]+;
 STRING: '"' ~('\r' | '\n' | '"')* '"';
 
-COMMENT: ';;' .*? '\n' -> channel(HIDDEN);
+COMMENT: (';;'|'#require') .*? '\n' -> channel(HIDDEN);
