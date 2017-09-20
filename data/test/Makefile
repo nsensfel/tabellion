@@ -3,6 +3,7 @@ AST_CREATOR = ghdl --file-to-xml
 #TEST_DIRS ?= $(addprefix ${CURDIR}/,$(wildcard */))
 TEST_DIRS ?= $(patsubst %/,%,$(wildcard */))
 PROPERTY_DIR ?= ${CURDIR}/../property
+# TODO: Start using those variables...
 SOLUTION_DIR ?= /tmp/tabellion/sol/
 ORACLE_CREATOR_SCRIPT = ${CURDIR}/oracle_creator.py
 ################################################################################
