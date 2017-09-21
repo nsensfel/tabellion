@@ -1,24 +1,16 @@
 ## Parameters ##################################################################
 #### GHDL's xml AST output.
-ifndef AST_FILE
-AST_FILE =
-endif
+AST_FILE ?=
 
 #### Where to output the models.
-ifndef MODEL_DIR
-MODEL_DIR =
-endif
+MODEL_DIR ?=
 
 #### Binaries
 ###### JRE binary
-ifndef JAVA
-JAVA = java
-endif
+JAVA ?= java
 
 ###### JDK binary
-ifndef JAVAC
-JAVAC = javac
-endif
+JAVAC ?= javac
 
 ## Parameters Sanity Check #####################################################
 ifeq ($(strip $(AST_FILE)),)

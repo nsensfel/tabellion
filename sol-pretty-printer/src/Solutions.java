@@ -74,6 +74,10 @@ public class Solutions
 
          for (final Map.Entry<String, String> me: si.get_functions_data())
          {
+            final String keyword;
+
+            keyword = me.getKey().toUpperCase();
+
             pp_content =
                pp_content.replace
                (
@@ -81,11 +85,14 @@ public class Solutions
                      "$"
                      + sol_data[0]
                      + "."
-                     + me.getKey().toUpperCase()
+                     + keyword
                      + "$"
                   ),
-                  /* FIXME */
-                  (Strings.get_string_from_id(me.getValue()) == null) ? "null" : Strings.get_string_from_id(me.getValue())
+                  (
+                     keyword.endsWith("ID") ?
+                        me.getValue() :
+                        Strings.get_string_from_id(me.getValue())
+                  )
                );
          }
       }

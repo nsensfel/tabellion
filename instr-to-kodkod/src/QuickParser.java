@@ -19,7 +19,7 @@ public class QuickParser
       instr_pattern =
          Pattern.compile
          (
-            "\\(([a-z_0-9\\->]+ .*)\\)"
+            "\\(([a-z_A-Z0-9\\->]+ .*)\\)"
          );
    }
 

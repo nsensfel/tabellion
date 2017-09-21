@@ -1,24 +1,16 @@
 ## Parameters ##################################################################
 #### Where to find the model
-ifndef MODEL_DIR
-MODEL_DIR =
-endif
+MODEL_DIR ?=
 
 #### Where to store the CFG models
-ifndef PATH_MODEL_DIR
-PATH_MODEL_DIR =
-endif
+PATH_MODEL_DIR ?=
 
 #### Binaries
 ###### JRE binary
-ifndef JAVA
-JAVA = java
-endif
+JAVA ?= java
 
 ###### JDK binary
-ifndef JAVAC
-JAVAC = javac
-endif
+JAVAC ?= javac
 
 ## Parameters Sanity Check #####################################################
 ifeq ($(strip $(MODEL_DIR)),)

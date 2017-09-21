@@ -1,24 +1,16 @@
 ## Parameters ##################################################################
 #### Where to find the model
-ifndef MODEL_DIR
-MODEL_DIR =
-endif
+MODEL_DIR ?=
 
 #### Where to store the Instance model
-ifndef MODEL_INSTANCES_DIR
-MODEL_INSTANCES_DIR =
-endif
+MODEL_INSTANCES_DIR ?=
 
 #### Binaries
 ###### JRE binary
-ifndef JAVA
-JAVA = java
-endif
+JAVA ?= java
 
 ###### JDK binary
-ifndef JAVAC
-JAVAC = javac
-endif
+JAVAC ?= javac
 
 ## Parameters Sanity Check #####################################################
 ifeq ($(strip $(MODEL_DIR)),)

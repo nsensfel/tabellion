@@ -29,6 +29,7 @@ public class SolutionItem
       }
 
       FROM_ID.put(wfm_id, si);
+      si.function_values.put("wfm_id", wfm_id);
    }
 
    public static void handle_unary_set_function

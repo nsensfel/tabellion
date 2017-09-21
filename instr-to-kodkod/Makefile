@@ -1,57 +1,48 @@
 ## Parameters ##################################################################
 #### Where to find the level files
-ifndef LEVEL_FILES
-LEVEL_FILES =
-endif
+LEVEL_FILES ?= $(wildcard $(LEVELS_DIR)/*.lvl)
 
 #### Where to find the properties to verify
-ifndef PROPERTY_FILES
-PROPERTY_FILES =
-endif
+PROPERTIES_DIR ?=
 
-#### Where to find the model
-ifndef MODEL_DIR
-MODEL_DIR =
-endif
+#### What are the targetted properties
+PROPERTIES ?=
+
+#### Where to find the properties to verify
+ALL_PROPERTY_FILES ?= $(wildcard $(PROPERTIES_DIR)/*.pro)
+
+MODEL_DIR ?=
 
 #### Where to store & find the PATH models
-ifndef PATH_MODEL_DIR
-PATH_MODEL_DIR = $(MODEL_DIR)/path/
-endif
+PATH_MODEL_DIR ?= $(MODEL_DIR)/path/
 
 #### Where to output the solutions.
-ifndef SOL_DIR
-SOL_DIR =
-endif
+SOL_DIR ?=
 
 #### Where to get the missing Jar files.
-ifndef JAR_SOURCE
-JAR_SOURCE = "https://noot-noot.org/tabellion/jar/"
-endif
+JAR_SOURCE ?= "https://noot-noot.org/tabellion/jar/"
 
 #### Binaries
 ###### JRE binary
-ifndef JAVA
 JAVA = java
-endif
 
 ###### JDK binary
-ifndef JAVAC
 JAVAC = javac
-endif
 
 ##### Downloader
-ifndef DOWNLOADER
 DOWNLOADER = wget
-endif
 
 ## Parameters Sanity Check #####################################################
 ifeq ($(strip $(LEVEL_FILES)),)
 $(error No LEVEL_FILES defined as parameter.)
 endif
 
-ifeq ($(strip $(PROPERTY_FILES)),)
-$(error No PROPERTY_FILES defined as parameter.)
+ifeq ($(strip $(PROPERTIES_DIR)),)
+$(error No PROPERTIES_DIR defined as parameter.)
+endif
+
+ifeq ($(strip $(PROPERTIES)),)
+$(error No PROPERTIES defined as parameter.)
 endif
 
 ifeq ($(strip $(MODEL_DIR)),)
@@ -90,9 +81,9 @@ ANTLR_JAR = ${CURDIR}/antlr-4.7-complete.jar
 ## Makefile Magic ##############################################################
 SOURCES = $(wildcard src/*.java)
 CLASSES = $(SOURCES:.java=.class)
-SOLUTION_FILES = $(addprefix $(SOL_DIR)/,$(notdir $(PROPERTY_FILES:.pro=.sol)))
+SOLUTION_FILES = $(addsuffix .sol,$(addprefix $(SOL_DIR)/,$(notdir $(PROPERTIES))))
 DEPENDENCY_FILES = \
-	$(addprefix $(DEPENDENCIES_DIR)/,$(notdir $(PROPERTY_FILES:.pro=.deps)))
+	$(addprefix $(DEPENDENCIES_DIR)/,$(notdir $(ALL_PROPERTY_FILES:.pro=.deps)))
 MODEL_FILES = \
 	$(MODEL_DIR)/structural.mod \
 	$(MODEL_DIR)/depths.mod \
@@ -118,9 +109,11 @@ clean:
 	rm -f $(CLASSES)
 	rm -f $(SOL_DIR)/*.sol
 	rm -f $(DEPENDENCY_FILES)
+	rm -f $(wildcard $(MODEL_INFERRED_DIR)/*.mod)
 
 clean_model:
 	$(MAKE) -C cfg-to-paths clean_model
+	rm -f $(wildcard $(MODEL_INFERRED_DIR)/*.mod)
 
 clean_solutions:
 	rm -f $(SOL_DIR)/*.sol
@@ -133,18 +126,23 @@ cfg-generator:
 $(PARSER_CLASSES): antlr-4.7-complete.jar kodkod.jar $(PARSER_SOURCES)
 	$(MAKE) -C parser
 
-$(SOL_DIR)/%.sol: \
-	$(DEPENDENCIES_DIR)/%.deps $(PROPERTY_FILES) $(MODEL_FILES) $(LEVEL_FILES)
-	touch $@
+-include $(wildcard $(DEPENDENCIES_DIR)/*)
+
+$(SOLUTION_FILES): $(SOL_DIR)/%.sol: $(PROPERTIES_DIR)/%.pro \
+	$(SOL_DIR)/%.sol.ready $(MODEL_FILES) $(LEVEL_FILES)
+#	$(addprefix $(SOL_DIR)/,$(addsuffix .sol,$($(DEPENDENCIES_DIR)/%.deps)))
+	echo "$^"
 	$(JAVA) -cp $(CLASSPATH) Main $@ -v \
-		$(filter %$(basename $(notdir $@)).pro,$(PROPERTY_FILES)) \
+		$< \
 		$(LEVEL_FILES) \
 		$(MODEL_FILES) \
+		$(MODEL_INFERRED_DIR)/*.mod \
 		$(wildcard $(PATH_MODEL_DIR)/*.mod)
-
-$(DEPENDENCY_FILES): $(PROPERTY_FILES)
-	sed -n 's/^#require \"\(.*\)\"$$/\1/p' \
-		$(filter %$(basename $(notdir $@)).pro,$(PROPERTY_FILES)) > $@
+	echo "" >> $@
+	$(MAKE) -C .. \
+		PROPERTIES=$(basename $(notdir $@)) \
+		TEMPLATE_DIR=$(TO_PRED_TEMPLATE_DIR) \
+		NICE_MESSAGE=$(MODEL_INFERRED_DIR)/$(basename $(notdir $@)).mod
 
 src/%.class: src/%.java $(PARSER_CLASSES) $(REQUIRED_JARS)
 	$(JAVAC) -cp $(CLASSPATH) $<
@@ -152,3 +150,4 @@ src/%.class: src/%.java $(PARSER_CLASSES) $(REQUIRED_JARS)
 %.jar:
 	echo "Attempting to download missing jar '$@'..."
 	$(DOWNLOADER) "$(JAR_SOURCE)/$@"
+
