@@ -2,7 +2,7 @@ TABELLION_MAIN ?= ${CURDIR}/../../
 AST_CREATOR = ghdl --file-to-xml
 #TEST_DIRS ?= $(addprefix ${CURDIR}/,$(wildcard */))
 TEST_DIRS ?= $(patsubst %/,%,$(wildcard */))
-PROPERTY_DIR ?= ${CURDIR}/../property
+PROPERTIES_DIR ?= ${CURDIR}/../property
 # TODO: Start using those variables...
 SOLUTION_DIR ?= /tmp/tabellion/sol/
 ORACLE_CREATOR_SCRIPT = ${CURDIR}/oracle_creator.py
@@ -44,6 +44,7 @@ clean:
 	rm -f $(VLD_FILES)
 	rm -f $(IVLD_FILES)
 	rm -f $(SOL_FILES)
+	rm -f $(addprefix .ready,$(SOL_FILES))
 	rm -rf /tmp/tabellion_{,in}valid
 
 $(AST_FILES): %.xml : %.vhd
@@ -62,7 +63,7 @@ $(VLD_FILES): %/valid.result: %/valid.ocl %/valid.xml
 	$(MAKE) -C $(TABELLION_MAIN) \
 		TMP_DIR=/tmp/tabellion_valid \
 		AST_FILE=${PWD}/$(dir $@)/valid.xml \
-		PROPERTY_FILES=$(PROPERTY_DIR)/$(patsubst %/,%,$(dir $@)).pro \
+		PROPERTIES=$(patsubst %/,%,$(dir $@)) \
 		TEMPLATE_DIR=${PWD}/$(dir $@)/ \
 		NICE_MESSAGE=/tmp/tabellion_valid/result
 	cat /tmp/tabellion_valid/result | sed '/^\s*$$/d' | sort > /tmp/tabellion_valid/result_clean
@@ -78,7 +79,7 @@ $(IVLD_FILES): %/invalid.result: %/invalid.ocl %/invalid.xml
 	$(MAKE) -C $(TABELLION_MAIN) \
 		TMP_DIR=/tmp/tabellion_invalid \
 		AST_FILE=${PWD}/$(dir $@)/invalid.xml \
-		PROPERTY_FILES=$(PROPERTY_DIR)/$(patsubst %/,%,$(dir $@)).pro \
+		PROPERTIES=$(patsubst %/,%,$(dir $@)) \
 		TEMPLATE_DIR=${PWD}/$(dir $@)/ \
 		NICE_MESSAGE=/tmp/tabellion_invalid/result
 	cat /tmp/tabellion_invalid/result | sed '/^\s*$$/d' | sort > $@

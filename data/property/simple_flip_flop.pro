@@ -9,7 +9,8 @@
       (is_explicit_process ps)
       (is_in_sensitivity_list clk ps)
       (CTL_verifies ps
-         (AF
+         (AU
+            (not (expr_writes reg))
             (and
                (kind "if")
                (or
@@ -46,7 +47,7 @@
                )
                (EX
                   (and
-                     (has_option "COND_WAS_TRUE")
+                     (has_option "cond_was_true")
                      (does_not_reach_parent_before
                         (and
                            (expr_writes reg)

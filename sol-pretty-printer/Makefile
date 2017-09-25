@@ -48,7 +48,7 @@ CLASSES = $(SOURCES:.java=.class)
 SOLUTION_FILES = $(wildcard $(SOL_DIR)/*.sol)
 PROPERTY_PP_FILES = $(wildcard $(TEMPLATE_DIR)/*.pp)
 SOLUTION_PP_PAIRS = \
-	$(foreach sf,$(SOLUTION_FILES),$(sf) $(filter %$(basename $(notdir $(sf))).pp,$(PROPERTY_PP_FILES)))
+	$(foreach sf,$(SOLUTION_FILES),$(sf) $(TEMPLATE_DIR)/$(basename $(notdir $(sf))).pp)
 
 ## Makefile Rules ##############################################################
 compile: $(CLASSES)

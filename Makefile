@@ -42,21 +42,21 @@ all: $(ALL_DIRS)
 	$(MAKE) model
 	$(MAKE) solutions
 
-compile:
+compile: $(ALL_DIRS)
 	$(MAKE) -C $(AST_TO_INSTR) compile
 	$(MAKE) -C $(INST_CALC) compile
 	$(MAKE) -C $(SOLVER) compile
 	$(MAKE) -C $(PRETTY_PRINTER) compile
 	$(MAKE) -C $(PROP_TO_PRED) compile
 
-model:
+model: $(ALL_DIRS)
 	$(MAKE) -C $(AST_TO_INSTR) model
 	$(MAKE) -C $(INST_CALC) model
 	$(MAKE) -C $(SOLVER) model
 	$(MAKE) -C $(PRETTY_PRINTER) model
 	$(MAKE) -C $(PROP_TO_PRED) model
 
-solutions: $(TMP_DIR) $(MODEL_DIR) $(SOL_DIR)
+solutions: $(ALL_DIRS)
 	$(MAKE) -C $(AST_TO_INSTR) solutions
 	$(MAKE) -C $(INST_CALC) solutions
 	$(MAKE) -C $(SOLVER) solutions

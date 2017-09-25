@@ -108,6 +108,7 @@ clean:
 	$(MAKE) -C cfg-to-paths clean
 	rm -f $(CLASSES)
 	rm -f $(SOL_DIR)/*.sol
+	rm -f $(SOL_DIR)/*.sol.ready
 	rm -f $(DEPENDENCY_FILES)
 	rm -f $(wildcard $(MODEL_INFERRED_DIR)/*.mod)
 
@@ -117,6 +118,7 @@ clean_model:
 
 clean_solutions:
 	rm -f $(SOL_DIR)/*.sol
+	rm -f $(SOL_DIR)/*.sol.ready
 	rm -f $(DEPENDENCY_FILES)
 
 ########
@@ -136,7 +138,7 @@ $(SOLUTION_FILES): $(SOL_DIR)/%.sol: $(PROPERTIES_DIR)/%.pro \
 		$< \
 		$(LEVEL_FILES) \
 		$(MODEL_FILES) \
-		$(MODEL_INFERRED_DIR)/*.mod \
+		`ls $(MODEL_INFERRED_DIR)/*.mod 2>/dev/null`\
 		$(wildcard $(PATH_MODEL_DIR)/*.mod)
 	echo "" >> $@
 	$(MAKE) -C .. \
