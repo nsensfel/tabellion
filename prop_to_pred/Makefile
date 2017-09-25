@@ -2,6 +2,9 @@
 TO_PRED_TEMPLATE_DIR ?=
 INFERRED_LEVEL_FILE ?=
 PARSING_SCRIPT ?= ${CURDIR}/parser.py
+PROPERTIES_DIR ?=
+#### Where to find the properties to verify
+ALL_PROPERTY_FILES ?= $(wildcard $(PROPERTIES_DIR)/*.pro)
 
 ## Parameters Sanity Check #####################################################
 ifeq ($(strip $(PARSING_SCRIPT)),)
@@ -12,9 +15,9 @@ endif
 
 ## Makefile Magic ##############################################################
 PRED_TO_INFER = \
-	$(addprefix $(TO_PRED_TEMPLATE_DIR)/,$(notdir $(wildcard $(TEMPLATE_DIR)/*.pp)))
+	$(addsuffix .pp,$(addprefix $(TO_PRED_TEMPLATE_DIR)/,$(notdir $(basename $(ALL_PROPERTY_FILES)))))
 ADDITIONAL_MAKEFILES = \
-	$(addsuffix .deps,$(addprefix $(DEPENDENCIES_DIR)/,$(basename $(notdir $(wildcard $(PROPERTIES_DIR)/*.pro)))))
+	$(addsuffix .deps,$(addprefix $(DEPENDENCIES_DIR)/,$(basename $(notdir $(ALL_PROPERTY_FILES)))))
 
 export
 ## Makefile Rules ##############################################################

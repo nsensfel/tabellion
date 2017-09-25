@@ -2,13 +2,11 @@ TABELLION_MAIN ?= ${CURDIR}/../../
 AST_CREATOR = ghdl --file-to-xml
 #TEST_DIRS ?= $(addprefix ${CURDIR}/,$(wildcard */))
 TEST_DIRS ?= $(patsubst %/,%,$(wildcard */))
-PROPERTIES_DIR ?= ${CURDIR}/../property
+PROPERTIES_DIR ?= ${CURDIR}/../property/
 # TODO: Start using those variables...
-SOLUTION_DIR ?= /tmp/tabellion/sol/
 ORACLE_CREATOR_SCRIPT = ${CURDIR}/oracle_creator.py
 ################################################################################
 TEST_FILES = $(addsuffix /valid,$(TEST_DIRS)) $(addsuffix /invalid,$(TEST_DIRS))
-SOLUTION_FILES = $(addsuffix .sol,$(addprefix $(SOLUTION_DIR)/,$(TEST_DIRS)))
 
 #VHD_FILES = $(addsuffix .vhd, $(TEST_FILES))
 AST_FILES = $(addsuffix .xml, $(TEST_FILES))

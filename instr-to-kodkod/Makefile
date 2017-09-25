@@ -82,6 +82,7 @@ ANTLR_JAR = ${CURDIR}/antlr-4.7-complete.jar
 SOURCES = $(wildcard src/*.java)
 CLASSES = $(SOURCES:.java=.class)
 SOLUTION_FILES = $(addsuffix .sol,$(addprefix $(SOL_DIR)/,$(notdir $(PROPERTIES))))
+ALL_SOLUTION_FILES = $(addsuffix .sol,$(addprefix $(SOL_DIR)/,$(notdir $(basename $(ALL_PROPERTY_FILES)))))
 DEPENDENCY_FILES = \
 	$(addprefix $(DEPENDENCIES_DIR)/,$(notdir $(ALL_PROPERTY_FILES:.pro=.deps)))
 MODEL_FILES = \
@@ -130,7 +131,7 @@ $(PARSER_CLASSES): antlr-4.7-complete.jar kodkod.jar $(PARSER_SOURCES)
 
 -include $(wildcard $(DEPENDENCIES_DIR)/*)
 
-$(SOLUTION_FILES): $(SOL_DIR)/%.sol: $(PROPERTIES_DIR)/%.pro \
+$(ALL_SOLUTION_FILES): $(SOL_DIR)/%.sol: $(PROPERTIES_DIR)/%.pro \
 	$(SOL_DIR)/%.sol.ready $(MODEL_FILES) $(LEVEL_FILES)
 #	$(addprefix $(SOL_DIR)/,$(addsuffix .sol,$($(DEPENDENCIES_DIR)/%.deps)))
 	echo "$^"
