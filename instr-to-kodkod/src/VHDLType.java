@@ -90,11 +90,17 @@ public class VHDLType
 
       members_as_set = members.entrySet();
 
-      for (final Map.Entry<String, Relation> member: members_as_set)
+      if (name.toLowerCase().equals("string"))
       {
-         b.boundExactly(member.getValue(), f.setOf(member.getKey()));
+         /* Other types do not require direct access to a member. */
+         /* TODO: only bound the strings that are actually mentionned in the
+          * formula.
+          */
+         for (final Map.Entry<String, Relation> member: members_as_set)
+         {
+            b.boundExactly(member.getValue(), f.setOf(member.getKey()));
+         }
       }
-
       /*
        * the toArray() is required to avoid the collection being considered as
        * a single atom.
