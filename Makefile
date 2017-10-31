@@ -1,7 +1,11 @@
 ## Makefile Parameters #########################################################
 LEVELS_DIR ?= ${CURDIR}/data/level/
 PROPERTIES_DIR ?= ${CURDIR}/data/property/
-PROPERTIES ?= $(basename $(notdir $(wildcard $(PROPERTIES_DIR)/*.pro)))
+#PROPERTIES ?= $(basename $(notdir $(wildcard $(PROPERTIES_DIR)/*.pro)))
+# Below is a list of properties that removes those requiring "inferred"
+# features. Comment the line above and uncomment the line below to use those.
+# Also, see the definition of PROP_TO_PRED further down.
+PROPERTIES ?= $(filter-out flip_flop CNE_01700 test, $(basename $(notdir $(wildcard $(PROPERTIES_DIR)/*.pro)))) 
 AST_FILE ?= ${CURDIR}/data/ast/best_chronometer_ever.xml
 TEMPLATE_DIR ?= ${CURDIR}/data/template/
 TO_PRED_TEMPLATE_DIR ?= ${CURDIR}/data/to_pred_template/
@@ -21,8 +25,9 @@ AST_TO_INSTR ?= ast-to-instr
 INST_CALC ?= instance-calculator
 SOLVER ?= instr-to-kodkod
 PRETTY_PRINTER ?= sol-pretty-printer
-PROP_TO_PRED ?= prop-to-pred
-
+#PROP_TO_PRED ?= prop-to-pred
+# Line above: use "inferred" feature, line below: do not use "inferred" feature.
+PROP_TO_PRED ?= no-prop-to-pred
 export
 
 ################################################################################
