@@ -21,7 +21,7 @@ AST_TO_INSTR ?= ast-to-instr
 INST_CALC ?= instance-calculator
 SOLVER ?= instr-to-kodkod
 PRETTY_PRINTER ?= sol-pretty-printer
-PROP_TO_PRED ?= prop_to_pred
+PROP_TO_PRED ?= prop-to-pred
 
 export
 
