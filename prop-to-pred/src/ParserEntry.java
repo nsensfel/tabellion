@@ -66,7 +66,13 @@ public class ParserEntry
          inferred_level_file.write(p.get_var_type());
          inferred_level_file.write(")\n");
       }
-      /*/while */
+
+      if (ALL_ENTRIES.isEmpty())
+      {
+         System.err.println("No data was given through stdin...");
+
+         System.exit(-1);
+      }
 
       inferred_level_file.write("(add_predicate _");
       inferred_level_file.write(predicate_name);
